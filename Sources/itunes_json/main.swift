@@ -34,15 +34,20 @@ extension MissingArtwork {
     var fileNameRepresentation : String {
         self.simpleRepresentation.replacingOccurrences(of: " ", with: "_")
     }
+
+    static func gatherMissingArtwork() throws -> Set<MissingArtwork> {
+        let itunes = try ITLibrary(apiVersion: "1.0")
+        return Set<MissingArtwork>(itunes.allMediaItems.compactMap {
+                    ((!$0.hasArtworkAvailable || $0.artwork == nil) && $0.mediaKind != .kindBook && $0.mediaKind != .kindVoiceMemo) ? $0.album.isCompilation ? .CompilationAlbum($0.album.title!) : .ArtistAlbum($0.artist?.name ?? $0.album.albumArtist!, $0.album.title ?? $0.title) : nil })
+
+    }
 }
 
-guard let itunes = try? ITLibrary(apiVersion: "1.0") else {
-    print("No iTunes Library")
+do {
+    let missingMediaArtworks = try MissingArtwork.gatherMissingArtwork()
+    print("\(missingMediaArtworks.count) Missing Artworks:")
+    missingMediaArtworks.sorted().forEach { print("\($0.searchQueryRepresentation)") }
+} catch {
+    print("unable to get missing art")
     exit(1)
 }
-
-let missingMediaArtworks = Set<MissingArtwork>(itunes.allMediaItems.compactMap {
-                                                ((!$0.hasArtworkAvailable || $0.artwork == nil) && $0.mediaKind != .kindBook && $0.mediaKind != .kindVoiceMemo) ? $0.album.isCompilation ? .CompilationAlbum($0.album.title!) : .ArtistAlbum($0.artist?.name ?? $0.album.albumArtist!, $0.album.title ?? $0.title) : nil })
-
-print("\(missingMediaArtworks.count) Missing Artworks:")
-missingMediaArtworks.sorted().forEach { print("\($0.searchQueryRepresentation)") }
