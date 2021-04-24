@@ -25,17 +25,13 @@ extension MissingArtwork : CustomStringConvertible {
 }
 
 extension MissingArtwork {
-    private var simpleRepresentation : String {
+    var simpleRepresentation : String {
         switch self {
         case let .ArtistAlbum(artist, album):
             return "\(artist) \(album)"
         case let .CompilationAlbum(title):
             return title
         }
-    }
-
-    var searchQueryRepresentation : String {
-        return self.simpleRepresentation.replacingOccurrences(of: " ", with: "+")
     }
 
     var fileNameRepresentation : String {
