@@ -17,5 +17,5 @@ jobs:
     - name: Archive
       uses: actions/upload-artifact@v2
       with:
-        name: itunes_json
-        path: .build/x86_64-apple-macosx/release/itunes_json
+        name: itunes_missing_artwork
+        path: .build/x86_64-apple-macosx/release/itunes_missing_artwork

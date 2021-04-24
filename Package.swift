@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "itunes_json",
+    name: "itunes_missing_artwork",
     platforms: [
         .macOS(.v11),
     ],
@@ -16,7 +16,7 @@ let package = Package(
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages which this package depends on.
         .target(
-            name: "itunes_json",
+            name: "itunes_missing_artwork",
             dependencies: [.product(name: "ArgumentParser", package: "swift-argument-parser"),
                            .product(name: "CupertinoJWT", package: "CupertinoJWT"),
             ]
