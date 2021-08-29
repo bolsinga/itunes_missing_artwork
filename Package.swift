@@ -9,7 +9,7 @@ let package = Package(
         .macOS(.v11),
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-argument-parser", from: "0.4.1"),
+        .package(url: "https://github.com/apple/swift-argument-parser", from: "0.4.4"),
         .package(url: "https://github.com/terwanerik/CupertinoJWT", from: "0.2.2"),
     ],
     targets: [
