@@ -1,37 +1,6 @@
 import Foundation
 import CupertinoJWT
 import ArgumentParser
-import Combine
-
-struct Artwork : Codable {
-    var width : Int
-    var height : Int
-    var url : String
-}
-
-struct MusicResponse : Codable {
-    struct Results : Codable {
-        struct Album : Codable {
-            struct Data : Codable {
-                struct Attributes : Codable {
-                    var artwork : Artwork
-                }
-                var attributes : Attributes
-            }
-            var data : [Data]
-        }
-        var albums : Album
-    }
-    var results : Results
-}
-
-extension Artwork {
-    var imageURL : URL? {
-        return URL(string: url.replacingOccurrences(of: "{w}", with: "\(width)").replacingOccurrences(of: "{h}", with: "\(height)"))
-    }
-}
-
-var semaphore = DispatchSemaphore(value: 0)
 
 struct Generate : ParsableCommand {
     struct SigningData : ExpressibleByArgument {
@@ -68,35 +37,8 @@ struct Generate : ParsableCommand {
 
         for missingMediaArtwork in missingMediaArtworks.sorted() {
             if let searchURL = missingMediaArtwork.searchURL {
-            let cancellable = session.dataTaskPublisher(for: searchURL)
-                .sink { completion in
-                    switch completion {
-                    case let .failure(reason):
-                        print("failed: \(reason)")
-                    case .finished:
-                        semaphore.signal()
-                        break
-                    }
-                } receiveValue: { receivedValue in
-                    let decoder = JSONDecoder()
-                    decoder.dateDecodingStrategy = .iso8601
-                    do {
-                        let musicResponse = try decoder.decode(MusicResponse.self, from: receivedValue.data)
-                        var index = 0
-                        for data in musicResponse.results.albums.data {
-                            let artwork = data.attributes.artwork
-                            if let url = artwork.imageURL {
-                                print("media: \(missingMediaArtwork) \(index) url: \(url.absoluteString)")
-                            } else {
-                                print("media: \(missingMediaArtwork) \(index) invalid artwork: \(artwork)")
-                            }
-                            index += 1
-                        }
-                    } catch {
-                        print("media: \(missingMediaArtwork) invalid decode: \(String(describing: String(data: receivedValue.data, encoding: .utf8)))")
-                    }
-                }
-                semaphore.wait()
+                let imageURLs = session.imageURLs(searchURL: searchURL)
+                print("media: \(missingMediaArtwork) imageURLs: \(String(describing: imageURLs))")
             }
         }
     }
