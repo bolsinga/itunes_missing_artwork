@@ -3,19 +3,6 @@ import CupertinoJWT
 import ArgumentParser
 import Combine
 
-extension MissingArtwork {
-    var searchURL : URL? {
-        var urlComponents = URLComponents()
-        urlComponents.scheme = "https"
-        urlComponents.host = "api.music.apple.com"
-        urlComponents.path = "/v1/catalog/us/search"
-        urlComponents.queryItems = [URLQueryItem(name: "term", value: self.simpleRepresentation),
-                                    URLQueryItem(name: "types", value: "albums"),
-                                    URLQueryItem(name: "limit", value: "2")]
-        return urlComponents.url
-    }
-}
-
 struct Artwork : Codable {
     var width : Int
     var height : Int
