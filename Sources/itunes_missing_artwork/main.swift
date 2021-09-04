@@ -37,8 +37,20 @@ struct Generate : ParsableCommand {
 
         for missingMediaArtwork in missingMediaArtworks.sorted() {
             if let searchURL = missingMediaArtwork.searchURL {
-                let imageURLs = session.imageURLs(searchURL: searchURL)
-                print("media: \(missingMediaArtwork) imageURLs: \(String(describing: imageURLs))")
+                let semaphore = DispatchSemaphore(value: 0)
+                let cancellable = session.musicAPIImageURLPublisher(searchURL: searchURL)
+                    .sink { completion in
+                        switch completion {
+                        case let .failure(reason):
+                            print("media: \(missingMediaArtwork) failed: \(reason)")
+                        case .finished:
+                            break
+                        }
+                        semaphore.signal()
+                    } receiveValue: { urls in
+                        print("media: \(missingMediaArtwork) imageURLs: \(String(describing: urls))")
+                    }
+                semaphore.wait()
             }
         }
     }

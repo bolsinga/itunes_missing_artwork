@@ -37,31 +37,16 @@ extension Artwork {
 }
 
 extension URLSession {
-    func imageURLs(searchURL: URL) -> [URL] {
-        var urls : [URL] = []
-        
-        let semaphore = DispatchSemaphore(value: 0)
-        
+   
+    func musicAPIImageURLPublisher(searchURL: URL) -> AnyPublisher<[URL], Error> {
         // TODO: figure out how to make a closure to just pass this to the decoder parameter below.
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         
-        let cancellable = self.dataTaskPublisher(for: searchURL)
+        return self.dataTaskPublisher(for: searchURL)
             .map { $0.data } // Get the Data
             .decode(type: MusicResponse.self, decoder: decoder) // Decode the JSON
             .map { $0.results.albums.data.compactMap { $0.attributes.artwork.imageURL } } // Convert the array of results into an array of URLs
-            .sink { completion in
-                switch completion {
-                case let .failure(reason):
-                    print("failed: \(reason)")
-                case .finished:
-                    break
-                }
-                semaphore.signal()
-            } receiveValue: { url in
-                urls.append(contentsOf: url)
-            }
-        semaphore.wait()
-        return urls
+            .eraseToAnyPublisher()
     }
 }
