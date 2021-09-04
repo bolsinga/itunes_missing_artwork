@@ -1,6 +1,7 @@
 import Foundation
 import CupertinoJWT
 import ArgumentParser
+import Combine
 
 struct Generate : ParsableCommand {
     struct SigningData : ExpressibleByArgument {
@@ -35,9 +36,10 @@ struct Generate : ParsableCommand {
 
         let session = URLSession(configuration: sessionConfiguration)
 
+        var cancellables : [AnyCancellable] = []
+
         for missingMediaArtwork in missingMediaArtworks.sorted() {
             if let searchURL = missingMediaArtwork.searchURL {
-                let semaphore = DispatchSemaphore(value: 0)
                 let cancellable = session.musicAPIImageURLPublisher(searchURL: searchURL)
                     .sink { completion in
                         switch completion {
@@ -46,13 +48,15 @@ struct Generate : ParsableCommand {
                         case .finished:
                             break
                         }
-                        semaphore.signal()
                     } receiveValue: { urls in
                         print("media: \(missingMediaArtwork) imageURLs: \(String(describing: urls))")
                     }
-                semaphore.wait()
+
+                cancellables.append(cancellable)
             }
         }
+
+        RunLoop.main.run()
     }
 }
 
