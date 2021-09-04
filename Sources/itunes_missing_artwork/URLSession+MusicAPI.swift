@@ -39,36 +39,28 @@ extension Artwork {
 extension URLSession {
     func imageURLs(searchURL: URL) -> [URL] {
         var urls : [URL] = []
+        
         let semaphore = DispatchSemaphore(value: 0)
+        
+        // TODO: figure out how to make a closure to just pass this to the decoder parameter below.
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        
         let cancellable = self.dataTaskPublisher(for: searchURL)
-        .sink { completion in
-            switch completion {
-            case let .failure(reason):
-                print("failed: \(reason)")
-            case .finished:
-                semaphore.signal()
-                break
-            }
-        } receiveValue: { receivedValue in
-            let decoder = JSONDecoder()
-            decoder.dateDecodingStrategy = .iso8601
-            do {
-                let musicResponse = try decoder.decode(MusicResponse.self, from: receivedValue.data)
-                var index = 0
-                for data in musicResponse.results.albums.data {
-                    let artwork = data.attributes.artwork
-                    if let url = artwork.imageURL {
-                        urls.append(url)
-                        print("\(index) url: \(url.absoluteString)")
-                    } else {
-                        print("\(index) invalid artwork: \(artwork)")
-                    }
-                    index += 1
+            .map { $0.data } // Get the Data
+            .decode(type: MusicResponse.self, decoder: decoder) // Decode the JSON
+            .map { $0.results.albums.data.compactMap { $0.attributes.artwork.imageURL } } // Convert the array of results into an array of URLs
+            .sink { completion in
+                switch completion {
+                case let .failure(reason):
+                    print("failed: \(reason)")
+                case .finished:
+                    break
                 }
-            } catch {
-                print("invalid decode: \(String(describing: String(data: receivedValue.data, encoding: .utf8)))")
+                semaphore.signal()
+            } receiveValue: { url in
+                urls.append(contentsOf: url)
             }
-        }
         semaphore.wait()
         return urls
     }
