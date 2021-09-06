@@ -39,21 +39,19 @@ struct Generate : ParsableCommand {
         var cancellables : [AnyCancellable] = []
 
         for missingMediaArtwork in missingMediaArtworks.sorted() {
-            if let searchURL = missingMediaArtwork.searchURL {
-                let cancellable = session.musicAPIImageURLPublisher(searchURL: searchURL)
-                    .sink { completion in
-                        switch completion {
-                        case let .failure(reason):
-                            print("media: \(missingMediaArtwork) failed: \(reason)")
-                        case .finished:
-                            break
-                        }
-                    } receiveValue: { urls in
-                        print("media: \(missingMediaArtwork) imageURLs: \(String(describing: urls))")
+            let cancellable = session.musicAPIImageURLPublisher(searchURL: missingMediaArtwork.searchURL)
+                .sink { completion in
+                    switch completion {
+                    case let .failure(reason):
+                        print("media: \(missingMediaArtwork) failed: \(reason)")
+                    case .finished:
+                        break
                     }
+                } receiveValue: { urls in
+                    print("media: \(missingMediaArtwork) imageURLs: \(String(describing: urls))")
+                }
 
-                cancellables.append(cancellable)
-            }
+            cancellables.append(cancellable)
         }
 
         RunLoop.main.run()

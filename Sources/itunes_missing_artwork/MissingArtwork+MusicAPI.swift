@@ -8,7 +8,7 @@
 import Foundation
 
 extension MissingArtwork {
-    var searchURL : URL? {
+    var searchURL : URL {
         var urlComponents = URLComponents()
         urlComponents.scheme = "https"
         urlComponents.host = "api.music.apple.com"
@@ -16,6 +16,9 @@ extension MissingArtwork {
         urlComponents.queryItems = [URLQueryItem(name: "term", value: self.simpleRepresentation),
                                     URLQueryItem(name: "types", value: "albums"),
                                     URLQueryItem(name: "limit", value: "2")]
-        return urlComponents.url
+        if let url = urlComponents.url {
+            return url
+        }
+        return URL(string: "missing")! // Use an bogus URL and allow the networking layer return an error.
     }
 }
