@@ -36,10 +36,9 @@ struct Generate : ParsableCommand {
 
         let session = URLSession(configuration: sessionConfiguration)
 
-        var cancellables : [AnyCancellable] = []
-
-        for missingMediaArtwork in missingMediaArtworks.sorted() {
-            let cancellable = session.musicAPIImageURLPublisher(searchURL: missingMediaArtwork.searchURL)
+        let cancellables : [AnyCancellable] = missingMediaArtworks.map {
+            let missingMediaArtwork = $0
+            return session.musicAPIImageURLPublisher(searchURL: missingMediaArtwork.searchURL)
                 .sink { completion in
                     switch completion {
                     case let .failure(reason):
@@ -50,8 +49,6 @@ struct Generate : ParsableCommand {
                 } receiveValue: { urls in
                     print("media: \(missingMediaArtwork) imageURLs: \(String(describing: urls))")
                 }
-
-            cancellables.append(cancellable)
         }
 
         RunLoop.main.run()
