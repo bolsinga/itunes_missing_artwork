@@ -1,7 +1,6 @@
 import Foundation
 import CupertinoJWT
 import ArgumentParser
-import Combine
 
 @main
 struct Program : ParsableCommand {
@@ -37,22 +36,20 @@ struct Program : ParsableCommand {
         sessionConfiguration.httpAdditionalHeaders = [ "Authorization" : "Bearer \(token)"]
 
         let session = URLSession(configuration: sessionConfiguration)
-
-        let cancellables : [AnyCancellable] = missingMediaArtworks.map {
-            let missingMediaArtwork = $0
-            return session.musicAPIImageURLPublisher(searchURL: missingMediaArtwork.searchURL)
-                .sink { completion in
-                    switch completion {
-                    case let .failure(reason):
-                        print("media: \(missingMediaArtwork) failed: \(reason)")
-                    case .finished:
-                        break
-                    }
-                } receiveValue: { urls in
-                    print("media: \(missingMediaArtwork) imageURLs: \(String(describing: urls))")
+        
+        let artworkURLFetcher = ArtworkURLFecther(session)
+        
+        Task { // required until ArgumentParser is set up to handle async
+            for missingMediaArtwork in missingMediaArtworks {
+                do {
+                    let imageURLs = try await artworkURLFetcher.fetch(missingMediaArtwork.searchURL)
+                    print("media: \(missingMediaArtwork) imageURLs: \(String(describing: imageURLs))")
+                } catch {
+                    print("media: \(missingMediaArtwork) failed: \(error)")
                 }
+            }
         }
 
-        RunLoop.main.run()
+        RunLoop.main.run() // Still need to keep the runloop alive.
     }
 }
