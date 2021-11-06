@@ -28,7 +28,8 @@ struct Generate : ParsableCommand {
     func run() throws {
         let token = try JWT(keyID: keyID, teamID: teamID, issueDate: Date(), expireDuration: 60 * 60).sign(with: signingData.p8)
 
-        let missingMediaArtworks = try MissingArtwork.gatherMissingArtwork()
+        let allMissingMediaArtworks = try MissingArtwork.gatherMissingArtwork()
+        let missingMediaArtworks = Set<MissingArtwork>(allMissingMediaArtworks)
         print("\(missingMediaArtworks.count) Missing Artworks")
 
         let sessionConfiguration = URLSessionConfiguration.default;
