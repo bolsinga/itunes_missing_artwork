@@ -3,7 +3,8 @@ import CupertinoJWT
 import ArgumentParser
 import Combine
 
-struct Generate : ParsableCommand {
+@main
+struct Program : ParsableCommand {
     struct SigningData : ExpressibleByArgument {
         var p8 : String
 
@@ -55,5 +56,3 @@ struct Generate : ParsableCommand {
         RunLoop.main.run()
     }
 }
-
-Generate.main()
