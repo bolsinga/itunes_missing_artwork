@@ -12,5 +12,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Switch from Xcode 13.0 to 13.1 if possible
+        run: |
+          XCODE_PATH="$(xcode-select -p)"
+          echo "Current Xcode: ${XCODE_PATH}"
+          if [[ "${XCODE_PATH}" == "*13.0*" ]]; then
+            sudo xcode-select -s "/Applications/Xcode_13.1.app"
+          fi
     - name: Build
       run: swift build -v
