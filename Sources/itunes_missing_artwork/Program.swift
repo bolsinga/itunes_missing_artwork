@@ -41,6 +41,7 @@ struct Program : ParsableCommand {
             let artworkURLFetcher = ArtworkURLFecther(session)
             let missingMediaURLs = await artworkURLFetcher.fetch(missingMediaArtworks)
             print("\(missingMediaURLs)")
+            Program.exit()
         }
 
         RunLoop.main.run() // Still need to keep the runloop alive.
