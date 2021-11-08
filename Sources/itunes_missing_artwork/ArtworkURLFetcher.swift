@@ -42,6 +42,21 @@ struct ArtworkURLFecther {
         self.session = session;
     }
     
+    public func fetch(_ missingArtworks: [MissingArtwork]) async -> [MissingArtwork : [URL]] {
+        var missingArtworkURLs: [MissingArtwork:[URL]] = [:]
+
+        for missingArtwork in missingArtworks {
+            do {
+                let imageURLs = try await self.fetch(missingArtwork.searchURL)
+                missingArtworkURLs[missingArtwork] = imageURLs
+            } catch {
+                missingArtworkURLs[missingArtwork] = []
+            }
+        }
+
+        return missingArtworkURLs
+    }
+
     public func fetch(_ searchURL: URL) async throws -> [URL] {
         let (data, _) = try await self.session.data(from: searchURL) // wait for the data
         let music = try JSONDecoder().decode(MusicResponse.self, from: data) // decode the data

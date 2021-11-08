@@ -29,7 +29,7 @@ struct Program : ParsableCommand {
         let token = try JWT(keyID: keyID, teamID: teamID, issueDate: Date(), expireDuration: 60 * 60).sign(with: signingData.p8)
 
         let allMissingMediaArtworks = try MissingArtwork.gatherMissingArtwork()
-        let missingMediaArtworks = Set<MissingArtwork>(allMissingMediaArtworks)
+        let missingMediaArtworks = Array(Set<MissingArtwork>(allMissingMediaArtworks))
         print("\(missingMediaArtworks.count) Missing Artworks")
 
         let sessionConfiguration = URLSessionConfiguration.default;
@@ -37,17 +37,10 @@ struct Program : ParsableCommand {
 
         let session = URLSession(configuration: sessionConfiguration)
         
-        let artworkURLFetcher = ArtworkURLFecther(session)
-        
         Task { // required until ArgumentParser is set up to handle async
-            for missingMediaArtwork in missingMediaArtworks {
-                do {
-                    let imageURLs = try await artworkURLFetcher.fetch(missingMediaArtwork.searchURL)
-                    print("media: \(missingMediaArtwork) imageURLs: \(String(describing: imageURLs))")
-                } catch {
-                    print("media: \(missingMediaArtwork) failed: \(error)")
-                }
-            }
+            let artworkURLFetcher = ArtworkURLFecther(session)
+            let missingMediaURLs = await artworkURLFetcher.fetch(missingMediaArtworks)
+            print("\(missingMediaURLs)")
         }
 
         RunLoop.main.run() // Still need to keep the runloop alive.
