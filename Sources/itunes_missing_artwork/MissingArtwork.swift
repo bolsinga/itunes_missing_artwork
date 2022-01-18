@@ -8,13 +8,13 @@
 import Foundation
 import iTunesLibrary
 
-enum MissingArtwork : Hashable, Comparable {
+public enum MissingArtwork : Hashable, Comparable {
     case ArtistAlbum(String, String)
     case CompilationAlbum(String)
 }
 
 extension MissingArtwork : CustomStringConvertible {
-    var description : String {
+    public var description : String {
         switch self {
         case let .ArtistAlbum(artist, album):
             return "\(artist): \(album)"
@@ -38,7 +38,7 @@ extension MissingArtwork {
         self.simpleRepresentation.replacingOccurrences(of: " ", with: "_")
     }
 
-    static func gatherMissingArtwork() throws -> [MissingArtwork] {
+    public static func gatherMissingArtwork() throws -> [MissingArtwork] {
         let itunes = try ITLibrary(apiVersion: "1.1")
 
         return itunes.allMediaItems

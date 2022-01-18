@@ -35,7 +35,7 @@ fileprivate extension Artwork {
     }
 }
 
-struct ArtworkURLFetcher {
+public struct ArtworkURLFetcher {
     let session : URLSession
  
     public init(_ session: URLSession) {
