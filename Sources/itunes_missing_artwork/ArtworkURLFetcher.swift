@@ -1,5 +1,5 @@
 //
-//  ArtworkURLFecther.swift
+//  ArtworkURLFetcher.swift
 //  
 //
 //  Created by Greg Bolsinga on 11/6/21.
@@ -35,7 +35,7 @@ fileprivate extension Artwork {
     }
 }
 
-struct ArtworkURLFecther {
+struct ArtworkURLFetcher {
     let session : URLSession
  
     public init(_ session: URLSession) {

@@ -38,7 +38,7 @@ struct Program : ParsableCommand {
         let session = URLSession(configuration: sessionConfiguration)
         
         Task { // required until ArgumentParser is set up to handle async
-            let artworkURLFetcher = ArtworkURLFecther(session)
+            let artworkURLFetcher = ArtworkURLFetcher(session)
             let missingMediaURLs = await artworkURLFetcher.fetch(missingMediaArtworks)
             print("\(missingMediaURLs)")
             Program.exit()
