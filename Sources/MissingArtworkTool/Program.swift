@@ -1,6 +1,7 @@
 import Foundation
 import CupertinoJWT
 import ArgumentParser
+import MissingArtwork
 
 @main
 struct Program : ParsableCommand {
