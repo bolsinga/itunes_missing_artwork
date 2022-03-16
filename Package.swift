@@ -11,7 +11,7 @@ let package = Package(
         .library(name: "MissingArtwork", targets: ["MissingArtwork"]),
         .executable(name: "MissingArtworkTool", targets: ["MissingArtworkTool"])],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-argument-parser", "1.0.1"..."1.0.1"),
+        .package(url: "https://github.com/apple/swift-argument-parser", "1.1.0"..."1.1.0"),
         .package(url: "https://github.com/terwanerik/CupertinoJWT", "0.2.2"..."0.2.2"),
     ],
     targets: [
