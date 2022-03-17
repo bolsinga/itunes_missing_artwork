@@ -4,7 +4,7 @@ import ArgumentParser
 import MissingArtwork
 
 @main
-struct Program : ParsableCommand {
+struct Program : AsyncParsableCommand {
     struct SigningData : ExpressibleByArgument {
         var p8 : String
 
@@ -26,7 +26,7 @@ struct Program : ParsableCommand {
     @Argument(help: "The path to the p8 file")
     var signingData: SigningData
 
-    func run() throws {
+    mutating func run() async throws {
         let token = try JWT(keyID: keyID, teamID: teamID, issueDate: Date(), expireDuration: 60 * 60).sign(with: signingData.p8)
 
         let allMissingMediaArtworks = try MissingArtwork.gatherMissingArtwork()
@@ -38,13 +38,8 @@ struct Program : ParsableCommand {
 
         let session = URLSession(configuration: sessionConfiguration)
         
-        Task { // required until ArgumentParser is set up to handle async
-            let artworkURLFetcher = ArtworkURLFetcher(session)
-            let missingMediaURLs = await artworkURLFetcher.fetch(missingMediaArtworks)
-            print("\(missingMediaURLs)")
-            Program.exit()
-        }
-
-        RunLoop.main.run() // Still need to keep the runloop alive.
+        let artworkURLFetcher = ArtworkURLFetcher(session)
+        let missingMediaURLs = await artworkURLFetcher.fetch(missingMediaArtworks)
+        print("\(missingMediaURLs)")
     }
 }
