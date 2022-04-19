@@ -24,6 +24,12 @@ extension MissingArtwork: CustomStringConvertible {
   }
 }
 
+extension MissingArtwork: Identifiable {
+  public var id: String {
+    self.simpleRepresentation
+  }
+}
+
 extension MissingArtwork {
   var simpleRepresentation: String {
     switch self {
