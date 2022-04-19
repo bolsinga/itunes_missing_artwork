@@ -29,7 +29,6 @@ public struct Description: View {
         HStack {
           Text(album)
             .font(.headline)
-          Spacer()
           Image(systemName: "square.stack")
         }
       }
