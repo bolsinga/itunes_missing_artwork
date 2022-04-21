@@ -9,7 +9,6 @@ let package = Package(
   ],
   products: [
     .library(name: "MissingArtwork", targets: ["MissingArtwork"]),
-    .library(name: "MissingArtworkUI", targets: ["MissingArtworkUI"]),
     .executable(name: "MissingArtworkTool", targets: ["MissingArtworkTool"]),
   ],
   dependencies: [
@@ -18,7 +17,6 @@ let package = Package(
   ],
   targets: [
     .target(name: "MissingArtwork", dependencies: []),
-    .target(name: "MissingArtworkUI", dependencies: [.target(name: "MissingArtwork")]),
     .executableTarget(
       name: "MissingArtworkTool",
       dependencies: [

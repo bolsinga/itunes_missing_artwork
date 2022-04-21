@@ -5,7 +5,6 @@
 //  Created by Greg Bolsinga on 4/7/22.
 //
 
-import MissingArtwork
 import SwiftUI
 
 public struct Description: View {
