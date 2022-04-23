@@ -15,15 +15,13 @@ public struct DescriptionList: View {
   let missingArtworks: [MissingArtwork]
 
   public var body: some View {
-    VStack {
-      List {
-        ForEach(missingArtworks) { missingArtwork in
-          Description(missingArtwork: missingArtwork)
-        }
+    List {
+      ForEach(missingArtworks) { missingArtwork in
+        Description(missingArtwork: missingArtwork)
       }
-      Text("\(missingArtworks.count) Missing")
-        .padding()
     }
+    Text("\(missingArtworks.count) Missing")
+      .padding()
   }
 }
 
