@@ -10,6 +10,7 @@ import SwiftUI
 public struct DescriptionList: View {
   @State private var filter = FilterCategory.all
   @State private var sortOrder = SortOrder.ascending
+  @State private var selectedArtwork: MissingArtwork?
 
   public init(missingArtworks: [MissingArtwork]) {
     self.missingArtworks = missingArtworks
@@ -42,6 +43,10 @@ public struct DescriptionList: View {
     }
   }
 
+  var title: String {
+    filter == .all ? "Missing Artwork" : filter.rawValue
+  }
+
   enum FilterCategory: String, CaseIterable, Identifiable {
     case all = "All"
     case albums = "Albums"
@@ -58,33 +63,43 @@ public struct DescriptionList: View {
   }
 
   public var body: some View {
-    VStack {
-      List {
-        ForEach(filteredArtworks) { missingArtwork in
-          Description(missingArtwork: missingArtwork)
+    NavigationView {
+      VStack {
+        List(selection: $selectedArtwork) {
+          ForEach(filteredArtworks) { missingArtwork in
+            NavigationLink {
+              Text(missingArtwork.simpleRepresentation)
+            } label: {
+              Description(missingArtwork: missingArtwork)
+            }
+            .tag(missingArtwork)
+          }
+        }
+        Text("\(missingArtworks.count) Missing")
+          .padding()
+      }
+      .navigationTitle(title)
+      .frame(minWidth: 325)
+      .toolbar {
+        ToolbarItem {
+          Menu {
+            Picker("Category", selection: $filter) {
+              ForEach(FilterCategory.allCases) { category in
+                Text(category.rawValue).tag(category)
+              }
+            }
+            Picker("Sort Order", selection: $sortOrder) {
+              ForEach(SortOrder.allCases) { sortOrder in
+                Text(sortOrder.rawValue).tag(sortOrder)
+              }
+            }
+          } label: {
+            Label("Filters", systemImage: "slider.horizontal.3")
+          }
         }
       }
-      Text("\(missingArtworks.count) Missing")
-        .padding()
-    }
-    .frame(minWidth:325)
-    .toolbar {
-      ToolbarItem {
-        Menu {
-          Picker("Category", selection: $filter) {
-            ForEach(FilterCategory.allCases) { category in
-              Text(category.rawValue).tag(category)
-            }
-          }
-          Picker("Sort Order", selection: $sortOrder) {
-            ForEach(SortOrder.allCases) { sortOrder in
-              Text(sortOrder.rawValue).tag(sortOrder)
-            }
-          }
-        } label: {
-          Label("Filters", systemImage: "slider.horizontal.3")
-        }
-      }
+
+      Text("Select an Item")
     }
   }
 }
