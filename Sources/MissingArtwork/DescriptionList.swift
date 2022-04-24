@@ -67,6 +67,7 @@ public struct DescriptionList: View {
       Text("\(missingArtworks.count) Missing")
         .padding()
     }
+    .frame(minWidth:325)
     .toolbar {
       ToolbarItem {
         Menu {
