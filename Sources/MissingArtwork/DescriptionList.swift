@@ -9,6 +9,7 @@ import SwiftUI
 
 public struct DescriptionList: View {
   @State private var filter = FilterCategory.all
+  @State private var sortOrder = SortOrder.ascending
 
   public init(missingArtworks: [MissingArtwork]) {
     self.missingArtworks = missingArtworks
@@ -16,8 +17,19 @@ public struct DescriptionList: View {
 
   let missingArtworks: [MissingArtwork]
 
+  var sortedArtworks: [MissingArtwork] {
+    missingArtworks.sorted {
+      switch sortOrder {
+      case .ascending:
+        return $0 < $1
+      case .descending:
+        return $1 < $0
+      }
+    }
+  }
+
   var filteredArtworks: [MissingArtwork] {
-    missingArtworks.filter { missingArtwork in
+    sortedArtworks.filter { missingArtwork in
       (filter == .all
         || {
           switch missingArtwork {
@@ -38,6 +50,13 @@ public struct DescriptionList: View {
     var id: FilterCategory { self }
   }
 
+  enum SortOrder: String, CaseIterable, Identifiable {
+    case ascending = "Ascending"
+    case descending = "Descending"
+
+    var id: SortOrder { self }
+  }
+
   public var body: some View {
     VStack {
       List {
@@ -54,6 +73,11 @@ public struct DescriptionList: View {
           Picker("Category", selection: $filter) {
             ForEach(FilterCategory.allCases) { category in
               Text(category.rawValue).tag(category)
+            }
+          }
+          Picker("Sort Order", selection: $sortOrder) {
+            ForEach(SortOrder.allCases) { sortOrder in
+              Text(sortOrder.rawValue).tag(sortOrder)
             }
           }
         } label: {
