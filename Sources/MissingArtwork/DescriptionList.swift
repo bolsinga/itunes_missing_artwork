@@ -8,20 +8,59 @@
 import SwiftUI
 
 public struct DescriptionList: View {
+  @State private var filter = FilterCategory.all
+
   public init(missingArtworks: [MissingArtwork]) {
     self.missingArtworks = missingArtworks
   }
 
   let missingArtworks: [MissingArtwork]
 
+  var filteredArtworks: [MissingArtwork] {
+    missingArtworks.filter { missingArtwork in
+      (filter == .all
+        || {
+          switch missingArtwork {
+          case .ArtistAlbum(_, _):
+            return filter == .albums
+          case .CompilationAlbum(_):
+            return filter == .compilations
+          }
+        }())
+    }
+  }
+
+  enum FilterCategory: String, CaseIterable, Identifiable {
+    case all = "All"
+    case albums = "Albums"
+    case compilations = "Compliations"
+
+    var id: FilterCategory { self }
+  }
+
   public var body: some View {
-    List {
-      ForEach(missingArtworks) { missingArtwork in
-        Description(missingArtwork: missingArtwork)
+    VStack {
+      List {
+        ForEach(filteredArtworks) { missingArtwork in
+          Description(missingArtwork: missingArtwork)
+        }
+      }
+      Text("\(missingArtworks.count) Missing")
+        .padding()
+    }
+    .toolbar {
+      ToolbarItem {
+        Menu {
+          Picker("Category", selection: $filter) {
+            ForEach(FilterCategory.allCases) { category in
+              Text(category.rawValue).tag(category)
+            }
+          }
+        } label: {
+          Label("Filters", systemImage: "slider.horizontal.3")
+        }
       }
     }
-    Text("\(missingArtworks.count) Missing")
-      .padding()
   }
 }
 
