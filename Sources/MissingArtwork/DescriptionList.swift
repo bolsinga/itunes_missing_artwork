@@ -75,8 +75,9 @@ public struct DescriptionList: View {
             .tag(missingArtwork)
           }
         }
+        Divider()
         Text("\(missingArtworks.count) Missing")
-          .padding()
+          .padding(EdgeInsets(top: 0, leading: 0, bottom: 6, trailing: 0))
       }
       .navigationTitle(title)
       .frame(minWidth: 325)
