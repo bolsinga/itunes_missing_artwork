@@ -30,8 +30,8 @@ struct Program: AsyncParsableCommand {
     let token = try JWT(keyID: keyID, teamID: teamID, issueDate: Date(), expireDuration: 60 * 60)
       .sign(with: signingData.p8)
 
-    let allMissingMediaArtworks = try MissingArtwork.gatherMissingArtwork()
-    let missingMediaArtworks = Array(Set<MissingArtwork>(allMissingMediaArtworks))
+    let model = Model()
+    let missingMediaArtworks = model.missingArtworks
     print("\(missingMediaArtworks.count) Missing Artworks")
 
     let sessionConfiguration = URLSessionConfiguration.default
