@@ -12,11 +12,13 @@ public struct DescriptionList: View {
   @State private var sortOrder = SortOrder.ascending
   @State private var selectedArtwork: MissingArtwork?
 
-  public init(missingArtworks: [MissingArtwork]) {
-    self.missingArtworks = missingArtworks
-  }
+  @EnvironmentObject var model: Model
 
-  let missingArtworks: [MissingArtwork]
+  public init() {}
+
+  var missingArtworks: [MissingArtwork] {
+    model.missingArtworks
+  }
 
   var sortedArtworks: [MissingArtwork] {
     missingArtworks.sorted {
@@ -112,6 +114,7 @@ struct DescriptionList_Previews: PreviewProvider {
       .CompilationAlbum("Beleza Tropical: Brazil Classics 1"),
     ]
 
-    DescriptionList(missingArtworks: missingArtworks)
+    DescriptionList()
+      .environmentObject(Model(missingArtworks: missingArtworks))
   }
 }
