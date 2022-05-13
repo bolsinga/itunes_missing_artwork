@@ -26,11 +26,13 @@ struct Program: AsyncParsableCommand {
   @Argument(help: "The path to the p8 file")
   var signingData: SigningData
 
+  @MainActor
   mutating func run() async throws {
     let token = try JWT(keyID: keyID, teamID: teamID, issueDate: Date(), expireDuration: 60 * 60)
       .sign(with: signingData.p8)
 
     let model = Model()
+    model.fetchMissingArtworks()
     let missingMediaArtworks = model.missingArtworks
     print("\(missingMediaArtworks.count) Missing Artworks")
 

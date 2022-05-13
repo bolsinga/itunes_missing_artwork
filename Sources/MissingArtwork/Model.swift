@@ -7,18 +7,24 @@
 
 import Foundation
 
+@MainActor
 public class Model: ObservableObject {
-  public var missingArtworks: [MissingArtwork]
+  @Published public var missingArtworks: [MissingArtwork]
 
-  public init() {
-    do {
-      missingArtworks = Array(Set<MissingArtwork>(try MissingArtwork.gatherMissingArtwork()))
-    } catch {
-      missingArtworks = []
-    }
-  }
-
+  /// Used for previews.
   public init(missingArtworks: [MissingArtwork]) {
     self.missingArtworks = missingArtworks
+  }
+
+  public convenience init() {
+    self.init(missingArtworks: [])
+  }
+
+  public func fetchMissingArtworks() {
+    do {
+      self.missingArtworks = Array(Set<MissingArtwork>(try MissingArtwork.gatherMissingArtwork()))
+    } catch {
+      self.missingArtworks = []
+    }
   }
 }
