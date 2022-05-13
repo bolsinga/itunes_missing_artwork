@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Model {
+public class Model: ObservableObject {
   public var missingArtworks: [MissingArtwork]
 
   public init() {
