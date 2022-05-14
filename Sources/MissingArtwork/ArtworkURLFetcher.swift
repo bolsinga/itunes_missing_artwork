@@ -52,6 +52,7 @@ public struct ArtworkURLFetcher {
         let imageURLs = try await self.fetch(missingArtwork.searchURL)
         missingArtworkURLs[missingArtwork] = imageURLs
       } catch {
+        debugPrint("Unabled to fetch missing artwork image URLs: \(error)")
         missingArtworkURLs[missingArtwork] = []
       }
     }

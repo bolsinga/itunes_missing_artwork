@@ -24,6 +24,7 @@ public class Model: ObservableObject {
     do {
       self.missingArtworks = Array(Set<MissingArtwork>(try MissingArtwork.gatherMissingArtwork()))
     } catch {
+      debugPrint("Unabled to fetch missing artworks: \(error)")
       self.missingArtworks = []
     }
   }
