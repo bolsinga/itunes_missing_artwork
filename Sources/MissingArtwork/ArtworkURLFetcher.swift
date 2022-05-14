@@ -44,6 +44,14 @@ public struct ArtworkURLFetcher {
     self.session = session
   }
 
+  public init(token: String) {
+    let sessionConfiguration = URLSessionConfiguration.default
+    sessionConfiguration.httpAdditionalHeaders = ["Authorization": "Bearer \(token)"]
+
+    let session = URLSession(configuration: sessionConfiguration)
+    self.init(session)
+  }
+
   public func fetch(_ missingArtworks: [MissingArtwork]) async -> [MissingArtwork: [URL]] {
     var missingArtworkURLs: [MissingArtwork: [URL]] = [:]
 
@@ -52,7 +60,7 @@ public struct ArtworkURLFetcher {
         let imageURLs = try await self.fetch(missingArtwork.searchURL)
         missingArtworkURLs[missingArtwork] = imageURLs
       } catch {
-        debugPrint("Unabled to fetch missing artwork image URLs: \(error)")
+        debugPrint("Unable to fetch missing artwork image URLs: \(error)")
         missingArtworkURLs[missingArtwork] = []
       }
     }

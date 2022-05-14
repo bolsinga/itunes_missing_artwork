@@ -36,12 +36,7 @@ struct Program: AsyncParsableCommand {
     let missingMediaArtworks = model.missingArtworks
     print("\(missingMediaArtworks.count) Missing Artworks")
 
-    let sessionConfiguration = URLSessionConfiguration.default
-    sessionConfiguration.httpAdditionalHeaders = ["Authorization": "Bearer \(token)"]
-
-    let session = URLSession(configuration: sessionConfiguration)
-
-    let artworkURLFetcher = ArtworkURLFetcher(session)
+    let artworkURLFetcher = ArtworkURLFetcher(token: token)
     let missingMediaURLs = await artworkURLFetcher.fetch(missingMediaArtworks)
     print("\(missingMediaURLs)")
   }
