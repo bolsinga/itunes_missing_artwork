@@ -27,9 +27,11 @@ public class Model: ObservableObject {
     self.init(missingArtworks: [])
   }
 
-  public func fetchMissingArtworks() {
+  public func fetchMissingArtworks() async {
     do {
-      self.missingArtworks = Array(Set<MissingArtwork>(try MissingArtwork.gatherMissingArtwork()))
+      async let missingArtworks = try MissingArtwork.gatherMissingArtwork()
+
+      self.missingArtworks = try await Array(Set<MissingArtwork>(missingArtworks))
     } catch {
       debugPrint("Unable to fetch missing artworks: \(error)")
       self.missingArtworks = []
