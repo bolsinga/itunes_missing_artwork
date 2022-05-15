@@ -13,10 +13,6 @@ struct MissingImageList: View {
   let missingArtwork: MissingArtwork
   let token: String
 
-  struct MissingArtworkIdentifiableURL: Identifiable {
-    public var id: URL
-  }
-
   var body: some View {
     Group {
       if let urls = model.missingArtworkURLs[missingArtwork], urls.count > 0 {
