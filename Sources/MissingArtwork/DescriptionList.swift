@@ -109,7 +109,7 @@ public struct DescriptionList: View {
       Text("Select an Item")
     }
     .task {
-      model.fetchMissingArtworks()
+      await model.fetchMissingArtworks()
     }
   }
 }

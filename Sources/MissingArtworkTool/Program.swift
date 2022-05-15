@@ -32,7 +32,7 @@ struct Program: AsyncParsableCommand {
       .sign(with: signingData.p8)
 
     let model = Model()
-    model.fetchMissingArtworks()
+    await model.fetchMissingArtworks()
     let missingMediaArtworks = model.missingArtworks
     print("\(missingMediaArtworks.count) Missing Artworks")
 
