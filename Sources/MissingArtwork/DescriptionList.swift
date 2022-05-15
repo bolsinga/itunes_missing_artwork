@@ -8,13 +8,17 @@
 import SwiftUI
 
 public struct DescriptionList: View {
+  let token: String
+
   @State private var filter = FilterCategory.all
   @State private var sortOrder = SortOrder.ascending
   @State private var selectedArtwork: MissingArtwork?
 
   @EnvironmentObject var model: Model
 
-  public init() {}
+  public init(token: String) {
+    self.token = token
+  }
 
   var missingArtworks: [MissingArtwork] {
     model.missingArtworks
@@ -70,7 +74,7 @@ public struct DescriptionList: View {
         List(selection: $selectedArtwork) {
           ForEach(filteredArtworks) { missingArtwork in
             NavigationLink {
-              Text(missingArtwork.simpleRepresentation)
+              MissingImageList(missingArtwork: missingArtwork, token: token)
             } label: {
               Description(missingArtwork: missingArtwork)
             }
@@ -117,7 +121,7 @@ struct DescriptionList_Previews: PreviewProvider {
       .CompilationAlbum("Beleza Tropical: Brazil Classics 1"),
     ]
 
-    DescriptionList()
+    DescriptionList(token: "")
       .environmentObject(Model(missingArtworks: missingArtworks))
   }
 }
