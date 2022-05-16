@@ -68,6 +68,12 @@ public struct DescriptionList: View {
     var id: SortOrder { self }
   }
 
+  @ViewBuilder private var progressOverlay: some View {
+    if filteredArtworks.count == 0 {
+      ProgressView()
+    }
+  }
+
   public var body: some View {
     NavigationView {
       VStack {
@@ -81,6 +87,7 @@ public struct DescriptionList: View {
             .tag(missingArtwork)
           }
         }
+        .overlay(progressOverlay)
         Divider()
         Text("\(missingArtworks.count) Missing")
           .padding(EdgeInsets(top: 0, leading: 0, bottom: 6, trailing: 0))
