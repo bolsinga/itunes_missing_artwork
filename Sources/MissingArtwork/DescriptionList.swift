@@ -113,7 +113,9 @@ public struct DescriptionList: View {
         }
       }
 
-      Text("Select an Item")
+      if filteredArtworks.count > 0 {
+        Text("Select an Item")
+      }
     }
     .task {
       await model.fetchMissingArtworks()
