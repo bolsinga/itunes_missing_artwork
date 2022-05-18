@@ -36,8 +36,10 @@ struct Program: AsyncParsableCommand {
     let missingMediaArtworks = model.missingArtworks
     print("\(missingMediaArtworks.count) Missing Artworks")
 
-    let artworkURLFetcher = ArtworkURLFetcher(token: token)
-    let missingMediaURLs = await artworkURLFetcher.fetch(missingMediaArtworks)
-    print("\(missingMediaURLs)")
+    for missingArtwork in missingMediaArtworks {
+      await model.fetchImageURLs(missingArtwork: missingArtwork, token: token)
+    }
+
+    print("\(model.missingArtworkURLs)")
   }
 }
