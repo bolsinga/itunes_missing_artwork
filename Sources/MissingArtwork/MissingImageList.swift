@@ -13,11 +13,21 @@ struct MissingImageList: View {
   let missingArtwork: MissingArtwork
   let token: String
 
+  struct IdentifiableURL: Identifiable {
+    public let url: URL
+    public var id: URL { return url }
+  }
+
+  private var identifiableURLs: [IdentifiableURL]? {
+    model.missingArtworkURLs[missingArtwork]
+      .map { $0.map { IdentifiableURL(url: $0) } }
+  }
+
   var body: some View {
     Group {
-      if let urls = model.missingArtworkURLs[missingArtwork], urls.count > 0 {
+      if let identifiableURLs = self.identifiableURLs, identifiableURLs.count > 0 {
         List {
-          ForEach(urls) {
+          ForEach(identifiableURLs) {
             AsyncImage(url: $0.url)
           }
         }

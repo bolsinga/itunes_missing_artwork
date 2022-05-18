@@ -15,7 +15,7 @@ public class Model: ObservableObject {
     public let url: URL
     public var id: URL { return url }
   }
-  @Published public var missingArtworkURLs: [MissingArtwork: [IdentifiableURL]]
+  @Published public var missingArtworkURLs: [MissingArtwork: [URL]]
 
   /// Used for previews.
   public init(missingArtworks: [MissingArtwork]) {
@@ -50,7 +50,6 @@ public class Model: ObservableObject {
 
   public func fetchImageURLs(missingArtwork: MissingArtwork, token: String) async {
     let urls = await getImageURLs(missingArtwork: missingArtwork, token: token)
-    let identifiableURLs = urls.map { IdentifiableURL(url: $0) }
-    self.missingArtworkURLs[missingArtwork] = identifiableURLs
+    self.missingArtworkURLs[missingArtwork] = urls
   }
 }
