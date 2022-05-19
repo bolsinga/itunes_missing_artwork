@@ -38,18 +38,13 @@ public class Model: ObservableObject {
     }
   }
 
-  private func getImageURLs(missingArtwork: MissingArtwork, token: String) async -> [URL] {
+  public func fetchImageURLs(missingArtwork: MissingArtwork, token: String) async {
     let fetcher = ArtworkURLFetcher(token: token)
     do {
-      return try await fetcher.fetch(missingArtwork.searchURL)
+      self.missingArtworkURLs[missingArtwork] = try await fetcher.fetch(missingArtwork.searchURL)
     } catch {
       debugPrint("Unable to fetch missing artwork URLs: (\(missingArtwork)) - \(error)")
-      return []
+      self.missingArtworkURLs[missingArtwork] = []
     }
-  }
-
-  public func fetchImageURLs(missingArtwork: MissingArtwork, token: String) async {
-    let urls = await getImageURLs(missingArtwork: missingArtwork, token: token)
-    self.missingArtworkURLs[missingArtwork] = urls
   }
 }

@@ -38,6 +38,11 @@ extension Artwork {
 }
 
 public struct ArtworkURLFetcher {
+
+  enum FetcherError: Error {
+    case badRequest
+  }
+
   let session: URLSession
 
   public init(_ session: URLSession) {
@@ -53,7 +58,12 @@ public struct ArtworkURLFetcher {
   }
 
   public func fetch(_ searchURL: URL) async throws -> [URL] {
-    let (data, _) = try await self.session.data(from: searchURL)  // wait for the data
+    let (data, response) = try await self.session.data(from: searchURL)  // wait for the data
+
+    guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+      throw FetcherError.badRequest
+    }
+
     let music = try JSONDecoder().decode(MusicResponse.self, from: data)  // decode the data
     return music.results.albums.data.compactMap { $0.attributes.artwork.imageURL }  // Convert the array of results into an array of URLs
   }
