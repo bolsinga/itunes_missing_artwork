@@ -23,20 +23,21 @@ struct MissingImageList: View {
       .map { $0.map { IdentifiableURL(url: $0) } }
   }
 
-  var body: some View {
-    Group {
-      if let identifiableURLs = self.identifiableURLs, identifiableURLs.count > 0 {
-        List {
-          ForEach(identifiableURLs) {
-            AsyncImage(url: $0.url)
-          }
-        }
-      } else {
-        Text("No image for \(missingArtwork.description)")
-      }
-    }.task {
-      await model.fetchImageURLs(missingArtwork: missingArtwork, token: token)
+  @ViewBuilder private var progressOverlay: some View {
+    if identifiableURLs == nil {
+      ProgressView()
+    } else if let identifiableURLs = identifiableURLs, identifiableURLs.count == 0 {
+      Text("No image for \(missingArtwork.description)")
     }
+  }
+
+  var body: some View {
+    List(self.identifiableURLs ?? []) { item in
+      AsyncImage(url: item.url)
+    }.overlay(progressOverlay)
+      .task {
+        await model.fetchImageURLs(missingArtwork: missingArtwork, token: token)
+      }
   }
 }
 
