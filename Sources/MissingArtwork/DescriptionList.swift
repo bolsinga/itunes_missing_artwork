@@ -118,7 +118,7 @@ public struct DescriptionList: View {
       }
     }
     .task {
-      await model.fetchMissingArtworks()
+      await model.fetchMissingArtworks(token: token)
     }
   }
 }
