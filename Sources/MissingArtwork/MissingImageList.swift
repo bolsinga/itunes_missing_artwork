@@ -33,7 +33,11 @@ struct MissingImageList: View {
 
   var body: some View {
     List(self.identifiableURLs ?? []) { item in
-      AsyncImage(url: item.url)
+      AsyncImage(url: item.url) { image in
+        image
+      } placeholder: {
+        ProgressView()
+      }
     }.overlay(progressOverlay)
       .task {
         await model.fetchImageURLs(missingArtwork: missingArtwork, token: token)
