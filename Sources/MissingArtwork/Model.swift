@@ -27,11 +27,15 @@ public class Model: ObservableObject {
     self.init(missingArtworks: [])
   }
 
-  public func fetchMissingArtworks() async {
+  public func fetchMissingArtworks(token: String) async {
     do {
       async let missingArtworks = try MissingArtwork.gatherMissingArtwork()
 
       self.missingArtworks = try await Array(Set<MissingArtwork>(missingArtworks))
+
+      for missingArtwork in self.missingArtworks {
+        await fetchImageURLs(missingArtwork: missingArtwork, token: token)
+      }
     } catch {
       debugPrint("Unable to fetch missing artworks: \(error)")
       self.missingArtworks = []
@@ -39,12 +43,14 @@ public class Model: ObservableObject {
   }
 
   public func fetchImageURLs(missingArtwork: MissingArtwork, token: String) async {
-    let fetcher = ArtworkURLFetcher(token: token)
-    do {
-      self.missingArtworkURLs[missingArtwork] = try await fetcher.fetch(missingArtwork.searchURL)
-    } catch {
-      debugPrint("Unable to fetch missing artwork URLs: (\(missingArtwork)) - \(error)")
-      self.missingArtworkURLs[missingArtwork] = []
+    if self.missingArtworkURLs[missingArtwork] == nil {
+      let fetcher = ArtworkURLFetcher(token: token)
+      do {
+        self.missingArtworkURLs[missingArtwork] = try await fetcher.fetch(missingArtwork.searchURL)
+      } catch {
+        debugPrint("Unable to fetch missing artwork URLs: (\(missingArtwork)) - \(error)")
+        self.missingArtworkURLs[missingArtwork] = []
+      }
     }
   }
 }
