@@ -18,13 +18,16 @@ public class Model: ObservableObject {
   @Published public var missingArtworkURLs: [MissingArtwork: [URL]]
 
   /// Used for previews.
-  public init(missingArtworks: [MissingArtwork]) {
+  public init(missingArtworks: [MissingArtwork], urls: [[URL]]) {
     self.missingArtworks = missingArtworks
     self.missingArtworkURLs = [:]
+    for (missingArtwork, urls) in zip(missingArtworks, urls) {
+      self.missingArtworkURLs[missingArtwork] = urls
+    }
   }
 
   public convenience init() {
-    self.init(missingArtworks: [])
+    self.init(missingArtworks: [], urls: [[]])
   }
 
   public func fetchMissingArtworks(token: String) async {

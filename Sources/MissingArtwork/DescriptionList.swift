@@ -125,12 +125,7 @@ public struct DescriptionList: View {
 
 struct DescriptionList_Previews: PreviewProvider {
   static var previews: some View {
-    let missingArtworks = [
-      MissingArtwork.ArtistAlbum("The Stooges", "Fun House"),
-      .CompilationAlbum("Beleza Tropical: Brazil Classics 1"),
-    ]
-
     DescriptionList(token: "")
-      .environmentObject(Model(missingArtworks: missingArtworks))
+      .environmentObject(Model.preview)
   }
 }

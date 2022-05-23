@@ -47,9 +47,11 @@ struct MissingImageList: View {
 
 struct MissingImageList_Previews: PreviewProvider {
   static var previews: some View {
-    let model = Model(missingArtworks: [MissingArtwork.ArtistAlbum("The Stooges", "Fun House")])
-    MissingImageList(
-      missingArtwork: model.missingArtworks.first!, token: "")
+    let model = Model.preview
+    Group {
+      MissingImageList(missingArtwork: model.missingArtworks.first!, token: "")
+      MissingImageList(missingArtwork: model.missingArtworks.last!, token: "")
+    }
     .environmentObject(model)
   }
 }
