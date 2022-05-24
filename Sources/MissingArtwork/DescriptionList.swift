@@ -12,6 +12,7 @@ public struct DescriptionList: View {
 
   @State private var filter = FilterCategory.all
   @State private var sortOrder = SortOrder.ascending
+  @State private var imageResult = ImageResult.all
   @State private var selectedArtwork: MissingArtwork?
 
   @EnvironmentObject var model: Model
@@ -49,6 +50,19 @@ public struct DescriptionList: View {
     }
   }
 
+  var displayableArtworks: [MissingArtwork] {
+    return filteredArtworks.filter { missingArtwork in
+      switch imageResult {
+      case .all:
+        return true
+      case .notFound:
+        return model.missingArtworkURLs[missingArtwork]?.count == 0
+      case .found:
+        return model.missingArtworkURLs[missingArtwork]?.count ?? 0 > 0
+      }
+    }
+  }
+
   var title: String {
     filter == .all ? "Missing Artwork" : filter.rawValue
   }
@@ -68,8 +82,16 @@ public struct DescriptionList: View {
     var id: SortOrder { self }
   }
 
+  enum ImageResult: String, CaseIterable, Identifiable {
+    case all = "All"
+    case notFound = "Not Found"
+    case found = "Found"
+
+    var id: ImageResult { self }
+  }
+
   @ViewBuilder private var progressOverlay: some View {
-    if filteredArtworks.count == 0 {
+    if displayableArtworks.count == 0 {
       ProgressView()
     }
   }
@@ -78,7 +100,7 @@ public struct DescriptionList: View {
     NavigationView {
       VStack {
         List(selection: $selectedArtwork) {
-          ForEach(filteredArtworks) { missingArtwork in
+          ForEach(displayableArtworks) { missingArtwork in
             NavigationLink {
               MissingImageList(missingArtwork: missingArtwork, token: token)
             } label: {
@@ -89,7 +111,7 @@ public struct DescriptionList: View {
         }
         .overlay(progressOverlay)
         Divider()
-        Text("\(missingArtworks.count) Missing")
+        Text("\(displayableArtworks.count) / \(missingArtworks.count) Missing")
           .padding(EdgeInsets(top: 0, leading: 0, bottom: 6, trailing: 0))
       }
       .navigationTitle(title)
@@ -107,13 +129,18 @@ public struct DescriptionList: View {
                 Text(sortOrder.rawValue).tag(sortOrder)
               }
             }
+            Picker("Image Result", selection: $imageResult) {
+              ForEach(ImageResult.allCases) { imageResult in
+                Text(imageResult.rawValue).tag(imageResult)
+              }
+            }
           } label: {
             Label("Filters", systemImage: "slider.horizontal.3")
           }
         }
       }
 
-      if filteredArtworks.count > 0 {
+      if displayableArtworks.count > 0 {
         Text("Select an Item")
       }
     }
