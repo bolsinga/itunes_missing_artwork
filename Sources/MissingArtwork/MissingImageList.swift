@@ -28,6 +28,7 @@ struct MissingImageList: View {
       ProgressView()
     } else if let identifiableURLs = identifiableURLs, identifiableURLs.count == 0 {
       Text("No image for \(missingArtwork.description)")
+        .textSelection(.enabled)
     }
   }
 
