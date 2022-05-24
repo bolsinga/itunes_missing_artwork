@@ -25,19 +25,8 @@ public struct DescriptionList: View {
     model.missingArtworks
   }
 
-  var sortedArtworks: [MissingArtwork] {
-    missingArtworks.sorted {
-      switch sortOrder {
-      case .ascending:
-        return $0 < $1
-      case .descending:
-        return $1 < $0
-      }
-    }
-  }
-
-  var filteredArtworks: [MissingArtwork] {
-    sortedArtworks.filter { missingArtwork in
+  var displayableArtworks: [MissingArtwork] {
+    return missingArtworks.filter { missingArtwork in
       (filter == .all
         || {
           switch missingArtwork {
@@ -47,11 +36,7 @@ public struct DescriptionList: View {
             return filter == .compilations
           }
         }())
-    }
-  }
-
-  var displayableArtworks: [MissingArtwork] {
-    return filteredArtworks.filter { missingArtwork in
+    }.filter { missingArtwork in
       switch imageResult {
       case .all:
         return true
@@ -59,6 +44,13 @@ public struct DescriptionList: View {
         return model.missingArtworkURLs[missingArtwork]?.count == 0
       case .found:
         return model.missingArtworkURLs[missingArtwork]?.count ?? 0 > 0
+      }
+    }.sorted {
+      switch sortOrder {
+      case .ascending:
+        return $0 < $1
+      case .descending:
+        return $1 < $0
       }
     }
   }
