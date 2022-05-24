@@ -110,6 +110,11 @@ public struct DescriptionList: View {
           }
         }
         .overlay(progressOverlay)
+        .searchable(text: $model.searchString) {
+            ForEach(model.searchSuggestions) { suggestion in
+              Text(suggestion.description).searchCompletion(suggestion.description)
+            }
+        }
         Divider()
         Text("\(displayableArtworks.count) / \(missingArtworks.count) Missing")
           .padding(EdgeInsets(top: 0, leading: 0, bottom: 6, trailing: 0))

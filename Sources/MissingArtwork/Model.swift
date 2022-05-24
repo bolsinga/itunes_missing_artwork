@@ -17,6 +17,8 @@ public class Model: ObservableObject {
   }
   @Published public var missingArtworkURLs: [MissingArtwork: [URL]]
 
+  @Published public var searchString: String = ""
+
   /// Used for previews.
   public init(missingArtworks: [MissingArtwork], urls: [[URL]]) {
     self.missingArtworks = missingArtworks
@@ -56,4 +58,12 @@ public class Model: ObservableObject {
       }
     }
   }
+
+  public var searchSuggestions: [MissingArtwork] {
+    missingArtworks.filter {
+      $0.description.localizedCaseInsensitiveContains(searchString)
+        && $0.description.localizedCaseInsensitiveCompare(searchString) != .orderedSame
+    }
+  }
+
 }
