@@ -7,6 +7,12 @@
 
 import SwiftUI
 
+extension MissingArtwork {
+  func matches(_ string: String) -> Bool {
+    string.isEmpty || description.localizedCaseInsensitiveContains(string)
+  }
+}
+
 public struct DescriptionList: View {
   let token: String
 
@@ -45,7 +51,10 @@ public struct DescriptionList: View {
       case .found:
         return model.missingArtworkURLs[missingArtwork]?.count ?? 0 > 0
       }
-    }.sorted {
+    }.filter { missingArtwork in
+      missingArtwork.matches(model.searchString)
+    }
+    .sorted {
       switch sortOrder {
       case .ascending:
         return $0 < $1
