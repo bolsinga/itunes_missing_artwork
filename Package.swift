@@ -16,7 +16,7 @@ let package = Package(
     .package(url: "https://github.com/terwanerik/CupertinoJWT", "0.2.2"..."0.2.2"),
   ],
   targets: [
-    .target(name: "MissingArtwork", dependencies: []),
+    .target(name: "MissingArtwork", dependencies: [], sources: [".", "Preview Content"]),
     .executableTarget(
       name: "MissingArtworkTool",
       dependencies: [

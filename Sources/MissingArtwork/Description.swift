@@ -38,9 +38,10 @@ public struct Description: View {
 
 struct Description_Previews: PreviewProvider {
   static var previews: some View {
+    let model = Model.preview
     Group {
-      Description(missingArtwork: .ArtistAlbum("The Stooges", "Fun House"))
-      Description(missingArtwork: .CompilationAlbum("Beleza Tropical: Brazil Classics 1"))
+      Description(missingArtwork: model.missingArtworks[0])
+      Description(missingArtwork: model.missingArtworks[1])
     }
   }
 }
