@@ -33,17 +33,19 @@ public class Model: ObservableObject {
   }
 
   public func fetchMissingArtworks(token: String) async {
-    do {
-      async let missingArtworks = try MissingArtwork.gatherMissingArtwork()
+    if self.missingArtworks.isEmpty {
+      do {
+        async let missingArtworks = try MissingArtwork.gatherMissingArtwork()
 
-      self.missingArtworks = try await Array(Set<MissingArtwork>(missingArtworks))
+        self.missingArtworks = try await Array(Set<MissingArtwork>(missingArtworks))
 
-      for missingArtwork in self.missingArtworks {
-        await fetchImageURLs(missingArtwork: missingArtwork, token: token)
+        for missingArtwork in self.missingArtworks {
+          await fetchImageURLs(missingArtwork: missingArtwork, token: token)
+        }
+      } catch {
+        debugPrint("Unable to fetch missing artworks: \(error)")
+        self.missingArtworks = []
       }
-    } catch {
-      debugPrint("Unable to fetch missing artworks: \(error)")
-      self.missingArtworks = []
     }
   }
 
