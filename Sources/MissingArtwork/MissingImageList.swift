@@ -8,9 +8,8 @@
 import SwiftUI
 
 struct MissingImageList: View {
-  @EnvironmentObject var model: Model
-
   let missingArtwork: MissingArtwork
+  @Binding var urls: [URL]?
 
   struct IdentifiableURL: Identifiable {
     public let url: URL
@@ -18,8 +17,7 @@ struct MissingImageList: View {
   }
 
   private var identifiableURLs: [IdentifiableURL]? {
-    model.missingArtworkURLs[missingArtwork]
-      .map { $0.map { IdentifiableURL(url: $0) } }
+    urls.map { $0.map { IdentifiableURL(url: $0) } }
   }
 
   @ViewBuilder private var progressOverlay: some View {
@@ -44,11 +42,14 @@ struct MissingImageList: View {
 
 struct MissingImageList_Previews: PreviewProvider {
   static var previews: some View {
-    let model = Model.preview
     Group {
-      MissingImageList(missingArtwork: model.missingArtworks.first!)
-      MissingImageList(missingArtwork: model.missingArtworks.last!)
+      let model = Model.preview
+      MissingImageList(
+        missingArtwork: model.missingArtworks.first!,
+        urls: .constant(model.missingArtworkURLs[model.missingArtworks.first!]))
+      MissingImageList(
+        missingArtwork: model.missingArtworks.last!,
+        urls: .constant(model.missingArtworkURLs[model.missingArtworks.last!]))
     }
-    .environmentObject(model)
   }
 }
