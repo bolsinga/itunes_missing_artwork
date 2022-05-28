@@ -11,7 +11,6 @@ struct MissingImageList: View {
   @EnvironmentObject var model: Model
 
   let missingArtwork: MissingArtwork
-  let token: String
 
   struct IdentifiableURL: Identifiable {
     public let url: URL
@@ -40,9 +39,6 @@ struct MissingImageList: View {
         ProgressView()
       }
     }.overlay(progressOverlay)
-      .task {
-        await model.fetchImageURLs(missingArtwork: missingArtwork, token: token)
-      }
   }
 }
 
@@ -50,8 +46,8 @@ struct MissingImageList_Previews: PreviewProvider {
   static var previews: some View {
     let model = Model.preview
     Group {
-      MissingImageList(missingArtwork: model.missingArtworks.first!, token: "")
-      MissingImageList(missingArtwork: model.missingArtworks.last!, token: "")
+      MissingImageList(missingArtwork: model.missingArtworks.first!)
+      MissingImageList(missingArtwork: model.missingArtworks.last!)
     }
     .environmentObject(model)
   }
