@@ -103,10 +103,12 @@ public struct DescriptionList: View {
         List(selection: $selectedArtwork) {
           ForEach(displayableArtworks) { missingArtwork in
             NavigationLink {
-              MissingImageList(missingArtwork: missingArtwork)
-                .task {
-                  await model.fetchImageURLs(missingArtwork: missingArtwork, token: token)
-                }
+              MissingImageList(
+                missingArtwork: missingArtwork, urls: $model.missingArtworkURLs[missingArtwork]
+              )
+              .task {
+                await model.fetchImageURLs(missingArtwork: missingArtwork, token: token)
+              }
             } label: {
               Description(missingArtwork: missingArtwork)
             }
