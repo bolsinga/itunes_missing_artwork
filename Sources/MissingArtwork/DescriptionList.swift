@@ -25,9 +25,7 @@ struct DescriptionList: View {
 
   @EnvironmentObject var model: Model
 
-  var missingArtworks: [MissingArtwork] {
-    model.missingArtworks
-  }
+  @Binding var missingArtworks: [MissingArtwork]
 
   var displayableArtworks: [MissingArtwork] {
     return missingArtworks.filter { missingArtwork in
@@ -165,7 +163,7 @@ struct DescriptionList: View {
 
 struct DescriptionList_Previews: PreviewProvider {
   static var previews: some View {
-    DescriptionList(token: "")
+    DescriptionList(token: "", missingArtworks: .constant(Model.preview.missingArtworks))
       .environmentObject(Model.preview)
   }
 }

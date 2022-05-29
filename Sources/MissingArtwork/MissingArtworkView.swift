@@ -17,7 +17,7 @@ public struct MissingArtworkView: View {
   }
 
   public var body: some View {
-    DescriptionList(token: token)
+    DescriptionList(token: token, missingArtworks: $model.missingArtworks)
       .task {
         await model.fetchMissingArtworks(token: token)
       }
