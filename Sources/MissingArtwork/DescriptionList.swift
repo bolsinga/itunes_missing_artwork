@@ -21,6 +21,8 @@ public struct DescriptionList: View {
   @State private var imageResult = ImageResult.all
   @State private var selectedArtwork: MissingArtwork?
 
+  @State private var searchString: String = ""
+
   @EnvironmentObject var model: Model
 
   public init(token: String) {
@@ -52,7 +54,7 @@ public struct DescriptionList: View {
         return model.missingArtworkURLs[missingArtwork]?.count ?? 0 > 0
       }
     }.filter { missingArtwork in
-      missingArtwork.matches(model.searchString)
+      missingArtwork.matches(searchString)
     }
     .sorted {
       switch sortOrder {
@@ -116,8 +118,8 @@ public struct DescriptionList: View {
           }
         }
         .overlay(progressOverlay)
-        .searchable(text: $model.searchString) {
-          ForEach(model.searchSuggestions) { suggestion in
+        .searchable(text: $searchString) {
+          ForEach(searchSuggestions) { suggestion in
             Text(suggestion.description).searchCompletion(suggestion.description)
           }
         }
@@ -154,6 +156,13 @@ public struct DescriptionList: View {
       if displayableArtworks.count > 0 {
         Text("Select an Item")
       }
+    }
+  }
+
+  fileprivate var searchSuggestions: [MissingArtwork] {
+    missingArtworks.filter {
+      $0.description.localizedCaseInsensitiveContains(searchString)
+        && $0.description.localizedCaseInsensitiveCompare(searchString) != .orderedSame
     }
   }
 }
