@@ -26,6 +26,7 @@ struct DescriptionList: View {
   @EnvironmentObject var model: Model
 
   @Binding var missingArtworks: [MissingArtwork]
+  @Binding var missingArtworkURLs: [MissingArtwork: [URL]]
 
   var displayableArtworks: [MissingArtwork] {
     return missingArtworks.filter { missingArtwork in
@@ -43,9 +44,9 @@ struct DescriptionList: View {
       case .all:
         return true
       case .notFound:
-        return model.missingArtworkURLs[missingArtwork]?.count == 0
+        return missingArtworkURLs[missingArtwork]?.count == 0
       case .found:
-        return model.missingArtworkURLs[missingArtwork]?.count ?? 0 > 0
+        return missingArtworkURLs[missingArtwork]?.count ?? 0 > 0
       }
     }.filter { missingArtwork in
       missingArtwork.matches(searchString)
@@ -100,7 +101,7 @@ struct DescriptionList: View {
           ForEach(displayableArtworks) { missingArtwork in
             NavigationLink {
               MissingImageList(
-                missingArtwork: missingArtwork, urls: $model.missingArtworkURLs[missingArtwork]
+                missingArtwork: missingArtwork, urls: $missingArtworkURLs[missingArtwork]
               )
               .task {
                 await model.fetchImageURLs(missingArtwork: missingArtwork, token: token)
@@ -163,7 +164,10 @@ struct DescriptionList: View {
 
 struct DescriptionList_Previews: PreviewProvider {
   static var previews: some View {
-    DescriptionList(token: "", missingArtworks: .constant(Model.preview.missingArtworks))
-      .environmentObject(Model.preview)
+    DescriptionList(
+      token: "", missingArtworks: .constant(Model.preview.missingArtworks),
+      missingArtworkURLs: .constant(Model.preview.missingArtworkURLs)
+    )
+    .environmentObject(Model.preview)
   }
 }
