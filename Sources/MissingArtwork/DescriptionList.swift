@@ -155,9 +155,6 @@ public struct DescriptionList: View {
         Text("Select an Item")
       }
     }
-    .task {
-      await model.fetchMissingArtworks(token: token)
-    }
   }
 }
 
