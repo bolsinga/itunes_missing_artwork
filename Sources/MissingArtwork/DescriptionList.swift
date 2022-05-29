@@ -13,7 +13,7 @@ extension MissingArtwork {
   }
 }
 
-public struct DescriptionList: View {
+struct DescriptionList: View {
   let token: String
 
   @State private var filter = FilterCategory.all
@@ -24,10 +24,6 @@ public struct DescriptionList: View {
   @State private var searchString: String = ""
 
   @EnvironmentObject var model: Model
-
-  public init(token: String) {
-    self.token = token
-  }
 
   var missingArtworks: [MissingArtwork] {
     model.missingArtworks
@@ -99,7 +95,7 @@ public struct DescriptionList: View {
     }
   }
 
-  public var body: some View {
+  var body: some View {
     NavigationView {
       VStack {
         List(selection: $selectedArtwork) {
