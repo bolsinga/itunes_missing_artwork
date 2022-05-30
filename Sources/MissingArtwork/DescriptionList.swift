@@ -171,10 +171,11 @@ struct DescriptionList_Previews: PreviewProvider {
   }
 
   static var previews: some View {
+    let model = Model.preview
     DescriptionList(
       fetcher: Fetcher(),
-      missingArtworks: .constant(Model.preview.missingArtworks),
-      missingArtworkURLs: .constant(Model.preview.missingArtworkURLs)
+      missingArtworks: .constant(model.missingArtworks),
+      missingArtworkURLs: .constant(model.missingArtworkURLs)
     )
   }
 }
