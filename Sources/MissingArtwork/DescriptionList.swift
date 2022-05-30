@@ -13,8 +13,12 @@ extension MissingArtwork {
   }
 }
 
+protocol ImageURLFetcher {
+  func fetchImages(missingArtwork: MissingArtwork) async
+}
+
 struct DescriptionList: View {
-  let token: String
+  let fetcher: ImageURLFetcher
 
   @State private var filter = FilterCategory.all
   @State private var sortOrder = SortOrder.ascending
@@ -22,8 +26,6 @@ struct DescriptionList: View {
   @State private var selectedArtwork: MissingArtwork?
 
   @State private var searchString: String = ""
-
-  @EnvironmentObject var model: Model
 
   @Binding var missingArtworks: [MissingArtwork]
   @Binding var missingArtworkURLs: [MissingArtwork: [URL]]
@@ -104,7 +106,7 @@ struct DescriptionList: View {
                 missingArtwork: missingArtwork, urls: $missingArtworkURLs[missingArtwork]
               )
               .task {
-                await model.fetchImageURLs(missingArtwork: missingArtwork, token: token)
+                await fetcher.fetchImages(missingArtwork: missingArtwork)
               }
             } label: {
               Description(missingArtwork: missingArtwork)
@@ -163,11 +165,16 @@ struct DescriptionList: View {
 }
 
 struct DescriptionList_Previews: PreviewProvider {
+  struct Fetcher: ImageURLFetcher {
+    func fetchImages(missingArtwork: MissingArtwork) async {
+    }
+  }
+
   static var previews: some View {
     DescriptionList(
-      token: "", missingArtworks: .constant(Model.preview.missingArtworks),
+      fetcher: Fetcher(),
+      missingArtworks: .constant(Model.preview.missingArtworks),
       missingArtworkURLs: .constant(Model.preview.missingArtworkURLs)
     )
-    .environmentObject(Model.preview)
   }
 }
