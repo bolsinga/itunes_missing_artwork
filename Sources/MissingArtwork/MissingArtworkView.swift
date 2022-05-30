@@ -10,7 +10,7 @@ import SwiftUI
 public struct MissingArtworkView: View, ImageURLFetcher {
   let token: String
 
-  @EnvironmentObject var model: Model
+  @StateObject private var model = Model()
 
   public init(token: String) {
     self.token = token
@@ -35,6 +35,5 @@ public struct MissingArtworkView: View, ImageURLFetcher {
 struct MissingArtworkView_Previews: PreviewProvider {
   static var previews: some View {
     MissingArtworkView(token: "")
-      .environmentObject(Model.preview)
   }
 }

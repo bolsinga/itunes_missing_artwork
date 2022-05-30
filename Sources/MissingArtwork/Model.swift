@@ -11,14 +11,14 @@ import Foundation
 public class Model: ObservableObject {
   @Published public var missingArtworks: [MissingArtwork]
 
-  public struct IdentifiableURL: Identifiable {
-    public let url: URL
-    public var id: URL { return url }
+  struct IdentifiableURL: Identifiable {
+    let url: URL
+    var id: URL { return url }
   }
   @Published public var missingArtworkURLs: [MissingArtwork: [URL]]
 
   /// Used for previews.
-  public init(missingArtworks: [MissingArtwork], urls: [[URL]]) {
+  init(missingArtworks: [MissingArtwork], urls: [[URL]]) {
     self.missingArtworks = missingArtworks
     self.missingArtworkURLs = [:]
     for (missingArtwork, urls) in zip(missingArtworks, urls) {
@@ -47,7 +47,7 @@ public class Model: ObservableObject {
     }
   }
 
-  public func fetchImageURLs(missingArtwork: MissingArtwork, token: String) async {
+  func fetchImageURLs(missingArtwork: MissingArtwork, token: String) async {
     if self.missingArtworkURLs[missingArtwork] == nil {
       let fetcher = ArtworkURLFetcher(token: token)
       do {
