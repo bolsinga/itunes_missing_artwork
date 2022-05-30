@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public struct MissingArtworkView: View {
+public struct MissingArtworkView: View, ImageURLFetcher {
   let token: String
 
   @EnvironmentObject var model: Model
@@ -18,12 +18,17 @@ public struct MissingArtworkView: View {
 
   public var body: some View {
     DescriptionList(
-      token: token, missingArtworks: $model.missingArtworks,
+      fetcher: self,
+      missingArtworks: $model.missingArtworks,
       missingArtworkURLs: $model.missingArtworkURLs
     )
     .task {
       await model.fetchMissingArtworks(token: token)
     }
+  }
+
+  func fetchImages(missingArtwork: MissingArtwork) async {
+    await model.fetchImageURLs(missingArtwork: missingArtwork, token: token)
   }
 }
 
