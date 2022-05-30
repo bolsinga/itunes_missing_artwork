@@ -14,7 +14,7 @@ extension MissingArtwork {
 }
 
 protocol ImageURLFetcher {
-  func fetchImages(missingArtwork: MissingArtwork) async
+  func fetchImages(missingArtwork: MissingArtwork, term: String) async
 }
 
 struct DescriptionList: View {
@@ -106,7 +106,8 @@ struct DescriptionList: View {
                 missingArtwork: missingArtwork, urls: $missingArtworkURLs[missingArtwork]
               )
               .task {
-                await fetcher.fetchImages(missingArtwork: missingArtwork)
+                await fetcher.fetchImages(
+                  missingArtwork: missingArtwork, term: missingArtwork.simpleRepresentation)
               }
             } label: {
               Description(missingArtwork: missingArtwork)
@@ -166,7 +167,7 @@ struct DescriptionList: View {
 
 struct DescriptionList_Previews: PreviewProvider {
   struct Fetcher: ImageURLFetcher {
-    func fetchImages(missingArtwork: MissingArtwork) async {
+    func fetchImages(missingArtwork: MissingArtwork, term: String) async {
     }
   }
 
