@@ -48,8 +48,7 @@ extension MissingArtwork {
     let itunes = try ITLibrary(apiVersion: "1.1")
 
     return itunes.allMediaItems
-      .filter { $0.mediaKind != .kindBook }
-      .filter { $0.mediaKind != .kindVoiceMemo }
+      .filter { $0.mediaKind == .kindSong }
       .filter { !$0.hasArtworkAvailable || $0.artwork == nil }
       .compactMap {
         $0.album.isCompilation
