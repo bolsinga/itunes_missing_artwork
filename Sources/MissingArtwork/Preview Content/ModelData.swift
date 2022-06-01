@@ -8,12 +8,13 @@
 import Foundation
 
 extension Model {
-  public static let preview = Model(
-    missingArtworks: [
-      MissingArtwork.ArtistAlbum("The Stooges", "Fun House"),
-      .CompilationAlbum("Beleza Tropical: Brazil Classics 1"),
-    ],
-    urls: [
+  public static let previewArtworks = [
+    MissingArtwork.ArtistAlbum("The Stooges", "Fun House"),
+    MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1"),
+  ]
+
+  public static let previewArtworkURLs =
+    [
       [
         URL(
           string:
@@ -30,5 +31,10 @@ extension Model {
             "https://is3-ssl.mzstatic.com/image/thumb/Music124/v4/e4/56/8d/e4568db1-d583-4456-7d44-e557fd887538/mzi.ritwbkcw.jpg/1425x1425bb.jpg"
         )!
       ],
-    ])
+    ]
+
+  public static let previewArtworkHashURLs = [
+    previewArtworks.first!: previewArtworkURLs.first!,
+    previewArtworks.last!: previewArtworkURLs.last!,
+  ]
 }
