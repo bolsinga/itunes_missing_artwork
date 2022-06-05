@@ -27,8 +27,9 @@ public struct MissingArtworkView: View, ImageURLFetcher {
     }
   }
 
-  func fetchImages(missingArtwork: MissingArtwork) async {
-    await model.fetchImageURLs(missingArtwork: missingArtwork, token: token)
+  func fetchImages(missingArtwork: MissingArtwork, term: String) async {
+    await model.fetchImageURLs(
+      missingArtwork: missingArtwork, term: term, token: token)
   }
 }
 
