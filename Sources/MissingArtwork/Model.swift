@@ -10,11 +10,6 @@ import Foundation
 @MainActor
 public class Model: ObservableObject {
   @Published public var missingArtworks: [MissingArtwork]
-
-  struct IdentifiableURL: Identifiable {
-    let url: URL
-    var id: URL { return url }
-  }
   @Published public var missingArtworkURLs: [MissingArtwork: [URL]]
 
   /// Used for previews.
