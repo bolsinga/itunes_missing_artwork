@@ -31,11 +31,6 @@ public class Model: ObservableObject {
         async let missingArtworks = try MissingArtwork.gatherMissingArtwork()
 
         self.missingArtworks = try await Array(Set<MissingArtwork>(missingArtworks))
-
-        for missingArtwork in self.missingArtworks {
-          await fetchImageURLs(
-            missingArtwork: missingArtwork, term: missingArtwork.simpleRepresentation, token: token)
-        }
       } catch {
         debugPrint("Unable to fetch missing artworks: \(error)")
         self.missingArtworks = []
