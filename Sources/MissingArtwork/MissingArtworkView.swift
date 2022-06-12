@@ -11,6 +11,7 @@ public struct MissingArtworkView: View, ImageURLFetcher {
   let token: String
 
   @State private var showProgressOverlay: Bool = true
+  @State private var showNoMissingArtworkFound: Bool = false
 
   @StateObject private var model = Model()
 
@@ -25,10 +26,17 @@ public struct MissingArtworkView: View, ImageURLFetcher {
       missingArtworkURLs: $model.missingArtworkURLs,
       showProgressOverlay: $showProgressOverlay
     )
+    .alert("No Missing Artwork", isPresented: $showNoMissingArtworkFound) {
+      Button("Quit", role: .destructive) {
+        NSApplication.shared.terminate(nil)
+      }
+    }
     .task {
       showProgressOverlay = true
       await model.fetchMissingArtworks(token: token)
       showProgressOverlay = false
+
+      showNoMissingArtworkFound = model.missingArtworks.isEmpty
     }
   }
 
