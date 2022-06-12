@@ -29,6 +29,7 @@ struct DescriptionList: View {
 
   @Binding var missingArtworks: [MissingArtwork]
   @Binding var missingArtworkURLs: [MissingArtwork: [URL]]
+  @Binding var showProgressOverlay: Bool
 
   var displayableArtworks: [MissingArtwork] {
     return missingArtworks.filter { missingArtwork in
@@ -91,7 +92,7 @@ struct DescriptionList: View {
   }
 
   @ViewBuilder private var progressOverlay: some View {
-    if displayableArtworks.count == 0 {
+    if showProgressOverlay {
       ProgressView()
     }
   }
@@ -175,7 +176,15 @@ struct DescriptionList_Previews: PreviewProvider {
     DescriptionList(
       fetcher: Fetcher(),
       missingArtworks: .constant(Model.previewArtworks),
-      missingArtworkURLs: .constant(Model.previewArtworkHashURLs)
+      missingArtworkURLs: .constant(Model.previewArtworkHashURLs),
+      showProgressOverlay: .constant(false)
+    )
+
+    DescriptionList(
+      fetcher: Fetcher(),
+      missingArtworks: .constant([]),
+      missingArtworkURLs: .constant([:]),
+      showProgressOverlay: .constant(true)
     )
   }
 }

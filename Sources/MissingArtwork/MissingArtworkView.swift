@@ -10,6 +10,8 @@ import SwiftUI
 public struct MissingArtworkView: View, ImageURLFetcher {
   let token: String
 
+  @State private var showProgressOverlay: Bool = true
+
   @StateObject private var model = Model()
 
   public init(token: String) {
@@ -20,10 +22,13 @@ public struct MissingArtworkView: View, ImageURLFetcher {
     DescriptionList(
       fetcher: self,
       missingArtworks: $model.missingArtworks,
-      missingArtworkURLs: $model.missingArtworkURLs
+      missingArtworkURLs: $model.missingArtworkURLs,
+      showProgressOverlay: $showProgressOverlay
     )
     .task {
+      showProgressOverlay = true
       await model.fetchMissingArtworks(token: token)
+      showProgressOverlay = false
     }
   }
 
