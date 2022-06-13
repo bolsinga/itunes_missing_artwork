@@ -26,11 +26,17 @@ public struct MissingArtworkView: View, ImageURLFetcher {
       missingArtworkURLs: $model.missingArtworkURLs,
       showProgressOverlay: $showProgressOverlay
     )
-    .alert("No Missing Artwork", isPresented: $showNoMissingArtworkFound) {
-      Button("Quit", role: .destructive) {
-        NSApplication.shared.terminate(nil)
+    .alert(
+      "No Missing Artwork", isPresented: $showNoMissingArtworkFound,
+      actions: {
+        Button("Quit", role: .destructive) {
+          NSApplication.shared.terminate(nil)
+        }
+      },
+      message: {
+        Text("The iTunes Library does not have any missing artwork. Enjoy!")
       }
-    }
+    )
     .task {
       showProgressOverlay = true
       await model.fetchMissingArtworks(token: token)
