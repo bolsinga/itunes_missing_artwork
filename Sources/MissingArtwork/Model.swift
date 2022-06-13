@@ -25,16 +25,11 @@ public class Model: ObservableObject {
     self.init(missingArtworks: [], urls: [[]])
   }
 
-  public func fetchMissingArtworks(token: String) async {
+  public func fetchMissingArtworks(token: String) async throws {
     if self.missingArtworks.isEmpty {
-      do {
-        async let missingArtworks = try MissingArtwork.gatherMissingArtwork()
+      async let missingArtworks = try MissingArtwork.gatherMissingArtwork()
 
-        self.missingArtworks = try await Array(Set<MissingArtwork>(missingArtworks))
-      } catch {
-        debugPrint("Unable to fetch missing artworks: \(error)")
-        self.missingArtworks = []
-      }
+      self.missingArtworks = try await Array(Set<MissingArtwork>(missingArtworks))
     }
   }
 
