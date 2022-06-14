@@ -78,6 +78,7 @@ public struct MissingArtworkView: View, ImageURLFetcher {
       }
       showProgressOverlay = false
     }
+    .musicKitAuthorizationSheet()
   }
 
   func fetchImages(missingArtwork: MissingArtwork, term: String) async {
