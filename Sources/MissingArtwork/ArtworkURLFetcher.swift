@@ -57,7 +57,23 @@ public struct ArtworkURLFetcher {
     self.init(session)
   }
 
-  public func fetch(_ searchURL: URL) async throws -> [URL] {
+  func searchURL(term: String, limit: Int = 2) -> URL {
+    var urlComponents = URLComponents()
+    urlComponents.scheme = "https"
+    urlComponents.host = "api.music.apple.com"
+    urlComponents.path = "/v1/catalog/us/search"
+    urlComponents.queryItems = [
+      URLQueryItem(name: "term", value: term),
+      URLQueryItem(name: "types", value: "albums"),
+      URLQueryItem(name: "limit", value: "\(limit)"),
+    ]
+    if let url = urlComponents.url {
+      return url
+    }
+    return URL(string: "missing")!  // Use an bogus URL and allow the networking layer return an error.
+  }
+
+  func fetch(_ searchURL: URL) async throws -> [URL] {
     let (data, response) = try await self.session.data(from: searchURL)  // wait for the data
 
     guard (response as? HTTPURLResponse)?.statusCode == 200 else {
@@ -67,4 +83,9 @@ public struct ArtworkURLFetcher {
     let music = try JSONDecoder().decode(MusicResponse.self, from: data)  // decode the data
     return music.results.albums.data.compactMap { $0.attributes.artwork.imageURL }  // Convert the array of results into an array of URLs
   }
+
+  public func fetch(searchTerm: String) async throws -> [URL] {
+    try await fetch(searchURL(term: searchTerm))
+  }
+
 }
