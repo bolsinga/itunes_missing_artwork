@@ -40,27 +40,11 @@ public class Model: ObservableObject {
     }
   }
 
-  func searchURL(term: String, limit: Int = 2) -> URL {
-    var urlComponents = URLComponents()
-    urlComponents.scheme = "https"
-    urlComponents.host = "api.music.apple.com"
-    urlComponents.path = "/v1/catalog/us/search"
-    urlComponents.queryItems = [
-      URLQueryItem(name: "term", value: term),
-      URLQueryItem(name: "types", value: "albums"),
-      URLQueryItem(name: "limit", value: "\(limit)"),
-    ]
-    if let url = urlComponents.url {
-      return url
-    }
-    return URL(string: "missing")!  // Use an bogus URL and allow the networking layer return an error.
-  }
-
   func fetchImageURLs(missingArtwork: MissingArtwork, term: String, token: String) async {
     if self.missingArtworkURLs[missingArtwork] == nil {
       let fetcher = ArtworkURLFetcher(token: token)
       do {
-        self.missingArtworkURLs[missingArtwork] = try await fetcher.fetch(searchURL(term: term))
+        self.missingArtworkURLs[missingArtwork] = try await fetcher.fetch(searchTerm: term)
       } catch {
         debugPrint("Unable to fetch missing artwork URLs: (\(missingArtwork)) - \(error)")
         self.missingArtworkURLs[missingArtwork] = []
