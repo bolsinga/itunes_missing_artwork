@@ -80,8 +80,13 @@ public struct ArtworkURLFetcher {
       throw FetcherError.badRequest
     }
 
-    let music = try JSONDecoder().decode(MusicResponse.self, from: data)  // decode the data
-    return music.results.albums.data.compactMap { $0.attributes.artwork.imageURL }  // Convert the array of results into an array of URLs
+    do {
+      let music = try JSONDecoder().decode(MusicResponse.self, from: data)  // decode the data
+      return music.results.albums.data.compactMap { $0.attributes.artwork.imageURL }  // Convert the array of results into an array of URLs
+    } catch {
+      debugPrint("Unable to fetch missing artwork URLs: (\(searchURL)) - \(error)")
+      return []
+    }
   }
 
   public func fetch(searchTerm: String) async throws -> [URL] {

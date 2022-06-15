@@ -81,8 +81,8 @@ public struct MissingArtworkView: View, ImageURLFetcher {
     .musicKitAuthorizationSheet()
   }
 
-  func fetchImages(missingArtwork: MissingArtwork, term: String) async {
-    await model.fetchImageURLs(
+  func fetchImages(missingArtwork: MissingArtwork, term: String) async throws {
+    try await model.fetchImageURLs(
       missingArtwork: missingArtwork, term: term, token: token)
   }
 }

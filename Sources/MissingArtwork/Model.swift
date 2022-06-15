@@ -33,22 +33,17 @@ public class Model: ObservableObject {
 
       Task.detached {
         for missingArtwork in await self.missingArtworks {
-          await self.fetchImageURLs(
+          try await self.fetchImageURLs(
             missingArtwork: missingArtwork, term: missingArtwork.simpleRepresentation, token: token)
         }
       }
     }
   }
 
-  func fetchImageURLs(missingArtwork: MissingArtwork, term: String, token: String) async {
+  func fetchImageURLs(missingArtwork: MissingArtwork, term: String, token: String) async throws {
     if self.missingArtworkURLs[missingArtwork] == nil {
-      let fetcher = ArtworkURLFetcher(token: token)
-      do {
-        self.missingArtworkURLs[missingArtwork] = try await fetcher.fetch(searchTerm: term)
-      } catch {
-        debugPrint("Unable to fetch missing artwork URLs: (\(missingArtwork)) - \(error)")
-        self.missingArtworkURLs[missingArtwork] = []
-      }
+      self.missingArtworkURLs[missingArtwork] = try await ArtworkURLFetcher(token: token).fetch(
+        searchTerm: term)
     }
   }
 }
