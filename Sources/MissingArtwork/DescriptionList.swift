@@ -27,6 +27,9 @@ struct DescriptionList: View {
 
   @State private var searchString: String = ""
 
+  @State var showMissingImageListOverlayProgress: Bool = false
+  @State private var missingImageListOverlayMessage: String?
+
   @Binding var missingArtworks: [MissingArtwork]
   @Binding var missingArtworkURLs: [MissingArtwork: [URL]]
   @Binding var showProgressOverlay: Bool
@@ -91,6 +94,14 @@ struct DescriptionList: View {
     var id: ImageResult { self }
   }
 
+  @ViewBuilder private var imageListOverlay: some View {
+    if showMissingImageListOverlayProgress {
+      ProgressView()
+    } else if let message = missingImageListOverlayMessage {
+      Text(message).textSelection(.enabled)
+    }
+  }
+
   @ViewBuilder private var progressOverlay: some View {
     if showProgressOverlay {
       ProgressView()
@@ -105,11 +116,16 @@ struct DescriptionList: View {
             NavigationLink {
               MissingImageList(
                 missingArtwork: missingArtwork, urls: $missingArtworkURLs[missingArtwork]
-              )
-              .task {
-                await fetcher.fetchImages(
-                  missingArtwork: missingArtwork, term: missingArtwork.simpleRepresentation)
-              }
+              ).overlay(imageListOverlay)
+                .task {
+                  showMissingImageListOverlayProgress = true
+                  await fetcher.fetchImages(
+                    missingArtwork: missingArtwork, term: missingArtwork.simpleRepresentation)
+                  if let urls = missingArtworkURLs[missingArtwork], urls.count == 0 {
+                    missingImageListOverlayMessage = "No image for \(missingArtwork.description)"
+                  }
+                  showMissingImageListOverlayProgress = false
+                }
             } label: {
               Description(missingArtwork: missingArtwork)
             }
