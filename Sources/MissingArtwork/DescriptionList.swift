@@ -118,6 +118,7 @@ struct DescriptionList: View {
                 missingArtwork: missingArtwork, urls: $missingArtworkURLs[missingArtwork]
               ).overlay(imageListOverlay)
                 .task {
+                  missingImageListOverlayMessage = nil
                   showMissingImageListOverlayProgress = true
                   defer {
                     showMissingImageListOverlayProgress = false
