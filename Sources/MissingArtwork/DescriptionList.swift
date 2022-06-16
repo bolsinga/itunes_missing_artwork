@@ -14,7 +14,7 @@ extension MissingArtwork {
 }
 
 protocol ImageURLFetcher {
-  func fetchImages(missingArtwork: MissingArtwork, term: String) async
+  func fetchImages(missingArtwork: MissingArtwork, term: String) async throws
 }
 
 struct DescriptionList: View {
@@ -119,12 +119,20 @@ struct DescriptionList: View {
               ).overlay(imageListOverlay)
                 .task {
                   showMissingImageListOverlayProgress = true
-                  await fetcher.fetchImages(
-                    missingArtwork: missingArtwork, term: missingArtwork.simpleRepresentation)
-                  if let urls = missingArtworkURLs[missingArtwork], urls.count == 0 {
-                    missingImageListOverlayMessage = "No image for \(missingArtwork.description)"
+                  defer {
+                    showMissingImageListOverlayProgress = false
                   }
-                  showMissingImageListOverlayProgress = false
+
+                  do {
+                    try await fetcher.fetchImages(
+                      missingArtwork: missingArtwork, term: missingArtwork.simpleRepresentation)
+                    if let urls = missingArtworkURLs[missingArtwork], urls.count == 0 {
+                      missingImageListOverlayMessage = "No image for \(missingArtwork.description)"
+                    }
+                  } catch {
+                    missingImageListOverlayMessage =
+                      "Error retrieving \(missingArtwork.description). Error: \(String(describing: error.localizedDescription))"
+                  }
                 }
             } label: {
               Description(missingArtwork: missingArtwork)
