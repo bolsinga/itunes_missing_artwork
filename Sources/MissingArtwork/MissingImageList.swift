@@ -20,15 +20,6 @@ struct MissingImageList: View {
     urls.map { $0.map { IdentifiableURL(url: $0) } }
   }
 
-  @ViewBuilder private var progressOverlay: some View {
-    if identifiableURLs == nil {
-      ProgressView()
-    } else if let identifiableURLs = identifiableURLs, identifiableURLs.count == 0 {
-      Text("No image for \(missingArtwork.description)")
-        .textSelection(.enabled)
-    }
-  }
-
   var body: some View {
     List(self.identifiableURLs ?? []) { item in
       AsyncImage(url: item.url) { image in
@@ -36,7 +27,7 @@ struct MissingImageList: View {
       } placeholder: {
         ProgressView()
       }
-    }.overlay(progressOverlay)
+    }
   }
 }
 
