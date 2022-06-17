@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import MusicKit
 
 @MainActor
 public class Model: ObservableObject {
@@ -42,8 +43,13 @@ public class Model: ObservableObject {
 
   func fetchImageURLs(missingArtwork: MissingArtwork, term: String, token: String) async throws {
     if self.missingArtworkURLs[missingArtwork] == nil {
-      self.missingArtworkURLs[missingArtwork] = try await ArtworkURLFetcher(token: token).fetch(
-        searchTerm: term)
+      var searchRequest = MusicCatalogSearchRequest(term: term, types: [Album.self])
+      searchRequest.limit = 2
+      let searchResponse = try await searchRequest.response()
+      self.missingArtworkURLs[missingArtwork] = searchResponse.albums.compactMap(\.artwork)
+        .compactMap {
+          $0.url(width: $0.maximumWidth, height: $0.maximumHeight)
+        }
     }
   }
 }
