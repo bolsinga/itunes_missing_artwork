@@ -34,7 +34,7 @@ public class Model: ObservableObject {
     }
   }
 
-  func fetchImageURLs(missingArtwork: MissingArtwork, term: String) async throws {
+  func fetchArtworks(missingArtwork: MissingArtwork, term: String) async throws {
     if self.missingArtworkURLs[missingArtwork] == nil {
       var searchRequest = MusicCatalogSearchRequest(term: term, types: [Album.self])
       searchRequest.limit = 2

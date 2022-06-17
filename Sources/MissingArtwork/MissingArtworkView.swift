@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public struct MissingArtworkView: View, ImageURLFetcher {
+public struct MissingArtworkView: View, ArtworksFetcher {
   struct FetchError: LocalizedError {
     let nsError: NSError
 
@@ -38,7 +38,7 @@ public struct MissingArtworkView: View, ImageURLFetcher {
     DescriptionList(
       fetcher: self,
       missingArtworks: $model.missingArtworks,
-      missingArtworkURLs: $model.missingArtworkURLs,
+      artworks: $model.missingArtworkURLs,
       showProgressOverlay: $showProgressOverlay
     )
     .alert(
@@ -77,9 +77,8 @@ public struct MissingArtworkView: View, ImageURLFetcher {
     .musicKitAuthorizationSheet()
   }
 
-  func fetchImages(missingArtwork: MissingArtwork, term: String) async throws {
-    try await model.fetchImageURLs(
-      missingArtwork: missingArtwork, term: term)
+  func fetchArtworks(missingArtwork: MissingArtwork, term: String) async throws {
+    try await model.fetchArtworks(missingArtwork: missingArtwork, term: term)
   }
 }
 
