@@ -24,8 +24,6 @@ public struct MissingArtworkView: View, ImageURLFetcher {
     }
   }
 
-  let token: String
-
   @State private var showProgressOverlay: Bool = true
   @State private var showNoMissingArtworkFound: Bool = false
 
@@ -34,9 +32,7 @@ public struct MissingArtworkView: View, ImageURLFetcher {
 
   @StateObject private var model = Model()
 
-  public init(token: String) {
-    self.token = token
-  }
+  public init() {}
 
   public var body: some View {
     DescriptionList(
@@ -67,7 +63,7 @@ public struct MissingArtworkView: View, ImageURLFetcher {
     .task {
       showProgressOverlay = true
       do {
-        try await model.fetchMissingArtworks(token: token)
+        try await model.fetchMissingArtworks()
 
         showNoMissingArtworkFound = model.missingArtworks.isEmpty
       } catch let error as NSError {
@@ -83,12 +79,12 @@ public struct MissingArtworkView: View, ImageURLFetcher {
 
   func fetchImages(missingArtwork: MissingArtwork, term: String) async throws {
     try await model.fetchImageURLs(
-      missingArtwork: missingArtwork, term: term, token: token)
+      missingArtwork: missingArtwork, term: term)
   }
 }
 
 struct MissingArtworkView_Previews: PreviewProvider {
   static var previews: some View {
-    MissingArtworkView(token: "")
+    MissingArtworkView()
   }
 }

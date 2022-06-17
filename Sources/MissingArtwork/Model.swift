@@ -26,7 +26,7 @@ public class Model: ObservableObject {
     self.init(missingArtworks: [], urls: [[]])
   }
 
-  public func fetchMissingArtworks(token: String) async throws {
+  public func fetchMissingArtworks() async throws {
     if self.missingArtworks.isEmpty {
       async let missingArtworks = try MissingArtwork.gatherMissingArtwork()
 
@@ -35,13 +35,13 @@ public class Model: ObservableObject {
       Task.detached {
         for missingArtwork in await self.missingArtworks {
           try await self.fetchImageURLs(
-            missingArtwork: missingArtwork, term: missingArtwork.simpleRepresentation, token: token)
+            missingArtwork: missingArtwork, term: missingArtwork.simpleRepresentation)
         }
       }
     }
   }
 
-  func fetchImageURLs(missingArtwork: MissingArtwork, term: String, token: String) async throws {
+  func fetchImageURLs(missingArtwork: MissingArtwork, term: String) async throws {
     if self.missingArtworkURLs[missingArtwork] == nil {
       var searchRequest = MusicCatalogSearchRequest(term: term, types: [Album.self])
       searchRequest.limit = 2
