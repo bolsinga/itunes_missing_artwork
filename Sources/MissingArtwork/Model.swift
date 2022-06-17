@@ -11,19 +11,14 @@ import MusicKit
 @MainActor
 public class Model: ObservableObject {
   @Published public var missingArtworks: [MissingArtwork]
-  @Published public var missingArtworkURLs: [MissingArtwork: [URL]]
 
   /// Used for previews.
-  init(missingArtworks: [MissingArtwork], urls: [[URL]]) {
+  init(missingArtworks: [MissingArtwork]) {
     self.missingArtworks = missingArtworks
-    self.missingArtworkURLs = [:]
-    for (missingArtwork, urls) in zip(missingArtworks, urls) {
-      self.missingArtworkURLs[missingArtwork] = urls
-    }
   }
 
   public convenience init() {
-    self.init(missingArtworks: [], urls: [[]])
+    self.init(missingArtworks: [])
   }
 
   public func fetchMissingArtworks() async throws {
@@ -34,15 +29,13 @@ public class Model: ObservableObject {
     }
   }
 
-  func fetchArtworks(missingArtwork: MissingArtwork, term: String) async throws {
-    if self.missingArtworkURLs[missingArtwork] == nil {
-      var searchRequest = MusicCatalogSearchRequest(term: term, types: [Album.self])
-      searchRequest.limit = 2
-      let searchResponse = try await searchRequest.response()
-      self.missingArtworkURLs[missingArtwork] = searchResponse.albums.compactMap(\.artwork)
-        .compactMap {
-          $0.url(width: $0.maximumWidth, height: $0.maximumHeight)
-        }
-    }
+  func fetchArtworks(missingArtwork: MissingArtwork, term: String) async throws -> [URL] {
+    var searchRequest = MusicCatalogSearchRequest(term: term, types: [Album.self])
+    searchRequest.limit = 2
+    let searchResponse = try await searchRequest.response()
+    return searchResponse.albums.compactMap(\.artwork)
+      .compactMap {
+        $0.url(width: $0.maximumWidth, height: $0.maximumHeight)
+      }
   }
 }

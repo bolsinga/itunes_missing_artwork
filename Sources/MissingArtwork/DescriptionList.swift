@@ -14,7 +14,7 @@ extension MissingArtwork {
 }
 
 protocol ArtworksFetcher {
-  func fetchArtworks(missingArtwork: MissingArtwork, term: String) async throws
+  func fetchArtworks(missingArtwork: MissingArtwork, term: String) async throws -> [URL]
 }
 
 struct DescriptionList: View {
@@ -119,13 +119,18 @@ struct DescriptionList: View {
               ).overlay(imageListOverlay)
                 .task {
                   missingImageListOverlayMessage = nil
+
+                  guard artworks[missingArtwork] == nil else {
+                    return
+                  }
+
                   showMissingImageListOverlayProgress = true
                   defer {
                     showMissingImageListOverlayProgress = false
                   }
 
                   do {
-                    try await fetcher.fetchArtworks(
+                    artworks[missingArtwork] = try await fetcher.fetchArtworks(
                       missingArtwork: missingArtwork, term: missingArtwork.simpleRepresentation)
                     if let urls = artworks[missingArtwork], urls.count == 0 {
                       missingImageListOverlayMessage =
@@ -194,7 +199,8 @@ struct DescriptionList: View {
 
 struct DescriptionList_Previews: PreviewProvider {
   struct Fetcher: ArtworksFetcher {
-    func fetchArtworks(missingArtwork: MissingArtwork, term: String) async {
+    func fetchArtworks(missingArtwork: MissingArtwork, term: String) async -> [URL] {
+      return []
     }
   }
 
