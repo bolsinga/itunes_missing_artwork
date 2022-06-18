@@ -30,6 +30,8 @@ public struct MissingArtworkView: View, ArtworksFetcher {
   @State private var showFetchErrorAlert: Bool = false
   @State private var fetchError: FetchError?
 
+  @State private var artworks: [MissingArtwork: [URL]] = [:]
+
   @StateObject private var model = Model()
 
   public init() {}
@@ -38,7 +40,7 @@ public struct MissingArtworkView: View, ArtworksFetcher {
     DescriptionList(
       fetcher: self,
       missingArtworks: $model.missingArtworks,
-      artworks: $model.missingArtworkURLs,
+      artworks: $artworks,
       showProgressOverlay: $showProgressOverlay
     )
     .alert(
@@ -77,8 +79,8 @@ public struct MissingArtworkView: View, ArtworksFetcher {
     .musicKitAuthorizationSheet()
   }
 
-  func fetchArtworks(missingArtwork: MissingArtwork, term: String) async throws {
-    try await model.fetchArtworks(missingArtwork: missingArtwork, term: term)
+  func fetchArtworks(missingArtwork: MissingArtwork, term: String) async throws -> [URL] {
+    return try await model.fetchArtworks(missingArtwork: missingArtwork, term: term)
   }
 }
 
