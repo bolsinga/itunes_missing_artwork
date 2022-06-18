@@ -5,6 +5,7 @@
 //  Created by Greg Bolsinga on 5/28/22.
 //
 
+import MusicKit
 import SwiftUI
 
 public struct MissingArtworkView: View, ArtworksFetcher {
@@ -32,8 +33,6 @@ public struct MissingArtworkView: View, ArtworksFetcher {
 
   @State private var missingArtworks: [MissingArtwork] = []
   @State private var artworks: [MissingArtwork: [URL]] = [:]
-
-  @StateObject private var model = Model()
 
   public init() {}
 
@@ -71,7 +70,7 @@ public struct MissingArtworkView: View, ArtworksFetcher {
       }
 
       do {
-        missingArtworks = try await model.fetchMissingArtworks()
+        missingArtworks = try await fetchMissingArtworks()
 
         showNoMissingArtworkFound = missingArtworks.isEmpty
       } catch let error as NSError {
@@ -85,8 +84,19 @@ public struct MissingArtworkView: View, ArtworksFetcher {
     .musicKitAuthorizationSheet()
   }
 
+  func fetchMissingArtworks() async throws -> [MissingArtwork] {
+    async let missingArtworks = try MissingArtwork.gatherMissingArtwork()
+    return try await Array(Set<MissingArtwork>(missingArtworks))
+  }
+
   func fetchArtworks(missingArtwork: MissingArtwork, term: String) async throws -> [URL] {
-    return try await model.fetchArtworks(missingArtwork: missingArtwork, term: term)
+    var searchRequest = MusicCatalogSearchRequest(term: term, types: [Album.self])
+    searchRequest.limit = 2
+    let searchResponse = try await searchRequest.response()
+    return searchResponse.albums.compactMap(\.artwork)
+      .compactMap {
+        $0.url(width: $0.maximumWidth, height: $0.maximumHeight)
+      }
   }
 }
 
