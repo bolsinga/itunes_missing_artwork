@@ -13,12 +13,12 @@ extension MissingArtwork {
   }
 }
 
-protocol ImageURLFetcher {
-  func fetchImages(missingArtwork: MissingArtwork, term: String) async throws
+protocol ArtworksFetcher {
+  func fetchArtworks(missingArtwork: MissingArtwork, term: String) async throws
 }
 
 struct DescriptionList: View {
-  let fetcher: ImageURLFetcher
+  let fetcher: ArtworksFetcher
 
   @State private var filter = FilterCategory.all
   @State private var sortOrder = SortOrder.ascending
@@ -31,7 +31,7 @@ struct DescriptionList: View {
   @State private var missingImageListOverlayMessage: String?
 
   @Binding var missingArtworks: [MissingArtwork]
-  @Binding var missingArtworkURLs: [MissingArtwork: [URL]]
+  @Binding var artworks: [MissingArtwork: [URL]]
   @Binding var showProgressOverlay: Bool
 
   var displayableArtworks: [MissingArtwork] {
@@ -50,9 +50,9 @@ struct DescriptionList: View {
       case .all:
         return true
       case .notFound:
-        return missingArtworkURLs[missingArtwork]?.count == 0
+        return artworks[missingArtwork]?.count == 0
       case .found:
-        return missingArtworkURLs[missingArtwork]?.count ?? 0 > 0
+        return artworks[missingArtwork]?.count ?? 0 > 0
       }
     }.filter { missingArtwork in
       missingArtwork.matches(searchString)
@@ -115,7 +115,7 @@ struct DescriptionList: View {
           ForEach(displayableArtworks) { missingArtwork in
             NavigationLink {
               MissingImageList(
-                missingArtwork: missingArtwork, urls: $missingArtworkURLs[missingArtwork]
+                missingArtwork: missingArtwork, urls: $artworks[missingArtwork]
               ).overlay(imageListOverlay)
                 .task {
                   missingImageListOverlayMessage = nil
@@ -125,10 +125,11 @@ struct DescriptionList: View {
                   }
 
                   do {
-                    try await fetcher.fetchImages(
+                    try await fetcher.fetchArtworks(
                       missingArtwork: missingArtwork, term: missingArtwork.simpleRepresentation)
-                    if let urls = missingArtworkURLs[missingArtwork], urls.count == 0 {
-                      missingImageListOverlayMessage = "No image for \(missingArtwork.description)"
+                    if let urls = artworks[missingArtwork], urls.count == 0 {
+                      missingImageListOverlayMessage =
+                        "No image for \(missingArtwork.description)"
                     }
                   } catch {
                     missingImageListOverlayMessage =
@@ -192,8 +193,8 @@ struct DescriptionList: View {
 }
 
 struct DescriptionList_Previews: PreviewProvider {
-  struct Fetcher: ImageURLFetcher {
-    func fetchImages(missingArtwork: MissingArtwork, term: String) async {
+  struct Fetcher: ArtworksFetcher {
+    func fetchArtworks(missingArtwork: MissingArtwork, term: String) async {
     }
   }
 
@@ -201,14 +202,14 @@ struct DescriptionList_Previews: PreviewProvider {
     DescriptionList(
       fetcher: Fetcher(),
       missingArtworks: .constant(Model.previewArtworks),
-      missingArtworkURLs: .constant(Model.previewArtworkHashURLs),
+      artworks: .constant(Model.previewArtworkHashURLs),
       showProgressOverlay: .constant(false)
     )
 
     DescriptionList(
       fetcher: Fetcher(),
       missingArtworks: .constant([]),
-      missingArtworkURLs: .constant([:]),
+      artworks: .constant([:]),
       showProgressOverlay: .constant(true)
     )
   }
