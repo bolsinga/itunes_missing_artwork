@@ -30,6 +30,7 @@ public struct MissingArtworkView: View, ArtworksFetcher {
   @State private var showFetchErrorAlert: Bool = false
   @State private var fetchError: FetchError?
 
+  @State private var missingArtworks: [MissingArtwork] = []
   @State private var artworks: [MissingArtwork: [URL]] = [:]
 
   @StateObject private var model = Model()
@@ -39,7 +40,7 @@ public struct MissingArtworkView: View, ArtworksFetcher {
   public var body: some View {
     DescriptionList(
       fetcher: self,
-      missingArtworks: $model.missingArtworks,
+      missingArtworks: $missingArtworks,
       artworks: $artworks,
       showProgressOverlay: $showProgressOverlay
     )
@@ -64,10 +65,15 @@ public struct MissingArtworkView: View, ArtworksFetcher {
     )
     .task {
       showProgressOverlay = true
-      do {
-        try await model.fetchMissingArtworks()
 
-        showNoMissingArtworkFound = model.missingArtworks.isEmpty
+      guard missingArtworks.isEmpty else {
+        return
+      }
+
+      do {
+        missingArtworks = try await model.fetchMissingArtworks()
+
+        showNoMissingArtworkFound = missingArtworks.isEmpty
       } catch let error as NSError {
         showFetchErrorAlert = true
 
