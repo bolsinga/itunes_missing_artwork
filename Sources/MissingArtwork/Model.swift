@@ -31,13 +31,6 @@ public class Model: ObservableObject {
       async let missingArtworks = try MissingArtwork.gatherMissingArtwork()
 
       self.missingArtworks = try await Array(Set<MissingArtwork>(missingArtworks))
-
-      Task.detached {
-        for missingArtwork in await self.missingArtworks {
-          try await self.fetchImageURLs(
-            missingArtwork: missingArtwork, term: missingArtwork.simpleRepresentation)
-        }
-      }
     }
   }
 
