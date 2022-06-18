@@ -8,9 +8,9 @@ let package = Package(
     .macOS(.v12)
   ],
   products: [
-    .library(name: "MissingArtwork", targets: ["MissingArtwork"]),
+    .library(name: "MissingArtwork", targets: ["MissingArtwork"])
   ],
   targets: [
-    .target(name: "MissingArtwork", dependencies: [], sources: [".", "Preview Content"]),
+    .target(name: "MissingArtwork", dependencies: [], sources: [".", "Preview Content"])
   ]
 )
