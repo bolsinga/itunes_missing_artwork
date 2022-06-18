@@ -207,8 +207,8 @@ struct DescriptionList_Previews: PreviewProvider {
   static var previews: some View {
     DescriptionList(
       fetcher: Fetcher(),
-      missingArtworks: .constant(Model.previewArtworks),
-      artworks: .constant(Model.previewArtworkHashURLs),
+      missingArtworks: .constant(MissingArtwork.previewArtworks),
+      artworks: .constant(MissingArtwork.previewArtworkHashURLs),
       showProgressOverlay: .constant(false)
     )
 

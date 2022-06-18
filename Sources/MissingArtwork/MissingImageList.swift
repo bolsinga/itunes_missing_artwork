@@ -35,11 +35,11 @@ struct MissingImageList_Previews: PreviewProvider {
   static var previews: some View {
     Group {
       MissingImageList(
-        missingArtwork: Model.previewArtworks.first!,
-        urls: .constant(Model.previewArtworkURLs.first))
+        missingArtwork: MissingArtwork.previewArtworks.first!,
+        urls: .constant(MissingArtwork.previewArtworkURLs.first))
       MissingImageList(
-        missingArtwork: Model.previewArtworks.last!,
-        urls: .constant(Model.previewArtworkURLs.last))
+        missingArtwork: MissingArtwork.previewArtworks.last!,
+        urls: .constant(MissingArtwork.previewArtworkURLs.last))
     }
   }
 }
