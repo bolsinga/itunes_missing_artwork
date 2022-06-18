@@ -39,8 +39,8 @@ public struct Description: View {
 struct Description_Previews: PreviewProvider {
   static var previews: some View {
     Group {
-      Description(missingArtwork: Model.previewArtworks[0])
-      Description(missingArtwork: Model.previewArtworks[1])
+      Description(missingArtwork: MissingArtwork.previewArtworks[0])
+      Description(missingArtwork: MissingArtwork.previewArtworks[1])
     }
   }
 }
