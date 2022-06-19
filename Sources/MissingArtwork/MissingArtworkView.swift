@@ -32,7 +32,7 @@ public struct MissingArtworkView: View, ArtworksFetcher {
   @State private var fetchError: FetchError?
 
   @State private var missingArtworks: [MissingArtwork] = []
-  @State private var artworks: [MissingArtwork: [URL]] = [:]
+  @State private var artworks: [MissingArtwork: [Artwork]] = [:]
 
   public init() {}
 
@@ -89,14 +89,11 @@ public struct MissingArtworkView: View, ArtworksFetcher {
     return try await Array(Set<MissingArtwork>(missingArtworks))
   }
 
-  func fetchArtworks(missingArtwork: MissingArtwork, term: String) async throws -> [URL] {
+  func fetchArtworks(missingArtwork: MissingArtwork, term: String) async throws -> [Artwork] {
     var searchRequest = MusicCatalogSearchRequest(term: term, types: [Album.self])
     searchRequest.limit = 2
     let searchResponse = try await searchRequest.response()
     return searchResponse.albums.compactMap(\.artwork)
-      .compactMap {
-        $0.url(width: $0.maximumWidth, height: $0.maximumHeight)
-      }
   }
 }
 
