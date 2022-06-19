@@ -132,7 +132,8 @@ struct DescriptionList: View {
                   do {
                     artworks[missingArtwork] = try await fetcher.fetchArtworks(
                       missingArtwork: missingArtwork, term: missingArtwork.simpleRepresentation)
-                    if let urls = artworks[missingArtwork], urls.count == 0 {
+
+                    if let items = artworks[missingArtwork], items.isEmpty {
                       missingImageListOverlayMessage =
                         "No image for \(missingArtwork.description)"
                     }
