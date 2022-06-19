@@ -8,26 +8,18 @@
 import MusicKit
 import SwiftUI
 
+extension Artwork: Identifiable {
+  public var id: Artwork { self }
+}
+
 struct MissingImageList: View {
   let missingArtwork: MissingArtwork
   @Binding var artworks: [Artwork]?
 
-  struct IdentifiableURL: Identifiable {
-    public let url: URL
-    public var id: URL { return url }
-  }
-
-  private var identifiableURLs: [IdentifiableURL]? {
-    let urls = artworks.map { $0.compactMap { $0.url(width: $0.maximumWidth, height: $0.maximumHeight) } }
-    return urls.map { $0.map { IdentifiableURL(url: $0) } }
-  }
-
   var body: some View {
-    List(self.identifiableURLs ?? []) { item in
-      AsyncImage(url: item.url) { image in
-        image
-      } placeholder: {
-        ProgressView()
+    GeometryReader { proxy in
+      List(self.artworks ?? []) { artwork in
+        ArtworkImage(artwork, width: proxy.size.width)
       }
     }
   }
