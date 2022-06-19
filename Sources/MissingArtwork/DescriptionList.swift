@@ -5,6 +5,7 @@
 //  Created by Greg Bolsinga on 4/19/22.
 //
 
+import MusicKit
 import SwiftUI
 
 extension MissingArtwork {
@@ -14,7 +15,7 @@ extension MissingArtwork {
 }
 
 protocol ArtworksFetcher {
-  func fetchArtworks(missingArtwork: MissingArtwork, term: String) async throws -> [URL]
+  func fetchArtworks(missingArtwork: MissingArtwork, term: String) async throws -> [Artwork]
 }
 
 struct DescriptionList: View {
@@ -31,7 +32,7 @@ struct DescriptionList: View {
   @State private var missingImageListOverlayMessage: String?
 
   @Binding var missingArtworks: [MissingArtwork]
-  @Binding var artworks: [MissingArtwork: [URL]]
+  @Binding var artworks: [MissingArtwork: [Artwork]]
   @Binding var showProgressOverlay: Bool
 
   var displayableArtworks: [MissingArtwork] {
@@ -115,7 +116,7 @@ struct DescriptionList: View {
           ForEach(displayableArtworks) { missingArtwork in
             NavigationLink {
               MissingImageList(
-                missingArtwork: missingArtwork, urls: $artworks[missingArtwork]
+                missingArtwork: missingArtwork, artworks: $artworks[missingArtwork]
               ).overlay(imageListOverlay)
                 .task {
                   missingImageListOverlayMessage = nil
@@ -131,7 +132,8 @@ struct DescriptionList: View {
 
                   do {
                     artworks[missingArtwork] = try await fetcher.fetchArtworks(
-                      missingArtwork: missingArtwork, term: missingArtwork.simpleRepresentation)
+                      missingArtwork: missingArtwork, term: missingArtwork.simpleRepresentation
+                    )
 
                     if let items = artworks[missingArtwork], items.isEmpty {
                       missingImageListOverlayMessage =
@@ -200,7 +202,7 @@ struct DescriptionList: View {
 
 struct DescriptionList_Previews: PreviewProvider {
   struct Fetcher: ArtworksFetcher {
-    func fetchArtworks(missingArtwork: MissingArtwork, term: String) async -> [URL] {
+    func fetchArtworks(missingArtwork: MissingArtwork, term: String) async -> [Artwork] {
       return []
     }
   }
@@ -209,7 +211,7 @@ struct DescriptionList_Previews: PreviewProvider {
     DescriptionList(
       fetcher: Fetcher(),
       missingArtworks: .constant(MissingArtwork.previewArtworks),
-      artworks: .constant(MissingArtwork.previewArtworkHashURLs),
+      artworks: .constant([:]),
       showProgressOverlay: .constant(false)
     )
 

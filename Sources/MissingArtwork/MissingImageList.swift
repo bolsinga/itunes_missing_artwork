@@ -5,11 +5,12 @@
 //  Created by Greg Bolsinga on 5/14/22.
 //
 
+import MusicKit
 import SwiftUI
 
 struct MissingImageList: View {
   let missingArtwork: MissingArtwork
-  @Binding var urls: [URL]?
+  @Binding var artworks: [Artwork]?
 
   struct IdentifiableURL: Identifiable {
     public let url: URL
@@ -17,7 +18,8 @@ struct MissingImageList: View {
   }
 
   private var identifiableURLs: [IdentifiableURL]? {
-    urls.map { $0.map { IdentifiableURL(url: $0) } }
+    let urls = artworks.map { $0.compactMap { $0.url(width: $0.maximumWidth, height: $0.maximumHeight) } }
+    return urls.map { $0.map { IdentifiableURL(url: $0) } }
   }
 
   var body: some View {
@@ -36,10 +38,10 @@ struct MissingImageList_Previews: PreviewProvider {
     Group {
       MissingImageList(
         missingArtwork: MissingArtwork.previewArtworks.first!,
-        urls: .constant(MissingArtwork.previewArtworkURLs.first))
+        artworks: .constant([]))
       MissingImageList(
         missingArtwork: MissingArtwork.previewArtworks.last!,
-        urls: .constant(MissingArtwork.previewArtworkURLs.last))
+        artworks: .constant([]))
     }
   }
 }
