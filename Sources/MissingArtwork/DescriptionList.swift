@@ -193,7 +193,7 @@ struct DescriptionList: View {
   }
 
   fileprivate var searchSuggestions: [MissingArtwork] {
-    missingArtworks.filter {
+    displayableArtworks.filter {
       $0.description.localizedCaseInsensitiveContains(searchString)
         && $0.description.localizedCaseInsensitiveCompare(searchString) != .orderedSame
     }
