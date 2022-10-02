@@ -29,10 +29,7 @@ struct MissingImageList_Previews: PreviewProvider {
   static var previews: some View {
     Group {
       MissingImageList(
-        missingArtwork: MissingArtwork.previewArtworks.first!,
-        artworks: .constant([]))
-      MissingImageList(
-        missingArtwork: MissingArtwork.previewArtworks.last!,
+        missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House"),
         artworks: .constant([]))
     }
   }

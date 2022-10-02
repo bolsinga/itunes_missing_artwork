@@ -210,7 +210,10 @@ struct DescriptionList_Previews: PreviewProvider {
   static var previews: some View {
     DescriptionList(
       fetcher: Fetcher(),
-      missingArtworks: .constant(MissingArtwork.previewArtworks),
+      missingArtworks: .constant([
+        MissingArtwork.ArtistAlbum("The Stooges", "Fun House"),
+        MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1")
+      ]),
       artworks: .constant([:]),
       showProgressOverlay: .constant(false)
     )

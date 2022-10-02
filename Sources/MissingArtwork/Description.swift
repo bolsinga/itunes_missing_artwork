@@ -39,8 +39,8 @@ public struct Description: View {
 struct Description_Previews: PreviewProvider {
   static var previews: some View {
     Group {
-      Description(missingArtwork: MissingArtwork.previewArtworks[0])
-      Description(missingArtwork: MissingArtwork.previewArtworks[1])
+      Description(missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House"))
+      Description(missingArtwork: MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1"))
     }
   }
 }
