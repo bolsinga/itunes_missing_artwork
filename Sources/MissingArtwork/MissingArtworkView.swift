@@ -31,7 +31,7 @@ public struct MissingArtworkView: View, ArtworksFetcher {
   @State private var showFetchErrorAlert: Bool = false
   @State private var fetchError: FetchError?
 
-  @State private var missingArtworks: [MissingArtwork] = []
+  @State private var missingArtworks: [(MissingArtwork, ArtworkAvailability)] = []
   @State private var artworks: [MissingArtwork: [Artwork]] = [:]
 
   public init() {}
@@ -84,9 +84,9 @@ public struct MissingArtworkView: View, ArtworksFetcher {
     .musicKitAuthorizationSheet()
   }
 
-  func fetchMissingArtworks() async throws -> [MissingArtwork] {
+  func fetchMissingArtworks() async throws -> [(MissingArtwork, ArtworkAvailability)] {
     async let missingArtworks = try MissingArtwork.gatherMissingArtwork()
-    return try await Array(Set<MissingArtwork>(missingArtworks))
+    return try await missingArtworks
   }
 
   func fetchArtworks(missingArtwork: MissingArtwork, term: String) async throws -> [Artwork] {

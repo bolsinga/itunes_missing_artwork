@@ -25,18 +25,19 @@ struct DescriptionList: View {
   @State private var sortOrder = SortOrder.ascending
   @State private var imageResult = ImageResult.all
   @State private var selectedArtwork: MissingArtwork?
+  @State private var availabilityFilter = AvailabilityCategory.all
 
   @State private var searchString: String = ""
 
   @State var showMissingImageListOverlayProgress: Bool = false
   @State private var missingImageListOverlayMessage: String?
 
-  @Binding var missingArtworks: [MissingArtwork]
+  @Binding var missingArtworks: [(MissingArtwork, ArtworkAvailability)]
   @Binding var artworks: [MissingArtwork: [Artwork]]
   @Binding var showProgressOverlay: Bool
 
-  var displayableArtworks: [MissingArtwork] {
-    return missingArtworks.filter { missingArtwork in
+  var displayableArtworks: [(MissingArtwork, ArtworkAvailability)] {
+    return missingArtworks.filter { (missingArtwork, _) in
       (filter == .all
         || {
           switch missingArtwork {
@@ -46,7 +47,17 @@ struct DescriptionList: View {
             return filter == .compilations
           }
         }())
-    }.filter { missingArtwork in
+    }.filter { (_, availability) in
+      (availabilityFilter == .all
+        || {
+          switch availability {
+          case .some:
+            return availabilityFilter == .partial
+          case .none:
+            return availabilityFilter == .none
+          }
+        }())
+    }.filter { (missingArtwork, _) in
       switch imageResult {
       case .all:
         return true
@@ -55,15 +66,15 @@ struct DescriptionList: View {
       case .found:
         return artworks[missingArtwork]?.count ?? 0 > 0
       }
-    }.filter { missingArtwork in
+    }.filter { (missingArtwork, _) in
       missingArtwork.matches(searchString)
     }
     .sorted {
       switch sortOrder {
       case .ascending:
-        return $0 < $1
+        return $0.0 < $1.0
       case .descending:
-        return $1 < $0
+        return $1.0 < $0.0
       }
     }
   }
@@ -78,6 +89,14 @@ struct DescriptionList: View {
     case compilations = "Compliations"
 
     var id: FilterCategory { self }
+  }
+
+  enum AvailabilityCategory: String, CaseIterable, Identifiable {
+    case all = "All"
+    case none = "No Artwork"
+    case partial = "Partial Artwork"
+
+    var id: AvailabilityCategory { self }
   }
 
   enum SortOrder: String, CaseIterable, Identifiable {
@@ -113,7 +132,7 @@ struct DescriptionList: View {
     NavigationView {
       VStack {
         List(selection: $selectedArtwork) {
-          ForEach(displayableArtworks) { missingArtwork in
+          ForEach(displayableArtworks, id: \.0) { (missingArtwork, availability) in
             NavigationLink {
               MissingImageList(
                 missingArtwork: missingArtwork, artworks: $artworks[missingArtwork]
@@ -145,7 +164,7 @@ struct DescriptionList: View {
                   }
                 }
             } label: {
-              Description(missingArtwork: missingArtwork)
+              Description(missingArtwork: missingArtwork, availability: availability)
             }
             .tag(missingArtwork)
           }
@@ -167,6 +186,11 @@ struct DescriptionList: View {
           Menu {
             Picker("Category", selection: $filter) {
               ForEach(FilterCategory.allCases) { category in
+                Text(category.rawValue).tag(category)
+              }
+            }
+            Picker("Artwork Availability", selection: $availabilityFilter) {
+              ForEach(AvailabilityCategory.allCases) { category in
                 Text(category.rawValue).tag(category)
               }
             }
@@ -193,7 +217,7 @@ struct DescriptionList: View {
   }
 
   fileprivate var searchSuggestions: [MissingArtwork] {
-    displayableArtworks.filter {
+    displayableArtworks.map { $0.0 }.filter {
       $0.description.localizedCaseInsensitiveContains(searchString)
         && $0.description.localizedCaseInsensitiveCompare(searchString) != .orderedSame
     }
@@ -211,8 +235,8 @@ struct DescriptionList_Previews: PreviewProvider {
     DescriptionList(
       fetcher: Fetcher(),
       missingArtworks: .constant([
-        MissingArtwork.ArtistAlbum("The Stooges", "Fun House"),
-        MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1")
+        (MissingArtwork.ArtistAlbum("The Stooges", "Fun House"), .none),
+        (MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1"), .some),
       ]),
       artworks: .constant([:]),
       showProgressOverlay: .constant(false)
