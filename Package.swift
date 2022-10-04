@@ -11,6 +11,6 @@ let package = Package(
     .library(name: "MissingArtwork", targets: ["MissingArtwork"])
   ],
   targets: [
-    .target(name: "MissingArtwork", dependencies: [], sources: [".", "Preview Content"])
+    .target(name: "MissingArtwork")
   ]
 )
