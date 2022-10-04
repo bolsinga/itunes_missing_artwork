@@ -8,6 +8,11 @@
 import Foundation
 import iTunesLibrary
 
+public enum ArtworkAvailability {
+  case some  // Some of the songs for the album have artwork
+  case none  // None of the songs for the album have artwork
+}
+
 public enum MissingArtwork: Hashable, Comparable {
   case ArtistAlbum(String, String)
   case CompilationAlbum(String)
@@ -44,16 +49,31 @@ extension MissingArtwork {
     self.simpleRepresentation.replacingOccurrences(of: " ", with: "_")
   }
 
-  public static func gatherMissingArtwork() throws -> [MissingArtwork] {
+  public static func gatherMissingArtwork() throws -> [(MissingArtwork, ArtworkAvailability)] {
     let itunes = try ITLibrary(apiVersion: "1.1")
-
-    return itunes.allMediaItems
+    let missingItems = itunes.allMediaItems
       .filter { $0.mediaKind == .kindSong }
       .filter { !$0.hasArtworkAvailable || $0.artwork == nil }
-      .compactMap {
-        $0.album.isCompilation
-          ? .CompilationAlbum($0.album.title!)
-          : .ArtistAlbum($0.artist?.name ?? $0.album.albumArtist!, $0.album.title ?? $0.title)
+
+    var partial = [MissingArtwork: Int]()  // MissingItem to missingArtworkCount
+
+    for missingItem in missingItems {
+      let missingArtwork =
+        missingItem.album.isCompilation
+        ? MissingArtwork.CompilationAlbum(missingItem.album.title!)
+        : .ArtistAlbum(
+          missingItem.artist?.name ?? missingItem.album.albumArtist!,
+          missingItem.album.title ?? missingItem.title)
+
+      if let trackCount = partial[missingArtwork] {
+        partial[missingArtwork] = trackCount - 1
+      } else {
+        partial[missingArtwork] = missingItem.album.trackCount - 1
       }
+    }
+
+    return partial.map { (key: MissingArtwork, value: Int) in
+      (key, value != 0 ? .some : .none)
+    }
   }
 }
