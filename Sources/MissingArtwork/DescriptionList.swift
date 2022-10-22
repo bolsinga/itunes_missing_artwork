@@ -20,6 +20,7 @@ protocol ArtworksFetcher {
 
 struct DescriptionList: View {
   let fetcher: ArtworksFetcher
+  let partialImageButtonBuilder: (_ missingArtwork: MissingArtwork) -> Button<Text>
 
   @State private var filter = FilterCategory.all
   @State private var sortOrder = SortOrder.ascending
@@ -166,6 +167,10 @@ struct DescriptionList: View {
             } label: {
               Description(missingArtwork: missingArtwork, availability: availability)
             }
+            .contextMenu {
+              self.partialImageButtonBuilder(missingArtwork)
+                .disabled(availability != .some)
+            }
             .tag(missingArtwork)
           }
         }
@@ -234,6 +239,9 @@ struct DescriptionList_Previews: PreviewProvider {
   static var previews: some View {
     DescriptionList(
       fetcher: Fetcher(),
+      partialImageButtonBuilder: { missingArtwork in
+        Button("") {}
+      },
       missingArtworks: .constant([
         (MissingArtwork.ArtistAlbum("The Stooges", "Fun House"), .none),
         (MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1"), .some),
@@ -244,6 +252,10 @@ struct DescriptionList_Previews: PreviewProvider {
 
     DescriptionList(
       fetcher: Fetcher(),
+      partialImageButtonBuilder: { missingArtwork in
+        Button("") {
+        }
+      },
       missingArtworks: .constant([]),
       artworks: .constant([:]),
       showProgressOverlay: .constant(true)

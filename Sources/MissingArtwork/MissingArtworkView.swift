@@ -34,11 +34,18 @@ public struct MissingArtworkView: View, ArtworksFetcher {
   @State private var missingArtworks: [(MissingArtwork, ArtworkAvailability)] = []
   @State private var artworks: [MissingArtwork: [Artwork]] = [:]
 
-  public init() {}
+  let partialImageButtonBuilder: (_ missingArtwork: MissingArtwork) -> Button<Text>
+
+  public init(
+    partialImageButtonBuilder: @escaping ((_ missingArtwork: MissingArtwork) -> Button<Text>)
+  ) {
+    self.partialImageButtonBuilder = partialImageButtonBuilder
+  }
 
   public var body: some View {
     DescriptionList(
       fetcher: self,
+      partialImageButtonBuilder: partialImageButtonBuilder,
       missingArtworks: $missingArtworks,
       artworks: $artworks,
       showProgressOverlay: $showProgressOverlay
@@ -99,6 +106,8 @@ public struct MissingArtworkView: View, ArtworksFetcher {
 
 struct MissingArtworkView_Previews: PreviewProvider {
   static var previews: some View {
-    MissingArtworkView()
+    MissingArtworkView { missingArtwork in
+      Button("") {}
+    }
   }
 }
