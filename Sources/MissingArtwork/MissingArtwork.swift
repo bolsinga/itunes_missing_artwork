@@ -36,7 +36,7 @@ extension MissingArtwork: Identifiable {
 }
 
 extension MissingArtwork {
-  var simpleRepresentation: String {
+  public var simpleRepresentation: String {
     switch self {
     case let .ArtistAlbum(artist, album):
       return "\(artist) \(album)"
