@@ -56,6 +56,8 @@ struct DescriptionList: View {
             return availabilityFilter == .partial
           case .none:
             return availabilityFilter == .none
+          case .unknown:
+            return availabilityFilter == .unknown
           }
         }())
     }.filter { (missingArtwork, _) in
@@ -96,6 +98,7 @@ struct DescriptionList: View {
     case all = "All"
     case none = "No Artwork"
     case partial = "Partial Artwork"
+    case unknown = "Unknown"
 
     var id: AvailabilityCategory { self }
   }
