@@ -56,9 +56,11 @@ extension MissingArtwork {
       .filter { $0.mediaKind == .kindSong }
       .filter { !$0.hasArtworkAvailable || $0.artwork == nil }
 
-    var partial = [MissingArtwork: Int]()  // MissingItem to missingArtworkCount
+    var partial = [MissingArtwork: [Int: Int]]()  // MissingItem : [discNumber: missingArtworkCount]
 
     for missingItem in missingItems {
+      let discNumber = missingItem.album.discNumber
+
       let missingArtwork =
         missingItem.album.isCompilation
         ? MissingArtwork.CompilationAlbum(missingItem.album.title!)
@@ -66,19 +68,20 @@ extension MissingArtwork {
           missingItem.artist?.name ?? missingItem.album.albumArtist!,
           missingItem.album.title ?? missingItem.title)
 
-      if let trackCount = partial[missingArtwork] {
-        partial[missingArtwork] = trackCount - 1
+      if let albumInfo = partial[missingArtwork], let trackCount = albumInfo[discNumber] {
+        partial[missingArtwork] = [discNumber: trackCount - 1]
       } else {
         let albumTrackCount = missingItem.album.trackCount
-        if albumTrackCount == 0 {
-          partial[missingArtwork] = -1
-        } else {
-          partial[missingArtwork] = albumTrackCount - 1
-        }
+        partial[missingArtwork] = [discNumber: albumTrackCount == 0 ? -1 : albumTrackCount - 1]
       }
     }
 
-    return partial.map { (key: MissingArtwork, value: Int) in
+    return partial.map { (key: MissingArtwork, albumInfo: [Int: Int]) in
+      let value = albumInfo.values.reduce(
+        0,
+        { x, y in
+          x + y
+        })
       return (key, value < 0 ? .unknown : (value == 0 ? .none : .some))
     }
   }
