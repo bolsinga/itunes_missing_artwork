@@ -40,6 +40,8 @@ public struct Description: View {
         Image(systemName: "questionmark.square.dashed")
       case .none:
         EmptyView()
+      case .unknown:
+        Image(systemName: "questionmark.square.dashed").foregroundColor(.red)
       }
     }
     .padding(.vertical, 4)

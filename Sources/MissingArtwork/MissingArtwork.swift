@@ -11,6 +11,7 @@ import iTunesLibrary
 public enum ArtworkAvailability {
   case some  // Some of the songs for the album have artwork
   case none  // None of the songs for the album have artwork
+  case unknown  // Unknown if some or none of the songs for the album have artwork. Usually because the album does not have a track count.
 }
 
 public enum MissingArtwork: Hashable, Comparable {
@@ -68,12 +69,17 @@ extension MissingArtwork {
       if let trackCount = partial[missingArtwork] {
         partial[missingArtwork] = trackCount - 1
       } else {
-        partial[missingArtwork] = missingItem.album.trackCount - 1
+        let albumTrackCount = missingItem.album.trackCount
+        if albumTrackCount == 0 {
+          partial[missingArtwork] = -1
+        } else {
+          partial[missingArtwork] = albumTrackCount - 1
+        }
       }
     }
 
     return partial.map { (key: MissingArtwork, value: Int) in
-      (key, value != 0 ? .some : .none)
+      return (key, value < 0 ? .unknown : (value == 0 ? .none : .some))
     }
   }
 }
