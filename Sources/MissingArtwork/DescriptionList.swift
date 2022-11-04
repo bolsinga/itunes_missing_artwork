@@ -18,9 +18,9 @@ protocol ArtworksFetcher {
   func fetchArtworks(missingArtwork: MissingArtwork, term: String) async throws -> [Artwork]
 }
 
-struct DescriptionList: View {
+struct DescriptionList<Content: View>: View {
   let fetcher: ArtworksFetcher
-  let partialImageButtonBuilder: (_ missingArtwork: MissingArtwork) -> Button<Text>
+  @ViewBuilder let partialImageContextMenuBuilder: (_ missingArtwork: MissingArtwork) -> Content
 
   @State private var filter = FilterCategory.all
   @State private var sortOrder = SortOrder.ascending
@@ -171,7 +171,7 @@ struct DescriptionList: View {
               Description(missingArtwork: missingArtwork, availability: availability)
             }
             .contextMenu {
-              self.partialImageButtonBuilder(missingArtwork)
+              self.partialImageContextMenuBuilder(missingArtwork)
                 .disabled(availability != .some)
             }
             .tag(missingArtwork)
@@ -242,7 +242,7 @@ struct DescriptionList_Previews: PreviewProvider {
   static var previews: some View {
     DescriptionList(
       fetcher: Fetcher(),
-      partialImageButtonBuilder: { missingArtwork in
+      partialImageContextMenuBuilder: { missingArtwork in
         Button("") {}
       },
       missingArtworks: .constant([
@@ -255,7 +255,7 @@ struct DescriptionList_Previews: PreviewProvider {
 
     DescriptionList(
       fetcher: Fetcher(),
-      partialImageButtonBuilder: { missingArtwork in
+      partialImageContextMenuBuilder: { missingArtwork in
         Button("") {
         }
       },
