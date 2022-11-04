@@ -8,7 +8,7 @@
 import MusicKit
 import SwiftUI
 
-public struct MissingArtworkView: View, ArtworksFetcher {
+public struct MissingArtworkView<Content: View>: View, ArtworksFetcher {
   struct FetchError: LocalizedError {
     let nsError: NSError
 
@@ -34,18 +34,20 @@ public struct MissingArtworkView: View, ArtworksFetcher {
   @State private var missingArtworks: [(MissingArtwork, ArtworkAvailability)] = []
   @State private var artworks: [MissingArtwork: [Artwork]] = [:]
 
-  let partialImageButtonBuilder: (_ missingArtwork: MissingArtwork) -> Button<Text>
+  @ViewBuilder let partialImageContextMenuBuilder: (_ missingArtwork: MissingArtwork) -> Content
 
   public init(
-    partialImageButtonBuilder: @escaping ((_ missingArtwork: MissingArtwork) -> Button<Text>)
+    @ViewBuilder partialImageContextMenuBuilder: @escaping (
+      (_ missingArtwork: MissingArtwork) -> Content
+    )
   ) {
-    self.partialImageButtonBuilder = partialImageButtonBuilder
+    self.partialImageContextMenuBuilder = partialImageContextMenuBuilder
   }
 
   public var body: some View {
     DescriptionList(
       fetcher: self,
-      partialImageButtonBuilder: partialImageButtonBuilder,
+      partialImageContextMenuBuilder: partialImageContextMenuBuilder,
       missingArtworks: $missingArtworks,
       artworks: $artworks,
       showProgressOverlay: $showProgressOverlay
@@ -106,8 +108,8 @@ public struct MissingArtworkView: View, ArtworksFetcher {
 
 struct MissingArtworkView_Previews: PreviewProvider {
   static var previews: some View {
-    MissingArtworkView { missingArtwork in
+    MissingArtworkView(partialImageContextMenuBuilder: { missingArtwork in
       Button("") {}
-    }
+    })
   }
 }
