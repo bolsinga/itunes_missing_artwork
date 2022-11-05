@@ -13,7 +13,6 @@ extension Artwork: Identifiable {
 }
 
 struct MissingImageList: View {
-  let missingArtwork: MissingArtwork
   @Binding var artworks: [Artwork]?
 
   var body: some View {
@@ -29,7 +28,6 @@ struct MissingImageList_Previews: PreviewProvider {
   static var previews: some View {
     Group {
       MissingImageList(
-        missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House"),
         artworks: .constant([]))
     }
   }

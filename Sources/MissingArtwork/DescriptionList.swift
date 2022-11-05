@@ -138,9 +138,8 @@ struct DescriptionList<Content: View>: View {
         List(selection: $selectedArtwork) {
           ForEach(displayableArtworks, id: \.0) { (missingArtwork, availability) in
             NavigationLink {
-              MissingImageList(
-                missingArtwork: missingArtwork, artworks: $artworks[missingArtwork]
-              ).overlay(imageListOverlay)
+              MissingImageList(artworks: $artworks[missingArtwork])
+                .overlay(imageListOverlay)
                 .task {
                   missingImageListOverlayMessage = nil
 
