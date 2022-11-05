@@ -162,8 +162,11 @@ struct DescriptionList<Content: View>: View {
                         "No image for \(missingArtwork.description)"
                     }
                   } catch {
-                    missingImageListOverlayMessage =
-                      "Error retrieving \(missingArtwork.description). Error: \(String(describing: error.localizedDescription))"
+                    if missingArtwork == selectedArtwork {
+                      // only show this if the error occurred with the currently selected artwork.
+                      missingImageListOverlayMessage =
+                        "Error retrieving \(missingArtwork.description). Error: \(String(describing: error.localizedDescription))"
+                    }
                   }
                 }
             } label: {
