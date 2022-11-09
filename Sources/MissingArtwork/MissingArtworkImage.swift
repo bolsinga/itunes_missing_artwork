@@ -5,31 +5,61 @@
 //  Created by Greg Bolsinga on 11/8/22.
 //
 
+import AppKit
 import MusicKit
 import SwiftUI
 
 struct MissingArtworkImage: View {
   let artwork: Artwork
-
   let width: CGFloat
+
+  @State private var nsImage: NSImage? = nil
+  @State private var showProgressOverlay: Bool = true
+  @State private var error: Error? = nil
+
+  public init(artwork: Artwork, width: CGFloat) {
+    self.artwork = artwork
+    self.width = width
+  }
+
+  @ViewBuilder private var overlay: some View {
+    if showProgressOverlay {
+      if let backgroundColor = artwork.backgroundColor {
+        Color(cgColor: backgroundColor)
+          .frame(width: width, height: CGFloat(artwork.maximumHeight))
+      } else {
+        ProgressView()
+      }
+    } else if let error = error {
+      Text("Unable to load image: \(error.localizedDescription)")
+    }
+  }
 
   var body: some View {
     if let url = artwork.url(width: artwork.maximumWidth, height: artwork.maximumHeight) {
-      AsyncImage(url: url) { phase in
-        if let image = phase.image {
-          image.resizable().aspectRatio(contentMode: .fit)
-        } else if let error = phase.error {
-          Text("Unable to load image: \(error.localizedDescription)")
+      Group {
+        if let nsImage = nsImage {
+          Image(nsImage: nsImage)
+            .resizable().aspectRatio(contentMode: .fit)
         } else {
-          if let backgroundColor = artwork.backgroundColor {
-            Color(cgColor: backgroundColor)
-              .frame(width: width, height: CGFloat(artwork.maximumHeight))
-          } else {
-            ProgressView()
-          }
+          Text("Loading!")
         }
       }
+      .overlay(self.overlay)
       .frame(width: width)
+      .task {
+        showProgressOverlay = true
+        defer {
+          showProgressOverlay = false
+        }
+
+        do {
+          let (data, _) = try await URLSession.shared.data(from: url)
+          nsImage = NSImage.init(data: data)
+        } catch {
+          self.error = error
+        }
+      }
     } else {
       Text("Unable to get URL for Artwork")
     }
