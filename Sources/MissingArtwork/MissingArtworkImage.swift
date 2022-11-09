@@ -14,6 +14,24 @@ struct MissingArtworkImage: View {
   let width: CGFloat
 
   var body: some View {
-    ArtworkImage(artwork, width: width)
+    if let url = artwork.url(width: artwork.maximumWidth, height: artwork.maximumHeight) {
+      AsyncImage(url: url) { phase in
+        if let image = phase.image {
+          image.resizable().aspectRatio(contentMode: .fit)
+        } else if let error = phase.error {
+          Text("Unable to load image: \(error.localizedDescription)")
+        } else {
+          if let backgroundColor = artwork.backgroundColor {
+            Color(cgColor: backgroundColor)
+              .frame(width: width, height: CGFloat(artwork.maximumHeight))
+          } else {
+            ProgressView()
+          }
+        }
+      }
+      .frame(width: width)
+    } else {
+      Text("Unable to get URL for Artwork")
+    }
   }
 }
