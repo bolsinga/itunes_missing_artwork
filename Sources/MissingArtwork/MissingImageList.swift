@@ -17,8 +17,12 @@ struct MissingImageList: View {
 
   var body: some View {
     GeometryReader { proxy in
-      List(self.artworks ?? []) { artwork in
-        MissingArtworkImage(artwork: artwork, width: proxy.size.width)
+      ScrollView {
+        VStack {
+          ForEach(self.artworks ?? []) { artwork in
+            MissingArtworkImage(artwork: artwork, width: proxy.size.width)
+          }
+        }
       }
     }
   }
