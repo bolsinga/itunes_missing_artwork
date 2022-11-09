@@ -18,7 +18,7 @@ struct MissingImageList: View {
   var body: some View {
     GeometryReader { proxy in
       List(self.artworks ?? []) { artwork in
-        ArtworkImage(artwork, width: proxy.size.width)
+        MissingArtworkImage(artwork: artwork, width: proxy.size.width)
       }
     }
   }
