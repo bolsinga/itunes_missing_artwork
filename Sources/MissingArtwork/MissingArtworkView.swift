@@ -32,7 +32,6 @@ public struct MissingArtworkView<Content: View>: View, ArtworksFetcher {
   @State private var fetchError: FetchError?
 
   @State private var missingArtworks: [(MissingArtwork, ArtworkAvailability)] = []
-  @State private var artworks: [MissingArtwork: [Artwork]] = [:]
 
   @ViewBuilder let partialImageContextMenuBuilder: (_ missingArtwork: MissingArtwork) -> Content
 
@@ -49,7 +48,6 @@ public struct MissingArtworkView<Content: View>: View, ArtworksFetcher {
       fetcher: self,
       partialImageContextMenuBuilder: partialImageContextMenuBuilder,
       missingArtworks: $missingArtworks,
-      artworks: $artworks,
       showProgressOverlay: $showProgressOverlay
     )
     .alert(
