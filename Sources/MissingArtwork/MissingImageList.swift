@@ -15,12 +15,16 @@ extension Artwork: Identifiable {
 struct MissingImageList: View {
   @Binding var artworks: [Artwork]?
 
+  @State var current: Artwork?
+
   var body: some View {
     GeometryReader { proxy in
       ScrollView {
         VStack {
           ForEach(self.artworks ?? []) { artwork in
             MissingArtworkImage(artwork: artwork, width: proxy.size.width)
+              .onTapGesture { current = artwork }
+              .border(.selection, width: current == artwork ? 2.0 : 0)
           }
         }
       }
