@@ -33,9 +33,10 @@ struct DescriptionList<Content: View>: View {
   @State var showMissingImageListOverlayProgress: Bool = false
   @State private var missingImageListOverlayMessage: String?
 
+  @State private var selectedArtworks: [MissingArtwork: Artwork] = [:]
+
   @Binding var missingArtworks: [(MissingArtwork, ArtworkAvailability)]
   @Binding var artworks: [MissingArtwork: [Artwork]]
-  @Binding var selectedArtworks: [MissingArtwork: Artwork]
 
   @Binding var showProgressOverlay: Bool
 
@@ -257,7 +258,6 @@ struct DescriptionList_Previews: PreviewProvider {
         (MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1"), .some),
       ]),
       artworks: .constant([:]),
-      selectedArtworks: .constant([:]),
       showProgressOverlay: .constant(false)
     )
 
@@ -269,7 +269,6 @@ struct DescriptionList_Previews: PreviewProvider {
       },
       missingArtworks: .constant([]),
       artworks: .constant([:]),
-      selectedArtworks: .constant([:]),
       showProgressOverlay: .constant(true)
     )
   }
