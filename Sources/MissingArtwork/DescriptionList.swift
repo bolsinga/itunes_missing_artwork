@@ -35,6 +35,8 @@ struct DescriptionList<Content: View>: View {
 
   @Binding var missingArtworks: [(MissingArtwork, ArtworkAvailability)]
   @Binding var artworks: [MissingArtwork: [Artwork]]
+  @Binding var selectedArtworks: [MissingArtwork: Artwork]
+
   @Binding var showProgressOverlay: Bool
 
   var displayableArtworks: [(MissingArtwork, ArtworkAvailability)] {
@@ -138,37 +140,40 @@ struct DescriptionList<Content: View>: View {
         List(selection: $selectedArtwork) {
           ForEach(displayableArtworks, id: \.0) { (missingArtwork, availability) in
             NavigationLink {
-              MissingImageList(artworks: $artworks[missingArtwork])
-                .overlay(imageListOverlay)
-                .task {
-                  missingImageListOverlayMessage = nil
+              MissingImageList(
+                artworks: $artworks[missingArtwork],
+                selectedArtwork: $selectedArtworks[missingArtwork]
+              )
+              .overlay(imageListOverlay)
+              .task {
+                missingImageListOverlayMessage = nil
 
-                  guard artworks[missingArtwork] == nil else {
-                    return
+                guard artworks[missingArtwork] == nil else {
+                  return
+                }
+
+                showMissingImageListOverlayProgress = true
+                defer {
+                  showMissingImageListOverlayProgress = false
+                }
+
+                do {
+                  artworks[missingArtwork] = try await fetcher.fetchArtworks(
+                    missingArtwork: missingArtwork, term: missingArtwork.simpleRepresentation
+                  )
+
+                  if let items = artworks[missingArtwork], items.isEmpty {
+                    missingImageListOverlayMessage =
+                      "No image for \(missingArtwork.description)"
                   }
-
-                  showMissingImageListOverlayProgress = true
-                  defer {
-                    showMissingImageListOverlayProgress = false
-                  }
-
-                  do {
-                    artworks[missingArtwork] = try await fetcher.fetchArtworks(
-                      missingArtwork: missingArtwork, term: missingArtwork.simpleRepresentation
-                    )
-
-                    if let items = artworks[missingArtwork], items.isEmpty {
-                      missingImageListOverlayMessage =
-                        "No image for \(missingArtwork.description)"
-                    }
-                  } catch {
-                    if missingArtwork == selectedArtwork {
-                      // only show this if the error occurred with the currently selected artwork.
-                      missingImageListOverlayMessage =
-                        "Error retrieving \(missingArtwork.description). Error: \(String(describing: error.localizedDescription))"
-                    }
+                } catch {
+                  if missingArtwork == selectedArtwork {
+                    // only show this if the error occurred with the currently selected artwork.
+                    missingImageListOverlayMessage =
+                      "Error retrieving \(missingArtwork.description). Error: \(String(describing: error.localizedDescription))"
                   }
                 }
+              }
             } label: {
               Description(missingArtwork: missingArtwork, availability: availability)
             }
@@ -252,6 +257,7 @@ struct DescriptionList_Previews: PreviewProvider {
         (MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1"), .some),
       ]),
       artworks: .constant([:]),
+      selectedArtworks: .constant([:]),
       showProgressOverlay: .constant(false)
     )
 
@@ -263,6 +269,7 @@ struct DescriptionList_Previews: PreviewProvider {
       },
       missingArtworks: .constant([]),
       artworks: .constant([:]),
+      selectedArtworks: .constant([:]),
       showProgressOverlay: .constant(true)
     )
   }

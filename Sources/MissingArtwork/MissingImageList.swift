@@ -15,7 +15,7 @@ extension Artwork: Identifiable {
 struct MissingImageList: View {
   @Binding var artworks: [Artwork]?
 
-  @State var current: Artwork?
+  @Binding var selectedArtwork: Artwork?
 
   var body: some View {
     GeometryReader { proxy in
@@ -23,8 +23,8 @@ struct MissingImageList: View {
         VStack {
           ForEach(self.artworks ?? []) { artwork in
             MissingArtworkImage(artwork: artwork, width: proxy.size.width)
-              .onTapGesture { current = artwork }
-              .border(.selection, width: current == artwork ? 2.0 : 0)
+              .onTapGesture { selectedArtwork = artwork }
+              .border(.selection, width: selectedArtwork == artwork ? 2.0 : 0)
           }
         }
       }
@@ -36,7 +36,8 @@ struct MissingImageList_Previews: PreviewProvider {
   static var previews: some View {
     Group {
       MissingImageList(
-        artworks: .constant([]))
+        artworks: .constant([]),
+        selectedArtwork: .constant(nil))
     }
   }
 }
