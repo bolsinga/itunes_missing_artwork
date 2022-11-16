@@ -111,7 +111,7 @@ struct AuthorizationView: View {
 }
 
 extension View {
-  func musicKitAuthorizationSheet() -> some View {
+  @MainActor func musicKitAuthorizationSheet() -> some View {
     modifier(AuthorizationView.SheetPresentationModifier())
   }
 }
