@@ -5,6 +5,7 @@
 //  Created by Greg Bolsinga on 11/8/22.
 //
 
+@preconcurrency import Foundation
 import AppKit
 import MusicKit
 import SwiftUI
