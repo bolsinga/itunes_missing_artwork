@@ -8,13 +8,13 @@
 import Foundation
 import iTunesLibrary
 
-public enum ArtworkAvailability {
+public enum ArtworkAvailability: Sendable {
   case some  // Some of the songs for the album have artwork
   case none  // None of the songs for the album have artwork
   case unknown  // Unknown if some or none of the songs for the album have artwork. Usually because the album does not have a track count.
 }
 
-public enum MissingArtwork: Hashable, Comparable {
+public enum MissingArtwork: Hashable, Comparable, Sendable {
   case ArtistAlbum(String, String)
   case CompilationAlbum(String)
 }
