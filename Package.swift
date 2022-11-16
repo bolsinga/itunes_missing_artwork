@@ -11,6 +11,6 @@ let package = Package(
     .library(name: "MissingArtwork", targets: ["MissingArtwork"])
   ],
   targets: [
-    .target(name: "MissingArtwork")
+    .target(name: "MissingArtwork", swiftSettings: [.unsafeFlags(["-strict-concurrency=targeted"])])
   ]
 )
