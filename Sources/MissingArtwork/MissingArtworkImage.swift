@@ -18,11 +18,6 @@ struct MissingArtworkImage: View {
   @State private var showProgressOverlay: Bool = true
   @State private var error: Error? = nil
 
-  public init(artwork: Artwork, width: CGFloat) {
-    self.artwork = artwork
-    self.width = width
-  }
-
   @ViewBuilder private var overlay: some View {
     if showProgressOverlay {
       if let backgroundColor = artwork.backgroundColor {
