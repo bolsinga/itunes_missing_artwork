@@ -13,19 +13,19 @@ extension Artwork: Identifiable {
 }
 
 struct MissingImageList: View {
-  @Binding var artworks: [Artwork]?
+  @Binding var artworkImages: [ArtworkImage]?
 
-  @Binding var selectedArtwork: Artwork?
+  @Binding var selectedArtworkImage: ArtworkImage?
 
   var body: some View {
     GeometryReader { proxy in
       ScrollView {
         VStack {
-          if let artworks = artworks, !artworks.isEmpty {
-            ForEach(artworks) { artwork in
-              MissingArtworkImage(artwork: artwork, width: proxy.size.width)
-                .onTapGesture { selectedArtwork = artwork }
-                .border(.selection, width: selectedArtwork == artwork ? 2.0 : 0)
+          if let artworkImages = artworkImages, !artworkImages.isEmpty {
+            ForEach(artworkImages, id: \.artwork) { artworkImage in
+              MissingArtworkImage(artwork: artworkImage.artwork, width: proxy.size.width)
+                .onTapGesture { selectedArtworkImage = artworkImage }
+                .border(.selection, width: selectedArtworkImage == artworkImage ? 2.0 : 0)
             }
           }
         }
@@ -38,8 +38,8 @@ struct MissingImageList_Previews: PreviewProvider {
   static var previews: some View {
     Group {
       MissingImageList(
-        artworks: .constant([]),
-        selectedArtwork: .constant(nil))
+        artworkImages: .constant([]),
+        selectedArtworkImage: .constant(nil))
     }
   }
 }

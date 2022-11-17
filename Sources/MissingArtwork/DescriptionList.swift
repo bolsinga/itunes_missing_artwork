@@ -33,8 +33,8 @@ struct DescriptionList<Content: View>: View {
   @State var showMissingImageListOverlayProgress: Bool = false
   @State private var missingImageListOverlayMessage: String?
 
-  @State private var selectedArtworks: [MissingArtwork: Artwork] = [:]
-  @State var artworks: [MissingArtwork: [Artwork]] = [:]
+  @State private var selectedArtworkImages: [MissingArtwork: ArtworkImage] = [:]
+  @State var artworkImages: [MissingArtwork: [ArtworkImage]] = [:]
 
   @Binding var missingArtworks: [(MissingArtwork, ArtworkAvailability)]
 
@@ -68,9 +68,9 @@ struct DescriptionList<Content: View>: View {
       case .all:
         return true
       case .notFound:
-        return artworks[missingArtwork]?.count == 0
+        return artworkImages[missingArtwork]?.count == 0
       case .found:
-        return artworks[missingArtwork]?.count ?? 0 > 0
+        return artworkImages[missingArtwork]?.count ?? 0 > 0
       }
     }.filter { (missingArtwork, _) in
       missingArtwork.matches(searchString)
@@ -142,14 +142,14 @@ struct DescriptionList<Content: View>: View {
           ForEach(displayableArtworks, id: \.0) { (missingArtwork, availability) in
             NavigationLink {
               MissingImageList(
-                artworks: $artworks[missingArtwork],
-                selectedArtwork: $selectedArtworks[missingArtwork]
+                artworkImages: $artworkImages[missingArtwork],
+                selectedArtworkImage: $selectedArtworkImages[missingArtwork]
               )
               .overlay(imageListOverlay)
               .task {
                 missingImageListOverlayMessage = nil
 
-                guard artworks[missingArtwork] == nil else {
+                guard artworkImages[missingArtwork] == nil else {
                   return
                 }
 
@@ -159,11 +159,11 @@ struct DescriptionList<Content: View>: View {
                 }
 
                 do {
-                  artworks[missingArtwork] = try await fetcher.fetchArtworks(
+                  artworkImages[missingArtwork] = try await fetcher.fetchArtworks(
                     missingArtwork: missingArtwork, term: missingArtwork.simpleRepresentation
-                  )
+                  ).map { ArtworkImage(artwork: $0) }
 
-                  if let items = artworks[missingArtwork], items.isEmpty {
+                  if let items = artworkImages[missingArtwork], items.isEmpty {
                     missingImageListOverlayMessage =
                       "No image for \(missingArtwork.description)"
                   }
