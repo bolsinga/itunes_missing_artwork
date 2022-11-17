@@ -21,10 +21,12 @@ struct MissingImageList: View {
     GeometryReader { proxy in
       ScrollView {
         VStack {
-          ForEach(self.artworks ?? []) { artwork in
-            MissingArtworkImage(artwork: artwork, width: proxy.size.width)
-              .onTapGesture { selectedArtwork = artwork }
-              .border(.selection, width: selectedArtwork == artwork ? 2.0 : 0)
+          if let artworks = artworks, !artworks.isEmpty {
+            ForEach(artworks) { artwork in
+              MissingArtworkImage(artwork: artwork, width: proxy.size.width)
+                .onTapGesture { selectedArtwork = artwork }
+                .border(.selection, width: selectedArtwork == artwork ? 2.0 : 0)
+            }
           }
         }
       }
