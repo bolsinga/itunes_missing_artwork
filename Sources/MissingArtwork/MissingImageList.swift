@@ -21,7 +21,7 @@ struct MissingImageList: View {
     GeometryReader { proxy in
       ScrollView {
         VStack {
-          ForEach(artworkImages, id: \.artwork) { artworkImage in
+          ForEach($artworkImages, id: \.artwork) { $artworkImage in
             MissingArtworkImage(artwork: artworkImage.artwork, width: proxy.size.width)
               .onTapGesture { selectedArtworkImage = artworkImage }
               .border(.selection, width: selectedArtworkImage == artworkImage ? 2.0 : 0)
