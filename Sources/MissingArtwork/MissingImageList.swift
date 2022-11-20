@@ -13,7 +13,7 @@ extension Artwork: Identifiable {
 }
 
 struct MissingImageList: View {
-  @Binding var artworkImages: [ArtworkImage]?
+  @Binding var artworkImages: [ArtworkImage]
 
   @Binding var selectedArtworkImage: ArtworkImage?
 
@@ -21,12 +21,10 @@ struct MissingImageList: View {
     GeometryReader { proxy in
       ScrollView {
         VStack {
-          if let artworkImages = artworkImages, !artworkImages.isEmpty {
-            ForEach(artworkImages, id: \.artwork) { artworkImage in
-              MissingArtworkImage(artwork: artworkImage.artwork, width: proxy.size.width)
-                .onTapGesture { selectedArtworkImage = artworkImage }
-                .border(.selection, width: selectedArtworkImage == artworkImage ? 2.0 : 0)
-            }
+          ForEach(artworkImages, id: \.artwork) { artworkImage in
+            MissingArtworkImage(artwork: artworkImage.artwork, width: proxy.size.width)
+              .onTapGesture { selectedArtworkImage = artworkImage }
+              .border(.selection, width: selectedArtworkImage == artworkImage ? 2.0 : 0)
           }
         }
       }
