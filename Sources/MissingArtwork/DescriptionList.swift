@@ -18,6 +18,16 @@ protocol ArtworksFetcher {
   func fetchArtworks(missingArtwork: MissingArtwork, term: String) async throws -> [Artwork]
 }
 
+extension Binding {
+  public func defaultValue<T>(_ value: T) -> Binding<T> where Value == T? {
+    Binding<T> {
+      wrappedValue ?? value
+    } set: {
+      wrappedValue = $0
+    }
+  }
+}
+
 struct DescriptionList<Content: View>: View {
   let fetcher: ArtworksFetcher
   @ViewBuilder let partialImageContextMenuBuilder: (_ missingArtwork: MissingArtwork) -> Content
@@ -142,7 +152,7 @@ struct DescriptionList<Content: View>: View {
           ForEach(displayableArtworks, id: \.0) { (missingArtwork, availability) in
             NavigationLink {
               MissingImageList(
-                artworkImages: $artworkImages[missingArtwork],
+                artworkImages: $artworkImages[missingArtwork].defaultValue([]),
                 selectedArtworkImage: $selectedArtworkImages[missingArtwork]
               )
               .overlay(imageListOverlay)
