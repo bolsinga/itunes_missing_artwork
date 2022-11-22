@@ -22,9 +22,11 @@ struct MissingImageList: View {
       ScrollView {
         VStack {
           ForEach($artworkImages, id: \.artwork) { $artworkImage in
-            MissingArtworkImage(artwork: artworkImage.artwork, width: proxy.size.width)
-              .onTapGesture { selectedArtworkImage = artworkImage }
-              .border(.selection, width: selectedArtworkImage == artworkImage ? 2.0 : 0)
+            MissingArtworkImage(
+              artwork: artworkImage.artwork, width: proxy.size.width, nsImage: $artworkImage.nsImage
+            )
+            .onTapGesture { selectedArtworkImage = artworkImage }
+            .border(.selection, width: selectedArtworkImage == artworkImage ? 2.0 : 0)
           }
         }
       }

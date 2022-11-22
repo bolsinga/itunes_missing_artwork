@@ -5,7 +5,7 @@
 //  Created by Greg Bolsinga on 11/8/22.
 //
 
-@preconcurrency import AppKit
+@preconcurrency import Foundation
 import MusicKit
 import SwiftUI
 
@@ -13,7 +13,7 @@ struct MissingArtworkImage: View {
   let artwork: Artwork
   let width: CGFloat
 
-  @State private var nsImage: NSImage? = nil
+  @Binding var nsImage: NSImage?
   @State private var showProgressOverlay: Bool = true
   @State private var error: Error? = nil
 
