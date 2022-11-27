@@ -31,7 +31,7 @@ extension Binding {
 struct DescriptionList<Content: View>: View {
   let fetcher: ArtworksFetcher
 
-  typealias ImageContextMenuBuilder = (MissingArtwork, ArtworkAvailability) -> Content
+  typealias ImageContextMenuBuilder = (MissingArtwork, ArtworkAvailability, NSImage?) -> Content
 
   @ViewBuilder let imageContextMenuBuilder: ImageContextMenuBuilder
 
@@ -192,7 +192,8 @@ struct DescriptionList<Content: View>: View {
               Description(missingArtwork: missingArtwork, availability: availability)
             }
             .contextMenu {
-              self.imageContextMenuBuilder(missingArtwork, availability)
+              self.imageContextMenuBuilder(
+                missingArtwork, availability, selectedArtworkImages[missingArtwork]?.nsImage)
             }
             .tag(missingArtwork)
           }
@@ -262,7 +263,7 @@ struct DescriptionList_Previews: PreviewProvider {
   static var previews: some View {
     DescriptionList(
       fetcher: Fetcher(),
-      imageContextMenuBuilder: { missingArtwork, availability in
+      imageContextMenuBuilder: { missingArtwork, availability, image in
         Button("1") {}
         Button("2") {}
       },
@@ -275,7 +276,7 @@ struct DescriptionList_Previews: PreviewProvider {
 
     DescriptionList(
       fetcher: Fetcher(),
-      imageContextMenuBuilder: { missingArtwork, availability in
+      imageContextMenuBuilder: { missingArtwork, availability, image in
         Button("1") {}
         Button("2") {}
       },

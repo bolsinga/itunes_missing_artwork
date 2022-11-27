@@ -33,7 +33,8 @@ public struct MissingArtworkView<Content: View>: View, ArtworksFetcher {
 
   @State private var missingArtworks: [(MissingArtwork, ArtworkAvailability)] = []
 
-  public typealias ImageContextMenuBuilder = (MissingArtwork, ArtworkAvailability) -> Content
+  public typealias ImageContextMenuBuilder = (MissingArtwork, ArtworkAvailability, NSImage?) ->
+    Content
 
   @ViewBuilder let imageContextMenuBuilder: ImageContextMenuBuilder
 
@@ -104,7 +105,7 @@ public struct MissingArtworkView<Content: View>: View, ArtworksFetcher {
 
 struct MissingArtworkView_Previews: PreviewProvider {
   static var previews: some View {
-    MissingArtworkView(imageContextMenuBuilder: { missingArtwork, availability in
+    MissingArtworkView(imageContextMenuBuilder: { missingArtwork, availability, image in
       Button("1") {}
       Button("2") {}
     })
