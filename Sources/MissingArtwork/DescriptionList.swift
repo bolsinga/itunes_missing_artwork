@@ -30,7 +30,10 @@ extension Binding {
 
 struct DescriptionList<Content: View>: View {
   let fetcher: ArtworksFetcher
-  @ViewBuilder let partialImageContextMenuBuilder: (_ missingArtwork: MissingArtwork) -> Content
+
+  typealias ImageContextMenuBuilder = (MissingArtwork) -> Content
+
+  @ViewBuilder let imageContextMenuBuilder: ImageContextMenuBuilder
 
   @State private var filter = FilterCategory.all
   @State private var sortOrder = SortOrder.ascending
@@ -189,7 +192,7 @@ struct DescriptionList<Content: View>: View {
               Description(missingArtwork: missingArtwork, availability: availability)
             }
             .contextMenu {
-              self.partialImageContextMenuBuilder(missingArtwork)
+              self.imageContextMenuBuilder(missingArtwork)
                 .disabled(availability != .some)
             }
             .tag(missingArtwork)
@@ -260,8 +263,9 @@ struct DescriptionList_Previews: PreviewProvider {
   static var previews: some View {
     DescriptionList(
       fetcher: Fetcher(),
-      partialImageContextMenuBuilder: { missingArtwork in
-        Button("") {}
+      imageContextMenuBuilder: { missingArtwork in
+        Button("1") {}
+        Button("2") {}
       },
       missingArtworks: .constant([
         (MissingArtwork.ArtistAlbum("The Stooges", "Fun House"), .none),
@@ -272,9 +276,9 @@ struct DescriptionList_Previews: PreviewProvider {
 
     DescriptionList(
       fetcher: Fetcher(),
-      partialImageContextMenuBuilder: { missingArtwork in
-        Button("") {
-        }
+      imageContextMenuBuilder: { missingArtwork in
+        Button("1") {}
+        Button("2") {}
       },
       missingArtworks: .constant([]),
       showProgressOverlay: .constant(true)

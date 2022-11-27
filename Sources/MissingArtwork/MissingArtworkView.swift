@@ -33,20 +33,18 @@ public struct MissingArtworkView<Content: View>: View, ArtworksFetcher {
 
   @State private var missingArtworks: [(MissingArtwork, ArtworkAvailability)] = []
 
-  @ViewBuilder let partialImageContextMenuBuilder: (_ missingArtwork: MissingArtwork) -> Content
+  public typealias ImageContextMenuBuilder = (MissingArtwork) -> Content
 
-  public init(
-    @ViewBuilder partialImageContextMenuBuilder: @escaping (
-      (_ missingArtwork: MissingArtwork) -> Content
-    )
-  ) {
-    self.partialImageContextMenuBuilder = partialImageContextMenuBuilder
+  @ViewBuilder let imageContextMenuBuilder: ImageContextMenuBuilder
+
+  public init(@ViewBuilder imageContextMenuBuilder: @escaping ImageContextMenuBuilder) {
+    self.imageContextMenuBuilder = imageContextMenuBuilder
   }
 
   public var body: some View {
     DescriptionList(
       fetcher: self,
-      partialImageContextMenuBuilder: partialImageContextMenuBuilder,
+      imageContextMenuBuilder: imageContextMenuBuilder,
       missingArtworks: $missingArtworks,
       showProgressOverlay: $showProgressOverlay
     )
@@ -106,8 +104,9 @@ public struct MissingArtworkView<Content: View>: View, ArtworksFetcher {
 
 struct MissingArtworkView_Previews: PreviewProvider {
   static var previews: some View {
-    MissingArtworkView(partialImageContextMenuBuilder: { missingArtwork in
-      Button("") {}
+    MissingArtworkView(imageContextMenuBuilder: { missingArtwork in
+      Button("1") {}
+      Button("2") {}
     })
   }
 }
