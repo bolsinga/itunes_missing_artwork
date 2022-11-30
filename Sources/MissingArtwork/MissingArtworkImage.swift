@@ -36,6 +36,13 @@ struct MissingArtworkImage: View {
         if let nsImage = nsImage {
           Image(nsImage: nsImage)
             .resizable().aspectRatio(contentMode: .fit)
+            .contextMenu {
+              Button("Copy") {
+                let pasteboard = NSPasteboard.general
+                pasteboard.clearContents()
+                pasteboard.writeObjects([nsImage])
+              }
+            }
         } else {
           Text("Loading!")
         }
