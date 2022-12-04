@@ -59,7 +59,11 @@ extension MissingArtwork {
     var partial = [MissingArtwork: [Int: Int]]()  // MissingItem : [discNumber: missingArtworkCount]
 
     for missingItem in missingItems {
-      let discNumber = missingItem.album.discNumber
+      var discNumber = missingItem.album.discNumber
+      let discCount = missingItem.album.discCount
+      if discNumber == 1, discCount == 1 {
+        discNumber = 0 // just use 0 for debugging ease.
+      }
 
       let missingArtwork =
         missingItem.album.isCompilation
