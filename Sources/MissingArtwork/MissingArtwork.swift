@@ -68,9 +68,18 @@ extension MissingArtwork {
           missingItem.artist?.name ?? missingItem.album.albumArtist!,
           missingItem.album.title ?? missingItem.title)
 
-      if let albumInfo = partial[missingArtwork], let trackCount = albumInfo[discNumber] {
-        partial[missingArtwork] = [discNumber: trackCount - 1]
+      if let albumInfo = partial[missingArtwork] {
+        // We have tracked this missingArtwork already
+        if let trackCount = albumInfo[discNumber] {
+          // We have tracked this missingArtwork and discNumber
+          partial[missingArtwork]?[discNumber] = trackCount - 1
+        } else {
+          // We have tracked this missingArtwork but not this discNumber
+          let albumTrackCount = missingItem.album.trackCount
+          partial[missingArtwork]?[discNumber] = albumTrackCount == 0 ? -1 : albumTrackCount - 1
+        }
       } else {
+        // We have not tracked this missingArtwork.
         let albumTrackCount = missingItem.album.trackCount
         partial[missingArtwork] = [discNumber: albumTrackCount == 0 ? -1 : albumTrackCount - 1]
       }
