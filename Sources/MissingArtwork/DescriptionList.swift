@@ -239,6 +239,13 @@ struct DescriptionList<Content: View>: View {
             Label("Filters", systemImage: "slider.horizontal.3")
           }
         }
+        ToolbarItem {
+          Menu {
+            self.imageContextMenuBuilder(displayableArtworks.map { ($0.0, $0.1, nil) })
+          } label: {
+            Label("Multiple", systemImage: "wand.and.rays")
+          }
+        }
       }
 
       if displayableArtworks.count > 0 {
