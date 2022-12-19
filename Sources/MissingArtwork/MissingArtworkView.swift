@@ -29,7 +29,7 @@ public struct MissingArtworkView<Content: View>: View, ArtworksFetcher {
   @State private var showNoMissingArtworkFound: Bool = false
 
   @State private var showFetchErrorAlert: Bool = false
-  @State private var fetchError: FetchError? = nil
+  @State private var fetchError: FetchError?
 
   @State private var missingArtworks: [(MissingArtwork, ArtworkAvailability)] = []
 
