@@ -33,6 +33,8 @@ public struct MissingArtworkView<Content: View>: View, ArtworksFetcher {
 
   @State private var missingArtworks: [(MissingArtwork, ArtworkAvailability)] = []
 
+  @Binding var processingStates: [MissingArtwork: Description.ProcessingState]
+
   public typealias MissingImage = (
     missingArtwork: MissingArtwork, availability: ArtworkAvailability, image: NSImage?
   )
@@ -40,8 +42,12 @@ public struct MissingArtworkView<Content: View>: View, ArtworksFetcher {
 
   @ViewBuilder let imageContextMenuBuilder: ImageContextMenuBuilder
 
-  public init(@ViewBuilder imageContextMenuBuilder: @escaping ImageContextMenuBuilder) {
+  public init(
+    @ViewBuilder imageContextMenuBuilder: @escaping ImageContextMenuBuilder,
+    processingStates: Binding<[MissingArtwork: Description.ProcessingState]>
+  ) {
     self.imageContextMenuBuilder = imageContextMenuBuilder
+    self._processingStates = processingStates // Note this for assigning a Binding<T> to a wrapped property.
   }
 
   public var body: some View {
@@ -49,7 +55,8 @@ public struct MissingArtworkView<Content: View>: View, ArtworksFetcher {
       fetcher: self,
       imageContextMenuBuilder: imageContextMenuBuilder,
       missingArtworks: $missingArtworks,
-      showProgressOverlay: $showProgressOverlay
+      showProgressOverlay: $showProgressOverlay,
+      processingStates: $processingStates
     )
     .alert(
       "No Missing Artwork", isPresented: $showNoMissingArtworkFound,
@@ -107,9 +114,10 @@ public struct MissingArtworkView<Content: View>: View, ArtworksFetcher {
 
 struct MissingArtworkView_Previews: PreviewProvider {
   static var previews: some View {
-    MissingArtworkView(imageContextMenuBuilder: { items in
-      Button("1") {}
-      Button("2") {}
-    })
+    MissingArtworkView(
+      imageContextMenuBuilder: { items in
+        Button("1") {}
+        Button("2") {}
+      }, processingStates: .constant([:]))
   }
 }

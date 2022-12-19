@@ -54,6 +54,8 @@ struct DescriptionList<Content: View>: View {
 
   @Binding var showProgressOverlay: Bool
 
+  @Binding var processingStates: [MissingArtwork: Description.ProcessingState]
+
   var displayableArtworks: [(MissingArtwork, ArtworkAvailability)] {
     return missingArtworks.filter { (missingArtwork, _) in
       (filter == .all
@@ -190,7 +192,10 @@ struct DescriptionList<Content: View>: View {
                 }
               }
             } label: {
-              Description(missingArtwork: missingArtwork, availability: availability)
+              Description(
+                missingArtwork: missingArtwork,
+                availability: availability,
+                processingState: $processingStates[missingArtwork].defaultValue(.none))
             }
             .contextMenu {
               self.imageContextMenuBuilder([
@@ -280,7 +285,11 @@ struct DescriptionList_Previews: PreviewProvider {
         (MissingArtwork.ArtistAlbum("The Stooges", "Fun House"), .none),
         (MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1"), .some),
       ]),
-      showProgressOverlay: .constant(false)
+      showProgressOverlay: .constant(false),
+      processingStates: .constant([
+        MissingArtwork.ArtistAlbum("The Stooges", "Fun House"): .processing,
+        MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1"): .success,
+      ])
     )
 
     DescriptionList(
@@ -290,7 +299,8 @@ struct DescriptionList_Previews: PreviewProvider {
         Button("2") {}
       },
       missingArtworks: .constant([]),
-      showProgressOverlay: .constant(true)
+      showProgressOverlay: .constant(true),
+      processingStates: .constant([:])
     )
   }
 }
