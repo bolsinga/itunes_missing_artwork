@@ -8,23 +8,26 @@
 import MusicKit
 import SwiftUI
 
-public struct MissingArtworkView<Content: View>: View, ArtworksFetcher {
-  struct FetchError: LocalizedError {
-    let nsError: NSError
+private enum FetchError: Error {
+  case cannotFetchMissingArtwork(NSError)
+  case unknownError(Error)
+}
 
-    var errorDescription: String? {
-      nsError.localizedDescription
-    }
-
-    var failureReason: String? {
-      nsError.localizedFailureReason
-    }
-
-    var recoverySuggestion: String? {
-      nsError.localizedRecoverySuggestion
+extension FetchError: LocalizedError {
+  fileprivate var errorDescription: String? {
+    switch self {
+    case .cannotFetchMissingArtwork(let error):
+      return "iTunes Library unable to find missing artwork: \(error.localizedDescription)"
+    case .unknownError(let error):
+      return "iTunes Library unknown error: \(error)"
     }
   }
+  fileprivate var recoverySuggestion: String? {
+    "iTunes was unable to find any missing artwork to fix."
+  }
+}
 
+public struct MissingArtworkView<Content: View>: View, ArtworksFetcher {
   @State private var showProgressOverlay: Bool = true
   @State private var showNoMissingArtworkFound: Bool = false
 
@@ -47,6 +50,11 @@ public struct MissingArtworkView<Content: View>: View, ArtworksFetcher {
   ) {
     self.imageContextMenuBuilder = imageContextMenuBuilder
     self._processingStates = processingStates  // Note this for assigning a Binding<T> to a wrapped property.
+  }
+
+  @MainActor private func reportError(_ error: FetchError) {
+    fetchError = error
+    debugPrint("Unable to fetch missing artworks: \(String(describing: fetchError))")
   }
 
   public var body: some View {
@@ -74,7 +82,10 @@ public struct MissingArtworkView<Content: View>: View, ArtworksFetcher {
         Button("Quit", role: .destructive) {
           NSApplication.shared.terminate(nil)
         }
-      }, message: { error in Text("The iTunes Library has found an error when loading.") }
+      },
+      message: { error in
+        Text(error.recoverySuggestion ?? "")
+      }
     )
     .task {
       showProgressOverlay = true
@@ -88,8 +99,9 @@ public struct MissingArtworkView<Content: View>: View, ArtworksFetcher {
 
         showNoMissingArtworkFound = missingArtworks.isEmpty
       } catch let error as NSError {
-        fetchError = FetchError(nsError: error)
-        debugPrint("Unable to fetch missing artworks: \(error)")
+        reportError(.cannotFetchMissingArtwork(error))
+      } catch {
+        reportError(.unknownError(error))
       }
       showProgressOverlay = false
     }
