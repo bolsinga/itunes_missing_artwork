@@ -145,9 +145,11 @@ struct DescriptionList<Content: View>: View {
     }
   }
 
-  @ViewBuilder private var progressOverlay: some View {
+  @ViewBuilder private var listStateOverlay: some View {
     if showProgressOverlay {
       ProgressView()
+    } else if missingArtworks.isEmpty {
+      Text("No Missing Artwork")
     }
   }
 
@@ -205,7 +207,7 @@ struct DescriptionList<Content: View>: View {
             .tag(missingArtwork)
           }
         }
-        .overlay(progressOverlay)
+        .overlay(listStateOverlay)
         .searchable(text: $searchString) {
           ForEach(searchSuggestions) { suggestion in
             Text(suggestion.description).searchCompletion(suggestion.description)

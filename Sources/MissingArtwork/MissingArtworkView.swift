@@ -29,7 +29,6 @@ extension FetchError: LocalizedError {
 
 public struct MissingArtworkView<Content: View>: View, ArtworksFetcher {
   @State private var showProgressOverlay: Bool = true
-  @State private var showNoMissingArtworkFound: Bool = false
 
   @State private var fetchError: FetchError?
 
@@ -66,17 +65,6 @@ public struct MissingArtworkView<Content: View>: View, ArtworksFetcher {
       processingStates: $processingStates
     )
     .alert(
-      "No Missing Artwork", isPresented: $showNoMissingArtworkFound,
-      actions: {
-        Button("Quit", role: .destructive) {
-          NSApplication.shared.terminate(nil)
-        }
-      },
-      message: {
-        Text("The iTunes Library does not have any missing artwork. Enjoy!")
-      }
-    )
-    .alert(
       isPresented: .constant(fetchError != nil), error: fetchError,
       actions: { error in
         Button("Quit", role: .destructive) {
@@ -96,8 +84,6 @@ public struct MissingArtworkView<Content: View>: View, ArtworksFetcher {
 
       do {
         missingArtworks = try await fetchMissingArtworks()
-
-        showNoMissingArtworkFound = missingArtworks.isEmpty
       } catch let error as NSError {
         reportError(.cannotFetchMissingArtwork(error))
       } catch {
