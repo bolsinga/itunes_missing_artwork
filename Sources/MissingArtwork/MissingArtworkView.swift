@@ -47,7 +47,7 @@ public struct MissingArtworkView<Content: View>: View, ArtworksFetcher {
     processingStates: Binding<[MissingArtwork: Description.ProcessingState]>
   ) {
     self.imageContextMenuBuilder = imageContextMenuBuilder
-    self._processingStates = processingStates // Note this for assigning a Binding<T> to a wrapped property.
+    self._processingStates = processingStates  // Note this for assigning a Binding<T> to a wrapped property.
   }
 
   public var body: some View {
