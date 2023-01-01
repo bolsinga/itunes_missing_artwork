@@ -28,7 +28,6 @@ public struct MissingArtworkView<Content: View>: View, ArtworksFetcher {
   @State private var showProgressOverlay: Bool = true
   @State private var showNoMissingArtworkFound: Bool = false
 
-  @State private var showFetchErrorAlert: Bool = false
   @State private var fetchError: FetchError?
 
   @State private var missingArtworks: [(MissingArtwork, ArtworkAvailability)] = []
@@ -70,7 +69,7 @@ public struct MissingArtworkView<Content: View>: View, ArtworksFetcher {
       }
     )
     .alert(
-      isPresented: $showFetchErrorAlert, error: fetchError,
+      isPresented: .constant(fetchError != nil), error: fetchError,
       actions: { error in
         Button("Quit", role: .destructive) {
           NSApplication.shared.terminate(nil)
@@ -89,8 +88,6 @@ public struct MissingArtworkView<Content: View>: View, ArtworksFetcher {
 
         showNoMissingArtworkFound = missingArtworks.isEmpty
       } catch let error as NSError {
-        showFetchErrorAlert = true
-
         fetchError = FetchError(nsError: error)
         debugPrint("Unable to fetch missing artworks: \(error)")
       }
