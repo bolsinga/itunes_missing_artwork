@@ -27,7 +27,7 @@ extension FetchError: LocalizedError {
   }
 }
 
-public struct MissingArtworkView<Content: View>: View, ArtworksFetcher {
+public struct MissingArtworkView<Content: View>: View {
   @State private var showProgressOverlay: Bool = true
 
   @State private var fetchError: FetchError?
@@ -58,7 +58,6 @@ public struct MissingArtworkView<Content: View>: View, ArtworksFetcher {
 
   public var body: some View {
     DescriptionList(
-      fetcher: self,
       imageContextMenuBuilder: imageContextMenuBuilder,
       missingArtworks: $missingArtworks,
       showProgressOverlay: $showProgressOverlay,
@@ -97,13 +96,6 @@ public struct MissingArtworkView<Content: View>: View, ArtworksFetcher {
   func fetchMissingArtworks() async throws -> [(MissingArtwork, ArtworkAvailability)] {
     async let missingArtworks = try MissingArtwork.gatherMissingArtwork()
     return try await missingArtworks
-  }
-
-  func fetchArtworks(missingArtwork: MissingArtwork, term: String) async throws -> [Artwork] {
-    var searchRequest = MusicCatalogSearchRequest(term: term, types: [Album.self])
-    searchRequest.limit = 2
-    let searchResponse = try await searchRequest.response()
-    return searchResponse.albums.compactMap(\.artwork)
   }
 }
 

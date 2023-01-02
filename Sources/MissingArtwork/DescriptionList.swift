@@ -14,10 +14,6 @@ extension MissingArtwork {
   }
 }
 
-protocol ArtworksFetcher {
-  func fetchArtworks(missingArtwork: MissingArtwork, term: String) async throws -> [Artwork]
-}
-
 extension Binding {
   public func defaultValue<T>(_ value: T) -> Binding<T> where Value == T? {
     Binding<T> {
@@ -29,8 +25,6 @@ extension Binding {
 }
 
 struct DescriptionList<Content: View>: View {
-  let fetcher: ArtworksFetcher
-
   typealias MissingImage = (MissingArtwork, ArtworkAvailability, NSImage?)
   typealias ImageContextMenuBuilder = ([MissingImage]) -> Content
 
@@ -177,7 +171,7 @@ struct DescriptionList<Content: View>: View {
                 }
 
                 do {
-                  artworkImages[missingArtwork] = try await fetcher.fetchArtworks(
+                  artworkImages[missingArtwork] = try await fetchArtworks(
                     missingArtwork: missingArtwork, term: missingArtwork.simpleRepresentation
                   ).map { ArtworkImage(artwork: $0) }
 
@@ -267,18 +261,19 @@ struct DescriptionList<Content: View>: View {
         && $0.description.localizedCaseInsensitiveCompare(searchString) != .orderedSame
     }
   }
+
+  private func fetchArtworks(missingArtwork: MissingArtwork, term: String) async throws -> [Artwork]
+  {
+    var searchRequest = MusicCatalogSearchRequest(term: term, types: [Album.self])
+    searchRequest.limit = 2
+    let searchResponse = try await searchRequest.response()
+    return searchResponse.albums.compactMap(\.artwork)
+  }
 }
 
 struct DescriptionList_Previews: PreviewProvider {
-  struct Fetcher: ArtworksFetcher {
-    func fetchArtworks(missingArtwork: MissingArtwork, term: String) async -> [Artwork] {
-      return []
-    }
-  }
-
   static var previews: some View {
     DescriptionList(
-      fetcher: Fetcher(),
       imageContextMenuBuilder: { items in
         Button("1") {}
         Button("2") {}
@@ -295,7 +290,6 @@ struct DescriptionList_Previews: PreviewProvider {
     )
 
     DescriptionList(
-      fetcher: Fetcher(),
       imageContextMenuBuilder: { items in
         Button("1") {}
         Button("2") {}
