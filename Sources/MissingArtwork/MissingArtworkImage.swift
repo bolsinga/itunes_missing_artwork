@@ -9,61 +9,82 @@
 import MusicKit
 import SwiftUI
 
+private enum NoImageError: Error {
+  case noURL(Artwork)
+  case noImage(Artwork)
+}
+
+extension NoImageError: LocalizedError {
+  fileprivate var errorDescription: String? {
+    switch self {
+    case .noURL(let artwork):
+      return "No Image URL Available: \(artwork.description)."
+    case .noImage(let artwork):
+      return "No Image Found: \(artwork.description)."
+    }
+  }
+}
+
 struct MissingArtworkImage: View {
+  fileprivate enum LoadingState {
+    case none
+    case loading
+    case error(Error)
+    case loaded(NSImage)
+  }
+
   let artwork: Artwork
   let width: CGFloat
 
   @Binding var nsImage: NSImage?
-  @State private var showProgressOverlay: Bool = true
-  @State private var error: Error? = nil
 
-  @ViewBuilder private var overlay: some View {
-    if showProgressOverlay {
-      if let backgroundColor = artwork.backgroundColor {
-        Color(cgColor: backgroundColor)
-          .frame(width: width, height: CGFloat(artwork.maximumHeight))
-      } else {
-        ProgressView()
-      }
-    } else if let error = error {
-      Text("Unable to load image: \(error.localizedDescription)")
-    }
-  }
+  @State private var loadingState: LoadingState = .none
 
   var body: some View {
-    if let url = artwork.url(width: artwork.maximumWidth, height: artwork.maximumHeight) {
-      Group {
-        if let nsImage = nsImage {
-          Image(nsImage: nsImage)
-            .resizable().aspectRatio(contentMode: .fit)
-            .contextMenu {
-              Button("Copy") {
-                let pasteboard = NSPasteboard.general
-                pasteboard.clearContents()
-                pasteboard.writeObjects([nsImage])
-              }
-            }
+    Group {
+      switch loadingState {
+      case .none:
+        ProgressView()
+      case .loading:
+        if let backgroundColor = artwork.backgroundColor {
+          Color(cgColor: backgroundColor)
+            .frame(width: width, height: CGFloat(artwork.maximumHeight))
         } else {
-          Text("Loading!")
+          ProgressView()
         }
+      case .error(let error):
+        Text("Unable to load image: \(error.localizedDescription)")
+      case .loaded(let nsImage):
+        Image(nsImage: nsImage)
+          .resizable().aspectRatio(contentMode: .fit)
+          .contextMenu {
+            Button("Copy") {
+              let pasteboard = NSPasteboard.general
+              pasteboard.clearContents()
+              pasteboard.writeObjects([nsImage])
+            }
+          }
       }
-      .overlay(self.overlay)
-      .frame(width: width)
-      .task {
-        showProgressOverlay = true
-        defer {
-          showProgressOverlay = false
-        }
+    }
+    .frame(width: width)
+    .task {
+      loadingState = .loading
 
-        do {
-          let (data, _) = try await URLSession.shared.data(from: url)
-          nsImage = NSImage.init(data: data)
-        } catch {
-          self.error = error
+      do {
+        guard let url = artwork.url(width: artwork.maximumWidth, height: artwork.maximumHeight)
+        else { throw NoImageError.noURL(artwork) }
+
+        let (data, _) = try await URLSession.shared.data(from: url)
+        nsImage = NSImage.init(data: data)
+
+        if let nsImage = nsImage {
+          loadingState = .loaded(nsImage)
+        } else {
+          throw NoImageError.noImage(artwork)
         }
+      } catch {
+        loadingState = .error(error)
       }
-    } else {
-      Text("Unable to get URL for Artwork")
     }
   }
 }
