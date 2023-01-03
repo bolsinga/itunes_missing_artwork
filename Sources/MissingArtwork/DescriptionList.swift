@@ -38,9 +38,6 @@ struct DescriptionList<Content: View>: View {
 
   @State private var searchString: String = ""
 
-  @State var showMissingImageListOverlayProgress: Bool = false
-  @State private var missingImageListOverlayMessage: String?
-
   @State private var selectedArtworkImages: [MissingArtwork: ArtworkImage] = [:]
   @State var artworkImages: [MissingArtwork: [ArtworkImage]] = [:]
 
@@ -131,14 +128,6 @@ struct DescriptionList<Content: View>: View {
     var id: ImageResult { self }
   }
 
-  @ViewBuilder private var imageListOverlay: some View {
-    if showMissingImageListOverlayProgress {
-      ProgressView()
-    } else if let message = missingImageListOverlayMessage {
-      Text(message).textSelection(.enabled)
-    }
-  }
-
   @ViewBuilder private var listStateOverlay: some View {
     if showProgressOverlay {
       ProgressView()
@@ -154,39 +143,11 @@ struct DescriptionList<Content: View>: View {
           ForEach(displayableArtworks, id: \.0) { (missingArtwork, availability) in
             NavigationLink {
               MissingImageList(
+                missingArtwork: missingArtwork,
                 artworkImages: $artworkImages[missingArtwork].defaultValue([]),
-                selectedArtworkImage: $selectedArtworkImages[missingArtwork]
+                selectedArtworkImage: $selectedArtworkImages[missingArtwork],
+                selectedArtwork: $selectedArtwork
               )
-              .overlay(imageListOverlay)
-              .task {
-                missingImageListOverlayMessage = nil
-
-                guard artworkImages[missingArtwork] == nil else {
-                  return
-                }
-
-                showMissingImageListOverlayProgress = true
-                defer {
-                  showMissingImageListOverlayProgress = false
-                }
-
-                do {
-                  artworkImages[missingArtwork] = try await fetchArtworks(
-                    missingArtwork: missingArtwork, term: missingArtwork.simpleRepresentation
-                  ).map { ArtworkImage(artwork: $0) }
-
-                  if let items = artworkImages[missingArtwork], items.isEmpty {
-                    missingImageListOverlayMessage =
-                      "No image for \(missingArtwork.description)"
-                  }
-                } catch {
-                  if missingArtwork == selectedArtwork {
-                    // only show this if the error occurred with the currently selected artwork.
-                    missingImageListOverlayMessage =
-                      "Error retrieving \(missingArtwork.description). Error: \(String(describing: error.localizedDescription))"
-                  }
-                }
-              }
             } label: {
               Description(
                 missingArtwork: missingArtwork,
@@ -260,14 +221,6 @@ struct DescriptionList<Content: View>: View {
       $0.description.localizedCaseInsensitiveContains(searchString)
         && $0.description.localizedCaseInsensitiveCompare(searchString) != .orderedSame
     }
-  }
-
-  private func fetchArtworks(missingArtwork: MissingArtwork, term: String) async throws -> [Artwork]
-  {
-    var searchRequest = MusicCatalogSearchRequest(term: term, types: [Album.self])
-    searchRequest.limit = 2
-    let searchResponse = try await searchRequest.response()
-    return searchResponse.albums.compactMap(\.artwork)
   }
 }
 
