@@ -12,7 +12,46 @@ extension Artwork: Identifiable {
   public var id: Artwork { self }
 }
 
+private enum NoArtworkError: Error {
+  case noneFound(MissingArtwork)
+  case error(Error, MissingArtwork)
+}
+
+extension NoArtworkError: LocalizedError {
+  fileprivate var errorDescription: String? {
+    switch self {
+    case .noneFound(let missingArtwork):
+      return "No image for \(missingArtwork.description)"
+    case .error(let error, let missingArtwork):
+      return "Error retrieving \(missingArtwork.description). Error: \(error.localizedDescription)"
+    }
+  }
+}
+
 struct MissingImageList: View {
+  fileprivate enum LoadingState: Equatable {
+    case none
+    case loading
+    case error(Error)
+    case loaded
+
+    static func == (lhs: MissingImageList.LoadingState, rhs: MissingImageList.LoadingState) -> Bool
+    {
+      switch (lhs, rhs) {
+      case (.none, .none):
+        return true
+      case (.loading, .loading):
+        return true
+      case (.error(_), .error(_)):
+        return true
+      case (.loaded, .loaded):
+        return true
+      default:
+        return false
+      }
+    }
+  }
+
   let missingArtwork: MissingArtwork
   @Binding var artworkImages: [ArtworkImage]
 
@@ -20,14 +59,13 @@ struct MissingImageList: View {
 
   @Binding var selectedArtwork: MissingArtwork?
 
-  @State var showMissingImageListOverlayProgress: Bool = false
-  @State private var missingImageListOverlayMessage: String?
+  @State private var loadingState: LoadingState = .none
 
   @ViewBuilder private var imageListOverlay: some View {
-    if showMissingImageListOverlayProgress {
+    if loadingState == .none || loadingState == .loading {
       ProgressView()
-    } else if let message = missingImageListOverlayMessage {
-      Text(message).textSelection(.enabled)
+    } else if case .error(let error) = loadingState {
+      Text("\(error.localizedDescription)")
     }
   }
 
@@ -47,12 +85,7 @@ struct MissingImageList: View {
     }
     .overlay(imageListOverlay)
     .task {
-      missingImageListOverlayMessage = nil
-
-      showMissingImageListOverlayProgress = true
-      defer {
-        showMissingImageListOverlayProgress = false
-      }
+      loadingState = .loading
 
       do {
         artworkImages = try await fetchArtworks(
@@ -60,13 +93,14 @@ struct MissingImageList: View {
         ).map { ArtworkImage(artwork: $0) }
 
         if artworkImages.isEmpty {
-          missingImageListOverlayMessage = "No image for \(missingArtwork.description)"
+          throw NoArtworkError.noneFound(missingArtwork)
         }
+
+        loadingState = .loaded
       } catch {
         if missingArtwork == selectedArtwork {
           // only show this if the error occurred with the currently selected artwork.
-          missingImageListOverlayMessage =
-            "Error retrieving \(missingArtwork.description). Error: \(String(describing: error.localizedDescription))"
+          loadingState = .error(error)
         }
       }
     }
