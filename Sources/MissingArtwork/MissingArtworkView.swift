@@ -28,9 +28,41 @@ extension FetchError: LocalizedError {
 }
 
 public struct MissingArtworkView<Content: View>: View {
-  @State private var showProgressOverlay: Bool = true
+  fileprivate enum LoadingState: Equatable {
+    case loading
+    case error(FetchError)
+    case loaded
 
-  @State private var fetchError: FetchError?
+    var isError: Bool {
+      if case .error(_) = self {
+        return true
+      }
+      return false
+    }
+
+    var fetchError: FetchError? {
+      if case .error(let error) = self {
+        return error
+      }
+      return nil
+    }
+
+    static func == (
+      lhs: MissingArtworkView<Content>.LoadingState, rhs: MissingArtworkView<Content>.LoadingState
+    ) -> Bool {
+      switch (lhs, rhs) {
+      case (.loading, .loading):
+        return true
+      case (.error(_), .error(_)):
+        return true
+      case (.loaded, .loaded):
+        return true
+      default:
+        return false
+      }
+    }
+  }
+  @State private var loadingState: LoadingState = .loading
 
   @State private var missingArtworks: [(MissingArtwork, ArtworkAvailability)] = []
 
@@ -52,19 +84,19 @@ public struct MissingArtworkView<Content: View>: View {
   }
 
   @MainActor private func reportError(_ error: FetchError) {
-    fetchError = error
-    debugPrint("Unable to fetch missing artworks: \(String(describing: fetchError))")
+    loadingState = .error(error)
+    debugPrint("Unable to fetch missing artworks: \(error.localizedDescription)")
   }
 
   public var body: some View {
     DescriptionList(
       imageContextMenuBuilder: imageContextMenuBuilder,
       missingArtworks: $missingArtworks,
-      showProgressOverlay: $showProgressOverlay,
+      showProgressOverlay: .constant(loadingState == .loading),
       processingStates: $processingStates
     )
     .alert(
-      isPresented: .constant(fetchError != nil), error: fetchError,
+      isPresented: .constant(loadingState.isError), error: loadingState.fetchError,
       actions: { error in
         Button("Quit", role: .destructive) {
           NSApplication.shared.terminate(nil)
@@ -75,20 +107,22 @@ public struct MissingArtworkView<Content: View>: View {
       }
     )
     .task {
-      showProgressOverlay = true
-
       guard missingArtworks.isEmpty else {
+        loadingState = .loaded
         return
       }
 
+      loadingState = .loading
+
       do {
         missingArtworks = try await fetchMissingArtworks()
+
+        loadingState = .loaded
       } catch let error as NSError {
         reportError(.cannotFetchMissingArtwork(error))
       } catch {
         reportError(.unknownError(error))
       }
-      showProgressOverlay = false
     }
     .musicKitAuthorizationSheet()
   }
