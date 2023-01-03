@@ -85,6 +85,11 @@ struct MissingImageList: View {
     }
     .overlay(imageListOverlay)
     .task {
+      guard artworkImages.isEmpty else {
+        loadingState = .loaded
+        return
+      }
+
       loadingState = .loading
 
       do {
