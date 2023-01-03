@@ -68,6 +68,11 @@ struct MissingArtworkImage: View {
     }
     .frame(width: width)
     .task {
+      guard nsImage == nil else {
+        loadingState = .loaded(nsImage!)
+        return
+      }
+
       loadingState = .loading
 
       do {
