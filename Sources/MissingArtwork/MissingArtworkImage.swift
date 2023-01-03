@@ -27,7 +27,6 @@ extension NoImageError: LocalizedError {
 
 struct MissingArtworkImage: View {
   fileprivate enum LoadingState {
-    case none
     case loading
     case error(Error)
     case loaded(NSImage)
@@ -38,13 +37,11 @@ struct MissingArtworkImage: View {
 
   @Binding var nsImage: NSImage?
 
-  @State private var loadingState: LoadingState = .none
+  @State private var loadingState: LoadingState = .loading
 
   var body: some View {
     Group {
       switch loadingState {
-      case .none:
-        ProgressView()
       case .loading:
         if let backgroundColor = artwork.backgroundColor {
           Color(cgColor: backgroundColor)
