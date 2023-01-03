@@ -121,7 +121,7 @@ struct MissingImageList_Previews: PreviewProvider {
   static var previews: some View {
     Group {
       MissingImageList(
-        missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House"),
+        missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none),
         artworkImages: .constant([]),
         selectedArtworkImage: .constant(nil),
         selectedArtwork: .constant(nil))

@@ -16,13 +16,12 @@ public struct Description: View {
   }
 
   let missingArtwork: MissingArtwork
-  let availability: ArtworkAvailability
 
   @Binding var processingState: ProcessingState
 
   @ViewBuilder private var nameView: some View {
     switch missingArtwork {
-    case .ArtistAlbum(let artist, let album):
+    case .ArtistAlbum(let artist, let album, _):
       VStack(alignment: .leading) {
         Text(album)
           .font(.headline)
@@ -30,7 +29,7 @@ public struct Description: View {
           .font(.caption)
 
       }
-    case .CompilationAlbum(let album):
+    case .CompilationAlbum(let album, _):
       HStack {
         Text(album)
           .font(.headline)
@@ -55,9 +54,9 @@ public struct Description: View {
   }
 
   @ViewBuilder private var availabilityImage: some View {
-    if case .some = availability {
+    if case .some = missingArtwork.availability {
       Image(systemName: "questionmark.square.dashed")
-    } else if case .unknown = availability {
+    } else if case .unknown = missingArtwork.availability {
       Image(systemName: "questionmark.square.dashed").foregroundColor(.red)
     }
   }
@@ -77,17 +76,19 @@ struct Description_Previews: PreviewProvider {
   static var previews: some View {
     Group {
       Description(
-        missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House"), availability: .none,
+        missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none),
         processingState: .constant(Description.ProcessingState.none))
       Description(
-        missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House"), availability: .some,
+        missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .some),
         processingState: .constant(Description.ProcessingState.processing))
       Description(
-        missingArtwork: MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1"),
-        availability: .none, processingState: .constant(Description.ProcessingState.success))
+        missingArtwork: MissingArtwork.CompilationAlbum(
+          "Beleza Tropical: Brazil Classics 1", .none),
+        processingState: .constant(Description.ProcessingState.success))
       Description(
-        missingArtwork: MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1"),
-        availability: .some, processingState: .constant(Description.ProcessingState.failure))
+        missingArtwork: MissingArtwork.CompilationAlbum(
+          "Beleza Tropical: Brazil Classics 1", .some),
+        processingState: .constant(Description.ProcessingState.failure))
     }
   }
 }

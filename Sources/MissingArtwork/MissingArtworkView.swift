@@ -64,13 +64,11 @@ public struct MissingArtworkView<Content: View>: View {
   }
   @State private var loadingState: LoadingState = .loading
 
-  @State private var missingArtworks: [(MissingArtwork, ArtworkAvailability)] = []
+  @State private var missingArtworks: [MissingArtwork] = []
 
   @Binding var processingStates: [MissingArtwork: Description.ProcessingState]
 
-  public typealias MissingImage = (
-    missingArtwork: MissingArtwork, availability: ArtworkAvailability, image: NSImage?
-  )
+  public typealias MissingImage = (missingArtwork: MissingArtwork, image: NSImage?)
   public typealias ImageContextMenuBuilder = ([MissingImage]) -> Content
 
   @ViewBuilder let imageContextMenuBuilder: ImageContextMenuBuilder
@@ -127,7 +125,7 @@ public struct MissingArtworkView<Content: View>: View {
     .musicKitAuthorizationSheet()
   }
 
-  func fetchMissingArtworks() async throws -> [(MissingArtwork, ArtworkAvailability)] {
+  func fetchMissingArtworks() async throws -> [MissingArtwork] {
     async let missingArtworks = try MissingArtwork.gatherMissingArtwork()
     return try await missingArtworks
   }
