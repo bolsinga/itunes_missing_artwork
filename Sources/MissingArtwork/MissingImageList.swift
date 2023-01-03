@@ -30,7 +30,6 @@ extension NoArtworkError: LocalizedError {
 
 struct MissingImageList: View {
   fileprivate enum LoadingState: Equatable {
-    case none
     case loading
     case error(Error)
     case loaded
@@ -38,8 +37,6 @@ struct MissingImageList: View {
     static func == (lhs: MissingImageList.LoadingState, rhs: MissingImageList.LoadingState) -> Bool
     {
       switch (lhs, rhs) {
-      case (.none, .none):
-        return true
       case (.loading, .loading):
         return true
       case (.error(_), .error(_)):
@@ -59,10 +56,10 @@ struct MissingImageList: View {
 
   @Binding var selectedArtwork: MissingArtwork?
 
-  @State private var loadingState: LoadingState = .none
+  @State private var loadingState: LoadingState = .loading
 
   @ViewBuilder private var imageListOverlay: some View {
-    if loadingState == .none || loadingState == .loading {
+    if loadingState == .loading {
       ProgressView()
     } else if case .error(let error) = loadingState {
       Text("\(error.localizedDescription)")
