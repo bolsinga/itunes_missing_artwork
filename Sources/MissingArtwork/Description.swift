@@ -20,45 +20,54 @@ public struct Description: View {
 
   @Binding var processingState: ProcessingState
 
+  @ViewBuilder private var nameView: some View {
+    switch missingArtwork {
+    case .ArtistAlbum(let artist, let album):
+      VStack(alignment: .leading) {
+        Text(album)
+          .font(.headline)
+        Text(artist)
+          .font(.caption)
+
+      }
+    case .CompilationAlbum(let album):
+      HStack {
+        Text(album)
+          .font(.headline)
+        Image(systemName: "square.stack")
+      }
+    }
+  }
+
+  @ViewBuilder private var processedStateView: some View {
+    switch processingState {
+    case .none:
+      EmptyView()
+    case .processing:
+      Image(systemName: "gearshape.circle")
+    case .success:
+      Image(systemName: "checkmark.circle")
+        .foregroundColor(.green)
+    case .failure:
+      Image(systemName: "circle.slash")
+        .foregroundColor(.red)
+    }
+  }
+
+  @ViewBuilder private var availabilityImage: some View {
+    if case .some = availability {
+      Image(systemName: "questionmark.square.dashed")
+    } else if case .unknown = availability {
+      Image(systemName: "questionmark.square.dashed").foregroundColor(.red)
+    }
+  }
+
   public var body: some View {
     HStack {
-      switch missingArtwork {
-      case .ArtistAlbum(let artist, let album):
-        VStack(alignment: .leading) {
-          Text(album)
-            .font(.headline)
-          Text(artist)
-            .font(.caption)
-
-        }
-      case .CompilationAlbum(let album):
-        HStack {
-          Text(album)
-            .font(.headline)
-          Image(systemName: "square.stack")
-        }
-      }
-      switch processingState {
-      case .none:
-        EmptyView()
-      case .processing:
-        Image(systemName: "gearshape.circle")
-      case .success:
-        Image(systemName: "checkmark.circle")
-          .foregroundColor(.green)
-      case .failure:
-        Image(systemName: "circle.slash")
-          .foregroundColor(.red)
-      }
+      nameView
+      processedStateView
       Spacer()
-      switch availability {
-      case .some:
-        Image(systemName: "questionmark.square.dashed")
-      case .none:
-        EmptyView()
-      case .unknown:
-        Image(systemName: "questionmark.square.dashed").foregroundColor(.red)
-      }
+      availabilityImage
     }
     .padding(.vertical, 4)
   }
