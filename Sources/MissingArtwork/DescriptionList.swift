@@ -139,27 +139,25 @@ struct DescriptionList<Content: View>: View {
   var body: some View {
     NavigationView {
       VStack {
-        List(selection: $selectedArtwork) {
-          ForEach(displayableArtworks) { missingArtwork in
-            NavigationLink {
-              MissingImageList(
-                missingArtwork: missingArtwork,
-                artworkImages: $artworkImages[missingArtwork].defaultValue([]),
-                selectedArtworkImage: $selectedArtworkImages[missingArtwork],
-                selectedArtwork: $selectedArtwork
-              )
-            } label: {
-              Description(
-                missingArtwork: missingArtwork,
-                processingState: $processingStates[missingArtwork].defaultValue(.none))
-            }
-            .contextMenu {
-              self.imageContextMenuBuilder([
-                (missingArtwork, selectedArtworkImages[missingArtwork]?.nsImage)
-              ])
-            }
-            .tag(missingArtwork)
+        List(displayableArtworks, selection: $selectedArtwork) { missingArtwork in
+          NavigationLink {
+            MissingImageList(
+              missingArtwork: missingArtwork,
+              artworkImages: $artworkImages[missingArtwork].defaultValue([]),
+              selectedArtworkImage: $selectedArtworkImages[missingArtwork],
+              selectedArtwork: $selectedArtwork
+            )
+          } label: {
+            Description(
+              missingArtwork: missingArtwork,
+              processingState: $processingStates[missingArtwork].defaultValue(.none))
           }
+          .contextMenu {
+            self.imageContextMenuBuilder([
+              (missingArtwork, selectedArtworkImages[missingArtwork]?.nsImage)
+            ])
+          }
+          .tag(missingArtwork)
         }
         .overlay(listStateOverlay)
         .searchable(text: $searchString) {
