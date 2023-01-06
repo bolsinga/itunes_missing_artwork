@@ -136,76 +136,80 @@ struct DescriptionList<Content: View>: View {
     }
   }
 
+  @ViewBuilder private var sidebarView: some View {
+    VStack {
+      List(displayableArtworks, selection: $selectedArtwork) { missingArtwork in
+        NavigationLink {
+          MissingImageList(
+            missingArtwork: missingArtwork,
+            artworkImages: $artworkImages[missingArtwork].defaultValue([]),
+            selectedArtworkImage: $selectedArtworkImages[missingArtwork],
+            selectedArtwork: $selectedArtwork
+          )
+        } label: {
+          Description(
+            missingArtwork: missingArtwork,
+            processingState: $processingStates[missingArtwork].defaultValue(.none))
+        }
+        .contextMenu {
+          self.imageContextMenuBuilder([
+            (missingArtwork, selectedArtworkImages[missingArtwork]?.nsImage)
+          ])
+        }
+        .tag(missingArtwork)
+      }
+      .overlay(listStateOverlay)
+      .searchable(text: $searchString) {
+        ForEach(searchSuggestions) { suggestion in
+          Text(suggestion.description).searchCompletion(suggestion.description)
+        }
+      }
+      Divider()
+      Text("\(displayableArtworks.count) / \(missingArtworks.count) Missing")
+        .padding(EdgeInsets(top: 0, leading: 0, bottom: 6, trailing: 0))
+    }
+  }
+
   var body: some View {
     NavigationView {
-      VStack {
-        List(displayableArtworks, selection: $selectedArtwork) { missingArtwork in
-          NavigationLink {
-            MissingImageList(
-              missingArtwork: missingArtwork,
-              artworkImages: $artworkImages[missingArtwork].defaultValue([]),
-              selectedArtworkImage: $selectedArtworkImages[missingArtwork],
-              selectedArtwork: $selectedArtwork
-            )
-          } label: {
-            Description(
-              missingArtwork: missingArtwork,
-              processingState: $processingStates[missingArtwork].defaultValue(.none))
+      sidebarView
+        .navigationTitle(title)
+        .frame(minWidth: 325)
+        .toolbar {
+          ToolbarItem {
+            Menu {
+              Picker("Category", selection: $filter) {
+                ForEach(FilterCategory.allCases) { category in
+                  Text(category.rawValue).tag(category)
+                }
+              }
+              Picker("Artwork Availability", selection: $availabilityFilter) {
+                ForEach(AvailabilityCategory.allCases) { category in
+                  Text(category.rawValue).tag(category)
+                }
+              }
+              Picker("Sort Order", selection: $sortOrder) {
+                ForEach(SortOrder.allCases) { sortOrder in
+                  Text(sortOrder.rawValue).tag(sortOrder)
+                }
+              }
+              Picker("Image Result", selection: $imageResult) {
+                ForEach(ImageResult.allCases) { imageResult in
+                  Text(imageResult.rawValue).tag(imageResult)
+                }
+              }
+            } label: {
+              Label("Filters", systemImage: "slider.horizontal.3")
+            }
           }
-          .contextMenu {
-            self.imageContextMenuBuilder([
-              (missingArtwork, selectedArtworkImages[missingArtwork]?.nsImage)
-            ])
-          }
-          .tag(missingArtwork)
-        }
-        .overlay(listStateOverlay)
-        .searchable(text: $searchString) {
-          ForEach(searchSuggestions) { suggestion in
-            Text(suggestion.description).searchCompletion(suggestion.description)
-          }
-        }
-        Divider()
-        Text("\(displayableArtworks.count) / \(missingArtworks.count) Missing")
-          .padding(EdgeInsets(top: 0, leading: 0, bottom: 6, trailing: 0))
-      }
-      .navigationTitle(title)
-      .frame(minWidth: 325)
-      .toolbar {
-        ToolbarItem {
-          Menu {
-            Picker("Category", selection: $filter) {
-              ForEach(FilterCategory.allCases) { category in
-                Text(category.rawValue).tag(category)
-              }
+          ToolbarItem {
+            Menu {
+              self.imageContextMenuBuilder(displayableArtworks.map { ($0, nil) })
+            } label: {
+              Label("Multiple", systemImage: "wand.and.rays")
             }
-            Picker("Artwork Availability", selection: $availabilityFilter) {
-              ForEach(AvailabilityCategory.allCases) { category in
-                Text(category.rawValue).tag(category)
-              }
-            }
-            Picker("Sort Order", selection: $sortOrder) {
-              ForEach(SortOrder.allCases) { sortOrder in
-                Text(sortOrder.rawValue).tag(sortOrder)
-              }
-            }
-            Picker("Image Result", selection: $imageResult) {
-              ForEach(ImageResult.allCases) { imageResult in
-                Text(imageResult.rawValue).tag(imageResult)
-              }
-            }
-          } label: {
-            Label("Filters", systemImage: "slider.horizontal.3")
           }
         }
-        ToolbarItem {
-          Menu {
-            self.imageContextMenuBuilder(displayableArtworks.map { ($0, nil) })
-          } label: {
-            Label("Multiple", systemImage: "wand.and.rays")
-          }
-        }
-      }
 
       if displayableArtworks.count > 0 {
         Text("Select an Item")
