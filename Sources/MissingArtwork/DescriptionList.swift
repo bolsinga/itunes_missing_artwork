@@ -25,7 +25,7 @@ extension Binding {
 }
 
 struct DescriptionList<Content: View>: View {
-  typealias MissingImage = (MissingArtwork, ArtworkAvailability, NSImage?)
+  typealias MissingImage = (MissingArtwork, NSImage?)
   typealias ImageContextMenuBuilder = ([MissingImage]) -> Content
 
   @ViewBuilder let imageContextMenuBuilder: ImageContextMenuBuilder
@@ -41,27 +41,27 @@ struct DescriptionList<Content: View>: View {
   @State private var selectedArtworkImages: [MissingArtwork: ArtworkImage] = [:]
   @State var artworkImages: [MissingArtwork: [ArtworkImage]] = [:]
 
-  @Binding var missingArtworks: [(MissingArtwork, ArtworkAvailability)]
+  @Binding var missingArtworks: [MissingArtwork]
 
   @Binding var showProgressOverlay: Bool
 
   @Binding var processingStates: [MissingArtwork: Description.ProcessingState]
 
-  var displayableArtworks: [(MissingArtwork, ArtworkAvailability)] {
-    return missingArtworks.filter { (missingArtwork, _) in
+  var displayableArtworks: [MissingArtwork] {
+    return missingArtworks.filter { missingArtwork in
       (filter == .all
         || {
           switch missingArtwork {
-          case .ArtistAlbum(_, _):
+          case .ArtistAlbum(_, _, _):
             return filter == .albums
-          case .CompilationAlbum(_):
+          case .CompilationAlbum(_, _):
             return filter == .compilations
           }
         }())
-    }.filter { (_, availability) in
+    }.filter { missingArtwork in
       (availabilityFilter == .all
         || {
-          switch availability {
+          switch missingArtwork.availability {
           case .some:
             return availabilityFilter == .partial
           case .none:
@@ -70,7 +70,7 @@ struct DescriptionList<Content: View>: View {
             return availabilityFilter == .unknown
           }
         }())
-    }.filter { (missingArtwork, _) in
+    }.filter { missingArtwork in
       switch imageResult {
       case .all:
         return true
@@ -79,15 +79,15 @@ struct DescriptionList<Content: View>: View {
       case .found:
         return artworkImages[missingArtwork]?.count ?? 0 > 0
       }
-    }.filter { (missingArtwork, _) in
+    }.filter { missingArtwork in
       missingArtwork.matches(searchString)
     }
     .sorted {
       switch sortOrder {
       case .ascending:
-        return $0.0 < $1.0
+        return $0 < $1
       case .descending:
-        return $1.0 < $0.0
+        return $1 < $0
       }
     }
   }
@@ -140,7 +140,7 @@ struct DescriptionList<Content: View>: View {
     NavigationView {
       VStack {
         List(selection: $selectedArtwork) {
-          ForEach(displayableArtworks, id: \.0) { (missingArtwork, availability) in
+          ForEach(displayableArtworks) { missingArtwork in
             NavigationLink {
               MissingImageList(
                 missingArtwork: missingArtwork,
@@ -151,12 +151,11 @@ struct DescriptionList<Content: View>: View {
             } label: {
               Description(
                 missingArtwork: missingArtwork,
-                availability: availability,
                 processingState: $processingStates[missingArtwork].defaultValue(.none))
             }
             .contextMenu {
               self.imageContextMenuBuilder([
-                (missingArtwork, availability, selectedArtworkImages[missingArtwork]?.nsImage)
+                (missingArtwork, selectedArtworkImages[missingArtwork]?.nsImage)
               ])
             }
             .tag(missingArtwork)
@@ -203,7 +202,7 @@ struct DescriptionList<Content: View>: View {
         }
         ToolbarItem {
           Menu {
-            self.imageContextMenuBuilder(displayableArtworks.map { ($0.0, $0.1, nil) })
+            self.imageContextMenuBuilder(displayableArtworks.map { ($0, nil) })
           } label: {
             Label("Multiple", systemImage: "wand.and.rays")
           }
@@ -217,7 +216,7 @@ struct DescriptionList<Content: View>: View {
   }
 
   fileprivate var searchSuggestions: [MissingArtwork] {
-    displayableArtworks.map { $0.0 }.filter {
+    displayableArtworks.filter {
       $0.description.localizedCaseInsensitiveContains(searchString)
         && $0.description.localizedCaseInsensitiveCompare(searchString) != .orderedSame
     }
@@ -232,13 +231,13 @@ struct DescriptionList_Previews: PreviewProvider {
         Button("2") {}
       },
       missingArtworks: .constant([
-        (MissingArtwork.ArtistAlbum("The Stooges", "Fun House"), .none),
-        (MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1"), .some),
+        MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none),
+        MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1", .some),
       ]),
       showProgressOverlay: .constant(false),
       processingStates: .constant([
-        MissingArtwork.ArtistAlbum("The Stooges", "Fun House"): .processing,
-        MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1"): .success,
+        MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none): .processing,
+        MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1", .none): .success,
       ])
     )
 
