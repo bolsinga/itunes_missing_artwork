@@ -79,7 +79,7 @@ struct MissingArtworkImage: View {
         let (data, _) = try await URLSession.shared.data(from: url)
         nsImage = NSImage.init(data: data)
 
-        if let nsImage = nsImage {
+        if let nsImage {
           loadingState = .loaded(nsImage)
         } else {
           throw NoImageError.noImage(artwork)
