@@ -42,8 +42,8 @@ extension MissingArtwork {
 }
 
 extension MissingArtwork: Identifiable {
-  public var id: String {
-    self.simpleRepresentation
+  public var id: Self {
+    self
   }
 }
 
