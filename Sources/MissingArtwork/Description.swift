@@ -39,15 +39,12 @@ public struct Description: View {
   }
 
   @ViewBuilder private var processedStateView: some View {
-    switch processingState {
-    case .none:
-      EmptyView()
-    case .processing:
+    if case .processing = processingState {
       Image(systemName: "gearshape.circle")
-    case .success:
+    } else if case .success = processingState {
       Image(systemName: "checkmark.circle")
         .foregroundColor(.green)
-    case .failure:
+    } else if case .failure = processingState {
       Image(systemName: "circle.slash")
         .foregroundColor(.red)
     }
