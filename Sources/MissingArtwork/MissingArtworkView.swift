@@ -28,7 +28,7 @@ extension FetchError: LocalizedError {
 }
 
 public struct MissingArtworkView<Content: View>: View {
-  fileprivate enum LoadingState: Equatable {
+  fileprivate enum LoadingState {
     case loading
     case error(FetchError)
     case loaded
@@ -52,21 +52,6 @@ public struct MissingArtworkView<Content: View>: View {
         return error
       }
       return nil
-    }
-
-    static func == (
-      lhs: MissingArtworkView<Content>.LoadingState, rhs: MissingArtworkView<Content>.LoadingState
-    ) -> Bool {
-      switch (lhs, rhs) {
-      case (.loading, .loading):
-        return true
-      case (.error(_), .error(_)):
-        return true
-      case (.loaded, .loaded):
-        return true
-      default:
-        return false
-      }
     }
   }
   @State private var loadingState: LoadingState = .loading
