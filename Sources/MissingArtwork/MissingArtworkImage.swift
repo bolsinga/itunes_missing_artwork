@@ -26,32 +26,25 @@ extension NoImageError: LocalizedError {
 }
 
 struct MissingArtworkImage: View {
-  fileprivate enum LoadingState {
-    case loading
-    case error(Error)
-    case loaded(NSImage)
-  }
-
   let artwork: Artwork
   let width: CGFloat
 
   @Binding var nsImage: NSImage?
 
-  @State private var loadingState: LoadingState = .loading
+  @State private var loadingState: LoadingState<NSImage> = .loading
 
   var body: some View {
     Group {
-      switch loadingState {
-      case .loading:
+      if case .loading = loadingState {
         if let backgroundColor = artwork.backgroundColor {
           Color(cgColor: backgroundColor)
             .frame(width: width, height: CGFloat(artwork.maximumHeight))
         } else {
           ProgressView()
         }
-      case .error(let error):
+      } else if case .error(let error) = loadingState {
         Text("Unable to load image: \(error.localizedDescription)")
-      case .loaded(let nsImage):
+      } else if case .loaded(let nsImage) = loadingState {
         Image(nsImage: nsImage)
           .resizable().aspectRatio(contentMode: .fit)
           .contextMenu {
