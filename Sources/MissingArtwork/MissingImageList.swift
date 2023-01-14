@@ -32,7 +32,7 @@ struct MissingImageList: View {
   fileprivate enum LoadingState {
     case loading
     case error(Error)
-    case loaded
+    case loaded([ArtworkImage])
   }
 
   let missingArtwork: MissingArtwork
@@ -69,7 +69,7 @@ struct MissingImageList: View {
     .overlay(imageListOverlay)
     .task {
       guard artworkImages.isEmpty else {
-        loadingState = .loaded
+        loadingState = .loaded(artworkImages)
         return
       }
 
@@ -84,7 +84,7 @@ struct MissingImageList: View {
           throw NoArtworkError.noneFound(missingArtwork)
         }
 
-        loadingState = .loaded
+        loadingState = .loaded(artworkImages)
       } catch {
         if missingArtwork == selectedArtwork {
           // only show this if the error occurred with the currently selected artwork.
