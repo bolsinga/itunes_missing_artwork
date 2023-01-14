@@ -29,24 +29,10 @@ extension NoArtworkError: LocalizedError {
 }
 
 struct MissingImageList: View {
-  fileprivate enum LoadingState: Equatable {
+  fileprivate enum LoadingState {
     case loading
     case error(Error)
     case loaded
-
-    static func == (lhs: MissingImageList.LoadingState, rhs: MissingImageList.LoadingState) -> Bool
-    {
-      switch (lhs, rhs) {
-      case (.loading, .loading):
-        return true
-      case (.error(_), .error(_)):
-        return true
-      case (.loaded, .loaded):
-        return true
-      default:
-        return false
-      }
-    }
   }
 
   let missingArtwork: MissingArtwork
