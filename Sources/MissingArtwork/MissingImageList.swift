@@ -59,7 +59,7 @@ struct MissingImageList: View {
   @State private var loadingState: LoadingState = .loading
 
   @ViewBuilder private var imageListOverlay: some View {
-    if loadingState == .loading {
+    if case .loading = loadingState {
       ProgressView()
     } else if case .error(let error) = loadingState {
       Text("\(error.localizedDescription)")
