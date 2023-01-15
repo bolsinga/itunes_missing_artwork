@@ -19,4 +19,13 @@ enum LoadingState<Value> {
     }
     return nil
   }
+
+  var isIdleOrLoading: Bool {
+    switch self {
+    case .idle, .loading:
+      return true
+    case .error(_), .loaded(_):
+      return false
+    }
+  }
 }
