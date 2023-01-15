@@ -25,8 +25,7 @@ extension Binding {
 }
 
 struct DescriptionList<Content: View>: View {
-  typealias MissingImage = (MissingArtwork, NSImage?)
-  typealias ImageContextMenuBuilder = ([MissingImage]) -> Content
+  typealias ImageContextMenuBuilder = ([(MissingArtwork, NSImage?)]) -> Content
 
   @ViewBuilder let imageContextMenuBuilder: ImageContextMenuBuilder
 
