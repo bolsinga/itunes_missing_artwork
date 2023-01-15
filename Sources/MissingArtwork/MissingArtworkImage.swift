@@ -38,16 +38,17 @@ struct MissingArtworkImage: View {
 
   var body: some View {
     Group {
-      if case .loading = loadingState {
+      switch loadingState {
+      case .idle, .loading:
         if let backgroundColor = artwork.backgroundColor {
           Color(cgColor: backgroundColor)
             .frame(width: width, height: CGFloat(artwork.maximumHeight))
         } else {
           ProgressView()
         }
-      } else if case .error(let error) = loadingState {
+      case .error(let error):
         Text("Unable to load image: \(error.localizedDescription)")
-      } else if case .loaded(let nsImage) = loadingState {
+      case .loaded(let nsImage):
         Image(nsImage: nsImage)
           .resizable().aspectRatio(contentMode: .fit)
           .contextMenu {
