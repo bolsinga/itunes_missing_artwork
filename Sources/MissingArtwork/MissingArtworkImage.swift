@@ -26,12 +26,15 @@ extension NoImageError: LocalizedError {
 }
 
 struct MissingArtworkImage: View {
-  let artwork: Artwork
   let width: CGFloat
 
-  @Binding var nsImage: NSImage?
+  @Binding var artworkImage: ArtworkImage
 
   @State private var loadingState: LoadingState<NSImage> = .loading
+
+  private var artwork: Artwork {
+    artworkImage.artwork
+  }
 
   var body: some View {
     Group {
@@ -58,8 +61,8 @@ struct MissingArtworkImage: View {
     }
     .frame(width: width)
     .task {
-      guard nsImage == nil else {
-        loadingState = .loaded(nsImage!)
+      guard artworkImage.nsImage == nil else {
+        loadingState = .loaded(artworkImage.nsImage!)
         return
       }
 
@@ -70,9 +73,9 @@ struct MissingArtworkImage: View {
         else { throw NoImageError.noURL(artwork) }
 
         let (data, _) = try await URLSession.shared.data(from: url)
-        nsImage = NSImage.init(data: data)
+        artworkImage.nsImage = NSImage.init(data: data)
 
-        if let nsImage {
+        if let nsImage = artworkImage.nsImage {
           loadingState = .loaded(nsImage)
         } else {
           throw NoImageError.noImage(artwork)
