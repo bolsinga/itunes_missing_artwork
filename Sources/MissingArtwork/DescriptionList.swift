@@ -153,7 +153,7 @@ struct DescriptionList<Content: View>: View {
         }
         .contextMenu {
           self.imageContextMenuBuilder([
-            (missingArtwork, selectedArtworkImages[missingArtwork]?.nsImage)
+            (missingArtwork, selectedArtworkImages[missingArtwork]?.loadingState.value)
           ])
         }
         .tag(missingArtwork)

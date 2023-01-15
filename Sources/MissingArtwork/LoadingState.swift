@@ -12,4 +12,11 @@ enum LoadingState<Value> {
   case loading
   case error(Error)
   case loaded(Value)
+
+  var value: Value? {
+    if case .loaded(let value) = self {
+      return value
+    }
+    return nil
+  }
 }

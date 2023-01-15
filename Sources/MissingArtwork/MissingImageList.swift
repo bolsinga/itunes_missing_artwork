@@ -76,7 +76,7 @@ struct MissingImageList: View {
       do {
         artworkImages = try await fetchArtworks(
           missingArtwork: missingArtwork, term: missingArtwork.simpleRepresentation
-        ).map { ArtworkImage(artwork: $0) }
+        ).map { ArtworkImage(artwork: $0, loadingState: .idle) }
 
         if artworkImages.isEmpty {
           throw NoArtworkError.noneFound(missingArtwork)

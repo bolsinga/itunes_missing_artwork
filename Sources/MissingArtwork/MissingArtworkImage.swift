@@ -30,10 +30,12 @@ struct MissingArtworkImage: View {
 
   @Binding var artworkImage: ArtworkImage
 
-  @State private var loadingState: LoadingState<NSImage> = .loading
-
   private var artwork: Artwork {
     artworkImage.artwork
+  }
+
+  private var loadingState: LoadingState<NSImage> {
+    artworkImage.loadingState
   }
 
   var body: some View {
@@ -62,27 +64,26 @@ struct MissingArtworkImage: View {
     }
     .frame(width: width)
     .task {
-      guard artworkImage.nsImage == nil else {
-        loadingState = .loaded(artworkImage.nsImage!)
+      guard case .idle = loadingState else {
         return
       }
 
-      loadingState = .loading
+      artworkImage.loadingState = .loading
 
       do {
         guard let url = artwork.url(width: artwork.maximumWidth, height: artwork.maximumHeight)
         else { throw NoImageError.noURL(artwork) }
 
         let (data, _) = try await URLSession.shared.data(from: url)
-        artworkImage.nsImage = NSImage.init(data: data)
+        let nsImage = NSImage.init(data: data)
 
-        if let nsImage = artworkImage.nsImage {
-          loadingState = .loaded(nsImage)
+        if let nsImage {
+          artworkImage.loadingState = .loaded(nsImage)
         } else {
           throw NoImageError.noImage(artwork)
         }
       } catch {
-        loadingState = .error(error)
+        artworkImage.loadingState = .error(error)
       }
     }
   }
