@@ -80,7 +80,7 @@ struct MissingImageList: View {
       } catch {
         if missingArtwork == selectedArtwork {
           // only show this if the error occurred with the currently selected artwork.
-          loadingState = .error(error)
+          loadingState = .error(error.fallbackLocalizedError)
         }
       }
     }
