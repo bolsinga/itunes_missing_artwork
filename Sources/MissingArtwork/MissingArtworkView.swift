@@ -60,7 +60,8 @@ public struct MissingArtworkView<Content: View>: View {
 
   @Binding var processingStates: [MissingArtwork: Description.ProcessingState]
 
-  public typealias ImageContextMenuBuilder = ([(missingArtwork: MissingArtwork, image: NSImage?)]) -> Content
+  public typealias ImageContextMenuBuilder = ([(missingArtwork: MissingArtwork, image: NSImage?)])
+    -> Content
 
   @ViewBuilder let imageContextMenuBuilder: ImageContextMenuBuilder
 
