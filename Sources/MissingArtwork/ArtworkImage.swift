@@ -67,7 +67,7 @@ struct ArtworkImage: Equatable {
         throw NoImageError.noImage(artwork)
       }
     } catch {
-      loadingState = .error(error.fallbackLocalizedError)
+      loadingState = .error(error)
     }
   }
 }
