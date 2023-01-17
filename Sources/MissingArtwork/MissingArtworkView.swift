@@ -31,7 +31,7 @@ public struct MissingArtworkView<Content: View>: View {
   fileprivate enum LoadingState {
     case loading
     case error(FetchError)
-    case loaded
+    case loaded([MissingArtwork])
 
     var isLoading: Bool {
       if case .loading = self {
@@ -98,7 +98,7 @@ public struct MissingArtworkView<Content: View>: View {
     )
     .task {
       guard missingArtworks.isEmpty else {
-        loadingState = .loaded
+        loadingState = .loaded(missingArtworks)
         return
       }
 
@@ -107,7 +107,7 @@ public struct MissingArtworkView<Content: View>: View {
       do {
         missingArtworks = try await fetchMissingArtworks()
 
-        loadingState = .loaded
+        loadingState = .loaded(missingArtworks)
       } catch let error as NSError {
         reportError(.cannotFetchMissingArtwork(error))
       } catch {
