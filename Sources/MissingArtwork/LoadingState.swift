@@ -61,7 +61,25 @@ enum LoadingState<Value> {
     }
   }
 
+  var isLoading: Bool {
+    if case .loading = self {
+      return true
+    }
+    return false
+  }
+
+  var isError: Bool {
+    if case .error(_) = self {
+      return true
+    }
+    return false
+  }
+
   var currentError: LoadingStateError? {
+    // This wrapping LoadingStateError is necessary, as there is a compiler error if this
+    // attempts to return LocalizedError? and the associated value is also LocalizedError.
+    // So it is wrapped in a concrete type to hide this. Definitely not ideal, but can be
+    // revisited in the future.
     if case .error(let error) = self {
       if let localizedError = error as? LocalizedError {
         return LoadingStateError.localized(localizedError)

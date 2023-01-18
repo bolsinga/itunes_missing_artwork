@@ -28,33 +28,7 @@ extension FetchError: LocalizedError {
 }
 
 public struct MissingArtworkView<Content: View>: View {
-  fileprivate enum LoadingState {
-    case loading
-    case error(FetchError)
-    case loaded([MissingArtwork])
-
-    var isLoading: Bool {
-      if case .loading = self {
-        return true
-      }
-      return false
-    }
-
-    var isError: Bool {
-      if case .error(_) = self {
-        return true
-      }
-      return false
-    }
-
-    var fetchError: FetchError? {
-      if case .error(let error) = self {
-        return error
-      }
-      return nil
-    }
-  }
-  @State private var loadingState: LoadingState = .loading
+  @State private var loadingState: LoadingState<[MissingArtwork]> = .loading
 
   @State private var missingArtworks: [MissingArtwork] = []
 
@@ -86,7 +60,7 @@ public struct MissingArtworkView<Content: View>: View {
       processingStates: $processingStates
     )
     .alert(
-      isPresented: .constant(loadingState.isError), error: loadingState.fetchError,
+      isPresented: .constant(loadingState.isError), error: loadingState.currentError,
       actions: { error in
         Button("Quit", role: .destructive) {
           NSApplication.shared.terminate(nil)
