@@ -40,7 +40,7 @@ struct DescriptionList<Content: View>: View {
   @State private var selectedArtworkImages: [MissingArtwork: ArtworkImage] = [:]
   @State var artworkImages: [MissingArtwork: [ArtworkImage]] = [:]
 
-  @Binding var missingArtworks: [MissingArtwork]
+  let missingArtworks: [MissingArtwork]
 
   @Binding var showProgressOverlay: Bool
 
@@ -231,10 +231,10 @@ struct DescriptionList_Previews: PreviewProvider {
         Button("1") {}
         Button("2") {}
       },
-      missingArtworks: .constant([
+      missingArtworks: [
         MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none),
         MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1", .some),
-      ]),
+      ],
       showProgressOverlay: .constant(false),
       processingStates: .constant([
         MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none): .processing,
@@ -247,7 +247,7 @@ struct DescriptionList_Previews: PreviewProvider {
         Button("1") {}
         Button("2") {}
       },
-      missingArtworks: .constant([]),
+      missingArtworks: [],
       showProgressOverlay: .constant(true),
       processingStates: .constant([:])
     )

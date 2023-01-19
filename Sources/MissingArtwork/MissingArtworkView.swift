@@ -55,7 +55,7 @@ public struct MissingArtworkView<Content: View>: View {
   public var body: some View {
     DescriptionList(
       imageContextMenuBuilder: imageContextMenuBuilder,
-      missingArtworks: $missingArtworks,
+      missingArtworks: missingArtworks,
       showProgressOverlay: .constant(loadingState.isLoading),
       processingStates: $processingStates
     )
