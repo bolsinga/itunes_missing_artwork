@@ -31,7 +31,6 @@ struct DescriptionList<Content: View>: View {
 
   @State private var filter = FilterCategory.all
   @State private var sortOrder = SortOrder.ascending
-  @State private var imageResult = ImageResult.all
   @State private var selectedArtwork: MissingArtwork?
   @State private var availabilityFilter = AvailabilityCategory.all
 
@@ -87,15 +86,6 @@ struct DescriptionList<Content: View>: View {
           }
         }())
     }.filter { missingArtwork in
-      switch imageResult {
-      case .all:
-        return true
-      case .notFound:
-        return artworkImages[missingArtwork]?.count == 0
-      case .found:
-        return artworkImages[missingArtwork]?.count ?? 0 > 0
-      }
-    }.filter { missingArtwork in
       missingArtwork.matches(searchString)
     }
     .sorted {
@@ -134,14 +124,6 @@ struct DescriptionList<Content: View>: View {
     case descending = "Descending"
 
     var id: SortOrder { self }
-  }
-
-  enum ImageResult: String, CaseIterable, Identifiable {
-    case all = "All"
-    case notFound = "Not Found"
-    case found = "Found"
-
-    var id: ImageResult { self }
   }
 
   @ViewBuilder private var listStateOverlay: some View {
@@ -207,11 +189,6 @@ struct DescriptionList<Content: View>: View {
               Picker("Sort Order", selection: $sortOrder) {
                 ForEach(SortOrder.allCases) { sortOrder in
                   Text(sortOrder.rawValue).tag(sortOrder)
-                }
-              }
-              Picker("Image Result", selection: $imageResult) {
-                ForEach(ImageResult.allCases) { imageResult in
-                  Text(imageResult.rawValue).tag(imageResult)
                 }
               }
             } label: {
