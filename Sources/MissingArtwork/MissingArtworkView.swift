@@ -9,8 +9,7 @@ import MusicKit
 import SwiftUI
 
 private enum FetchError: Error {
-  case cannotFetchMissingArtwork(NSError)
-  case unknownError(Error)
+  case cannotFetchMissingArtwork(Error)
 }
 
 extension FetchError: LocalizedError {
@@ -18,8 +17,6 @@ extension FetchError: LocalizedError {
     switch self {
     case .cannotFetchMissingArtwork(let error):
       return "iTunes Library unable to find missing artwork: \(error.localizedDescription)"
-    case .unknownError(let error):
-      return "iTunes Library unknown error: \(error)"
     }
   }
   fileprivate var recoverySuggestion: String? {
@@ -43,11 +40,6 @@ public struct MissingArtworkView<Content: View>: View {
   ) {
     self.imageContextMenuBuilder = imageContextMenuBuilder
     self._processingStates = processingStates  // Note this for assigning a Binding<T> to a wrapped property.
-  }
-
-  @MainActor private func reportError(_ error: FetchError) {
-    loadingState = .error(error)
-    debugPrint("Unable to fetch missing artworks: \(error.localizedDescription)")
   }
 
   public var body: some View {
@@ -79,10 +71,10 @@ public struct MissingArtworkView<Content: View>: View {
         let missingArtworks = try await fetchMissingArtworks()
 
         loadingState = .loaded(missingArtworks)
-      } catch let error as NSError {
-        reportError(.cannotFetchMissingArtwork(error))
       } catch {
-        reportError(.unknownError(error))
+        let fetchError = FetchError.cannotFetchMissingArtwork(error)
+        loadingState = .error(fetchError)
+        debugPrint("Unable to fetch missing artworks: \(fetchError.localizedDescription)")
       }
     }
     .musicKitAuthorizationSheet()
