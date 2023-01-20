@@ -30,8 +30,6 @@ extension FetchError: LocalizedError {
 public struct MissingArtworkView<Content: View>: View {
   @State private var loadingState: LoadingState<[MissingArtwork]> = .idle
 
-  @State private var missingArtworks: [MissingArtwork] = []
-
   @Binding var processingStates: [MissingArtwork: Description.ProcessingState]
 
   public typealias ImageContextMenuBuilder = ([(missingArtwork: MissingArtwork, image: NSImage?)])
@@ -55,7 +53,7 @@ public struct MissingArtworkView<Content: View>: View {
   public var body: some View {
     DescriptionList(
       imageContextMenuBuilder: imageContextMenuBuilder,
-      missingArtworks: missingArtworks,
+      missingArtworks: loadingState.value,
       showProgressOverlay: .constant(loadingState.isLoading),
       processingStates: $processingStates
     )
@@ -78,7 +76,7 @@ public struct MissingArtworkView<Content: View>: View {
       loadingState = .loading
 
       do {
-        missingArtworks = try await fetchMissingArtworks()
+        let missingArtworks = try await fetchMissingArtworks()
 
         loadingState = .loaded(missingArtworks)
       } catch let error as NSError {

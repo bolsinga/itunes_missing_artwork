@@ -40,21 +40,30 @@ struct DescriptionList<Content: View>: View {
   @State private var selectedArtworkImages: [MissingArtwork: ArtworkImage] = [:]
   @State var artworkImages: [MissingArtwork: [ArtworkImage]] = [:]
 
-  let missingArtworks: [MissingArtwork]
+  let missingArtworks: [MissingArtwork]?
 
   @Binding var showProgressOverlay: Bool
 
   @Binding var processingStates: [MissingArtwork: Description.ProcessingState]
 
   var missingArtworksIsEmpty: Bool {
-    missingArtworks.isEmpty
+    if let missingArtworks {
+      return missingArtworks.isEmpty
+    }
+    return false
   }
 
   var missingArtworksCount: Int {
-    missingArtworks.count
+    if let missingArtworks {
+      return missingArtworks.count
+    }
+    return 0
   }
 
   var displayableArtworks: [MissingArtwork] {
+    guard let missingArtworks else {
+      return []
+    }
     return missingArtworks.filter { missingArtwork in
       (filter == .all
         || {
