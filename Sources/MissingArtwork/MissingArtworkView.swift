@@ -8,22 +8,6 @@
 import MusicKit
 import SwiftUI
 
-private enum FetchError: Error {
-  case cannotFetchMissingArtwork(Error)
-}
-
-extension FetchError: LocalizedError {
-  fileprivate var errorDescription: String? {
-    switch self {
-    case .cannotFetchMissingArtwork(let error):
-      return "iTunes Library unable to find missing artwork: \(error.localizedDescription)"
-    }
-  }
-  fileprivate var recoverySuggestion: String? {
-    "iTunes was unable to find any missing artwork to fix."
-  }
-}
-
 public struct MissingArtworkView<Content: View>: View {
   @State private var loadingState: LoadingState<[MissingArtwork]> = .idle
 
@@ -61,28 +45,9 @@ public struct MissingArtworkView<Content: View>: View {
       }
     )
     .task {
-      guard case .idle = loadingState else {
-        return
-      }
-
-      loadingState = .loading
-
-      do {
-        let missingArtworks = try await fetchMissingArtworks()
-
-        loadingState = .loaded(missingArtworks)
-      } catch {
-        let fetchError = FetchError.cannotFetchMissingArtwork(error)
-        loadingState = .error(fetchError)
-        debugPrint("Unable to fetch missing artworks: \(fetchError.localizedDescription)")
-      }
+      await loadingState.load()
     }
     .musicKitAuthorizationSheet()
-  }
-
-  func fetchMissingArtworks() async throws -> [MissingArtwork] {
-    async let missingArtworks = try MissingArtwork.gatherMissingArtwork()
-    return try await missingArtworks
   }
 }
 
