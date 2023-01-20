@@ -46,7 +46,7 @@ public struct MissingArtworkView<Content: View>: View {
     DescriptionList(
       imageContextMenuBuilder: imageContextMenuBuilder,
       missingArtworks: loadingState.value,
-      showProgressOverlay: .constant(loadingState.isLoading),
+      showProgressOverlay: .constant(loadingState.isIdleOrLoading),
       processingStates: $processingStates
     )
     .alert(
