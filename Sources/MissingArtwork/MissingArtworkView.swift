@@ -28,7 +28,7 @@ extension FetchError: LocalizedError {
 }
 
 public struct MissingArtworkView<Content: View>: View {
-  @State private var loadingState: LoadingState<[MissingArtwork]> = .loading
+  @State private var loadingState: LoadingState<[MissingArtwork]> = .idle
 
   @State private var missingArtworks: [MissingArtwork] = []
 
@@ -71,8 +71,7 @@ public struct MissingArtworkView<Content: View>: View {
       }
     )
     .task {
-      guard missingArtworks.isEmpty else {
-        loadingState = .loaded(missingArtworks)
+      guard case .idle = loadingState else {
         return
       }
 
