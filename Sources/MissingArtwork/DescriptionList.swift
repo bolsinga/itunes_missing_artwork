@@ -46,6 +46,14 @@ struct DescriptionList<Content: View>: View {
 
   @Binding var processingStates: [MissingArtwork: Description.ProcessingState]
 
+  var missingArtworksIsEmpty: Bool {
+    missingArtworks.isEmpty
+  }
+
+  var missingArtworksCount: Int {
+    missingArtworks.count
+  }
+
   var displayableArtworks: [MissingArtwork] {
     return missingArtworks.filter { missingArtwork in
       (filter == .all
@@ -130,7 +138,7 @@ struct DescriptionList<Content: View>: View {
   @ViewBuilder private var listStateOverlay: some View {
     if showProgressOverlay {
       ProgressView()
-    } else if missingArtworks.isEmpty {
+    } else if missingArtworksIsEmpty {
       Text("No Missing Artwork")
     }
   }
@@ -164,7 +172,7 @@ struct DescriptionList<Content: View>: View {
         }
       }
       Divider()
-      Text("\(displayableArtworks.count) / \(missingArtworks.count) Missing")
+      Text("\(displayableArtworks.count) / \(missingArtworksCount) Missing")
         .padding(EdgeInsets(top: 0, leading: 0, bottom: 6, trailing: 0))
     }
   }
