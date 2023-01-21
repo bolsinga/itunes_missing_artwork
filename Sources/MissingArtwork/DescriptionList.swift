@@ -36,7 +36,7 @@ struct DescriptionList<Content: View>: View {
 
   @State private var searchString: String = ""
 
-  @State private var selectedArtworkImages: [MissingArtwork: ArtworkImage] = [:]
+  @State private var selectedArtworkImages: [MissingArtwork: NSImage] = [:]
   @State var artworkImages: [MissingArtwork: [ArtworkImage]] = [:]
 
   let missingArtworks: [MissingArtwork]?
@@ -150,7 +150,7 @@ struct DescriptionList<Content: View>: View {
         }
         .contextMenu {
           self.imageContextMenuBuilder([
-            (missingArtwork, selectedArtworkImages[missingArtwork]?.loadingState.value)
+            (missingArtwork, selectedArtworkImages[missingArtwork])
           ])
         }
         .tag(missingArtwork)

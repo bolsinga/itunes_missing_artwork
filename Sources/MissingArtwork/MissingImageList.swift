@@ -28,7 +28,7 @@ struct MissingImageList: View {
   let missingArtwork: MissingArtwork
   @Binding var artworkImages: [ArtworkImage]
 
-  @Binding var selectedArtworkImage: ArtworkImage?
+  @Binding var selectedArtworkImage: NSImage?
 
   @State private var loadingState: LoadingState<[ArtworkImage]> = .idle
 
@@ -49,8 +49,9 @@ struct MissingImageList: View {
               width: proxy.size.width, artwork: artworkImage.artwork,
               loadingState: $artworkImage.loadingState
             )
-            .onTapGesture { selectedArtworkImage = artworkImage }
-            .border(.selection, width: selectedArtworkImage == artworkImage ? 2.0 : 0)
+            .onTapGesture { selectedArtworkImage = artworkImage.loadingState.value }
+            .border(
+              .selection, width: selectedArtworkImage == artworkImage.loadingState.value ? 2.0 : 0)
           }
         }
       }
