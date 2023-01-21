@@ -43,7 +43,7 @@ struct MissingArtworkImage: View {
     }
     .frame(width: width)
     .task {
-      await artworkImage.load()
+      await artworkImage.load(artwork: artworkImage.artwork)
     }
   }
 }
