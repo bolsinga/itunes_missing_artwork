@@ -30,8 +30,4 @@ struct ArtworkImage: Equatable {
 
   let artwork: Artwork
   var loadingState: LoadingState<NSImage>
-
-  mutating func load(artwork: Artwork) async {
-    await loadingState.load(artwork: artwork)
-  }
 }
