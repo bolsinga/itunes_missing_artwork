@@ -9,19 +9,6 @@ import AppKit
 import Foundation
 import MusicKit
 
-private enum NoImageError: Error {
-  case noURL(Artwork)
-}
-
-extension NoImageError: LocalizedError {
-  fileprivate var errorDescription: String? {
-    switch self {
-    case .noURL(let artwork):
-      return "No Image URL Available: \(artwork.description)."
-    }
-  }
-}
-
 struct ArtworkImage: Equatable {
   static func == (lhs: ArtworkImage, rhs: ArtworkImage) -> Bool {
     if lhs.artwork != rhs.artwork {
@@ -45,13 +32,6 @@ struct ArtworkImage: Equatable {
   var loadingState: LoadingState<NSImage>
 
   mutating func load(artwork: Artwork) async {
-    do {
-      guard let url = artwork.url(width: artwork.maximumWidth, height: artwork.maximumHeight)
-      else { throw NoImageError.noURL(artwork) }
-
-      await self.loadingState.load(url: url)
-    } catch {
-      self.loadingState = .error(error)
-    }
+    await loadingState.load(artwork: artwork)
   }
 }
