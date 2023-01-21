@@ -11,15 +11,12 @@ import SwiftUI
 struct MissingArtworkImage: View {
   let width: CGFloat
 
-  @Binding var artworkImage: ArtworkImage
-
-  private var artwork: Artwork {
-    artworkImage.artwork
-  }
+  let artwork: Artwork
+  @Binding var loadingState: LoadingState<NSImage>
 
   var body: some View {
     Group {
-      switch artworkImage.loadingState {
+      switch loadingState {
       case .idle, .loading:
         if let backgroundColor = artwork.backgroundColor {
           Color(cgColor: backgroundColor)
@@ -43,7 +40,7 @@ struct MissingArtworkImage: View {
     }
     .frame(width: width)
     .task {
-      await artworkImage.load(artwork: artworkImage.artwork)
+      await loadingState.load(artwork: artwork)
     }
   }
 }
