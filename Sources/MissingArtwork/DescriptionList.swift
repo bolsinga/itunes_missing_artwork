@@ -141,8 +141,7 @@ struct DescriptionList<Content: View>: View {
           MissingImageList(
             missingArtwork: missingArtwork,
             artworkImages: $artworkImages[missingArtwork].defaultValue([]),
-            selectedArtworkImage: $selectedArtworkImages[missingArtwork],
-            selectedArtwork: $selectedArtwork
+            selectedArtworkImage: $selectedArtworkImages[missingArtwork]
           )
         } label: {
           Description(
