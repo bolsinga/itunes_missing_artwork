@@ -24,10 +24,9 @@ extension NoArtworkError: LocalizedError {
 struct MissingImageList: View {
   let missingArtwork: MissingArtwork
   @Binding var artworkImages: [(Artwork, LoadingState<NSImage>)]
+  @Binding var loadingState: LoadingState<[Artwork]>
 
   @Binding var selectedArtworkImage: NSImage?
-
-  @State private var loadingState: LoadingState<[(Artwork, LoadingState<NSImage>)]> = .idle
 
   @ViewBuilder private var imageListOverlay: some View {
     if loadingState.isIdleOrLoading {
@@ -55,8 +54,7 @@ struct MissingImageList: View {
     }
     .overlay(imageListOverlay)
     .task {
-      guard artworkImages.isEmpty else {
-        loadingState = .loaded(artworkImages)
+      guard case .idle = loadingState else {
         return
       }
 
@@ -70,7 +68,7 @@ struct MissingImageList: View {
         }
         artworkImages = artworks.map { ($0, .idle) }
 
-        loadingState = .loaded(artworkImages)
+        loadingState = .loaded(artworks)
       } catch {
         loadingState = .error(error)
       }
@@ -92,6 +90,7 @@ struct MissingImageList_Previews: PreviewProvider {
       MissingImageList(
         missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none),
         artworkImages: .constant([]),
+        loadingState: .constant(.idle),
         selectedArtworkImage: .constant(nil))
     }
   }
