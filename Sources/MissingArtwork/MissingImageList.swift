@@ -30,8 +30,6 @@ struct MissingImageList: View {
 
   @Binding var selectedArtworkImage: ArtworkImage?
 
-  @Binding var selectedArtwork: MissingArtwork?
-
   @State private var loadingState: LoadingState<[ArtworkImage]> = .idle
 
   @ViewBuilder private var imageListOverlay: some View {
@@ -76,10 +74,7 @@ struct MissingImageList: View {
 
         loadingState = .loaded(artworkImages)
       } catch {
-        if missingArtwork == selectedArtwork {
-          // only show this if the error occurred with the currently selected artwork.
-          loadingState = .error(error)
-        }
+        loadingState = .error(error)
       }
     }
   }
@@ -99,8 +94,7 @@ struct MissingImageList_Previews: PreviewProvider {
       MissingImageList(
         missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none),
         artworkImages: .constant([]),
-        selectedArtworkImage: .constant(nil),
-        selectedArtwork: .constant(nil))
+        selectedArtworkImage: .constant(nil))
     }
   }
 }
