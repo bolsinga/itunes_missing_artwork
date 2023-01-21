@@ -8,10 +8,6 @@
 import MusicKit
 import SwiftUI
 
-extension Artwork: Identifiable {
-  public var id: Artwork { self }
-}
-
 private enum NoArtworkError: Error {
   case noneFound(MissingArtwork)
   case error(Error, MissingArtwork)
@@ -71,13 +67,12 @@ struct MissingImageList: View {
       loadingState = .loading
 
       do {
-        artworkImages = try await fetchArtworks(
-          missingArtwork: missingArtwork, term: missingArtwork.simpleRepresentation
-        ).map { ArtworkImage(artwork: $0, loadingState: .idle) }
-
-        if artworkImages.isEmpty {
+        let artworks = try await fetchArtworks(
+          missingArtwork: missingArtwork, term: missingArtwork.simpleRepresentation)
+        if artworks.isEmpty {
           throw NoArtworkError.noneFound(missingArtwork)
         }
+        artworkImages = artworks.map { ArtworkImage(artwork: $0, loadingState: .idle) }
 
         loadingState = .loaded(artworkImages)
       } catch {
