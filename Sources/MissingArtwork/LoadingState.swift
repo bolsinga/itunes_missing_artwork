@@ -7,31 +7,31 @@
 
 import Foundation
 
-enum LoadingStateError: LocalizedError {
+public enum LoadingStateError: LocalizedError {
   case localized(LocalizedError)
 
-  var errorDescription: String? {
+  public var errorDescription: String? {
     switch self {
     case .localized(let error):
       return error.errorDescription
     }
   }
 
-  var failureReason: String? {
+  public var failureReason: String? {
     switch self {
     case .localized(let error):
       return error.failureReason
     }
   }
 
-  var recoverySuggestion: String? {
+  public var recoverySuggestion: String? {
     switch self {
     case .localized(let error):
       return error.recoverySuggestion
     }
   }
 
-  var helpAnchor: String? {
+  public var helpAnchor: String? {
     switch self {
     case .localized(let error):
       return error.helpAnchor
@@ -39,20 +39,20 @@ enum LoadingStateError: LocalizedError {
   }
 }
 
-enum LoadingState<Value> {
+public enum LoadingState<Value> {
   case idle
   case loading
   case error(Error)
   case loaded(Value)
 
-  var value: Value? {
+  public var value: Value? {
     if case .loaded(let value) = self {
       return value
     }
     return nil
   }
 
-  var isIdleOrLoading: Bool {
+  public var isIdleOrLoading: Bool {
     switch self {
     case .idle, .loading:
       return true
@@ -61,14 +61,14 @@ enum LoadingState<Value> {
     }
   }
 
-  var isError: Bool {
+  public var isError: Bool {
     if case .error(_) = self {
       return true
     }
     return false
   }
 
-  var currentError: LoadingStateError? {
+  public var currentError: LoadingStateError? {
     // This wrapping LoadingStateError is necessary, as there is a compiler error if this
     // attempts to return LocalizedError? and the associated value is also LocalizedError.
     // So it is wrapped in a concrete type to hide this. Definitely not ideal, but can be
