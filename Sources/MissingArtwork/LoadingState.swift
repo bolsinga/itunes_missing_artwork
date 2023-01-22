@@ -7,38 +7,6 @@
 
 import Foundation
 
-public enum LoadingStateError: LocalizedError {
-  case localized(LocalizedError)
-
-  public var errorDescription: String? {
-    switch self {
-    case .localized(let error):
-      return error.errorDescription
-    }
-  }
-
-  public var failureReason: String? {
-    switch self {
-    case .localized(let error):
-      return error.failureReason
-    }
-  }
-
-  public var recoverySuggestion: String? {
-    switch self {
-    case .localized(let error):
-      return error.recoverySuggestion
-    }
-  }
-
-  public var helpAnchor: String? {
-    switch self {
-    case .localized(let error):
-      return error.helpAnchor
-    }
-  }
-}
-
 public enum LoadingState<Value> {
   case idle
   case loading
@@ -68,17 +36,9 @@ public enum LoadingState<Value> {
     return false
   }
 
-  public var currentError: LoadingStateError? {
-    // This wrapping LoadingStateError is necessary, as there is a compiler error if this
-    // attempts to return LocalizedError? and the associated value is also LocalizedError.
-    // So it is wrapped in a concrete type to hide this. Definitely not ideal, but can be
-    // revisited in the future.
+  public var currentError: WrappedLocalizedError? {
     if case .error(let error) = self {
-      if let localizedError = error as? LocalizedError {
-        return LoadingStateError.localized(localizedError)
-      } else {
-        return LoadingStateError.localized(error.fallbackLocalizedError)
-      }
+      return WrappedLocalizedError.wrapError(error: error)
     }
     return nil
   }
