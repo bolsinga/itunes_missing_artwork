@@ -27,7 +27,7 @@ struct DescriptionList<Content: View>: View {
   @State private var searchString: String = ""
 
   @State private var selectedArtworkImages: [MissingArtwork: NSImage] = [:]
-  @State var artworkImages: [MissingArtwork: [ArtworkImage]] = [:]
+  @State var artworkImages: [MissingArtwork: [(Artwork, LoadingState<NSImage>)]] = [:]
 
   let missingArtworks: [MissingArtwork]?
 

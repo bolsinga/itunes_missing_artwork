@@ -26,11 +26,11 @@ extension NoArtworkError: LocalizedError {
 
 struct MissingImageList: View {
   let missingArtwork: MissingArtwork
-  @Binding var artworkImages: [ArtworkImage]
+  @Binding var artworkImages: [(Artwork, LoadingState<NSImage>)]
 
   @Binding var selectedArtworkImage: NSImage?
 
-  @State private var loadingState: LoadingState<[ArtworkImage]> = .idle
+  @State private var loadingState: LoadingState<[(Artwork, LoadingState<NSImage>)]> = .idle
 
   @ViewBuilder private var imageListOverlay: some View {
     if loadingState.isIdleOrLoading {
@@ -44,14 +44,14 @@ struct MissingImageList: View {
     GeometryReader { proxy in
       ScrollView {
         VStack {
-          ForEach($artworkImages, id: \.artwork) { $artworkImage in
+          ForEach($artworkImages, id: \.0) { $artworkImage in
             MissingArtworkImage(
-              width: proxy.size.width, artwork: artworkImage.artwork,
-              loadingState: $artworkImage.loadingState
+              width: proxy.size.width, artwork: artworkImage.0,
+              loadingState: $artworkImage.1
             )
-            .onTapGesture { selectedArtworkImage = artworkImage.loadingState.value }
+            .onTapGesture { selectedArtworkImage = artworkImage.1.value }
             .border(
-              .selection, width: selectedArtworkImage == artworkImage.loadingState.value ? 2.0 : 0)
+              .selection, width: selectedArtworkImage == artworkImage.1.value ? 2.0 : 0)
           }
         }
       }
@@ -71,7 +71,7 @@ struct MissingImageList: View {
         if artworks.isEmpty {
           throw NoArtworkError.noneFound(missingArtwork)
         }
-        artworkImages = artworks.map { ArtworkImage(artwork: $0, loadingState: .idle) }
+        artworkImages = artworks.map { ($0, .idle) }
 
         loadingState = .loaded(artworkImages)
       } catch {
