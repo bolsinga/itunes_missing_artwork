@@ -39,7 +39,7 @@ enum LoadingStateError: LocalizedError {
   }
 }
 
-enum LoadingState<Value> {
+public enum LoadingState<Value> {
   case idle
   case loading
   case error(Error)
