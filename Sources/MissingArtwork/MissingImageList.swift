@@ -8,19 +8,6 @@
 import MusicKit
 import SwiftUI
 
-private enum NoArtworkError: Error {
-  case noneFound(MissingArtwork)
-}
-
-extension NoArtworkError: LocalizedError {
-  fileprivate var errorDescription: String? {
-    switch self {
-    case .noneFound(let missingArtwork):
-      return "No image for \(missingArtwork.description)"
-    }
-  }
-}
-
 struct MissingImageList: View {
   let missingArtwork: MissingArtwork
   @Binding var artworkImages: [(Artwork, LoadingState<NSImage>)]
@@ -54,33 +41,12 @@ struct MissingImageList: View {
     }
     .overlay(imageListOverlay)
     .task {
-      guard case .idle = loadingState else {
-        return
-      }
+      await loadingState.load(missingArtwork: missingArtwork)
 
-      loadingState = .loading
-
-      do {
-        let artworks = try await fetchArtworks(
-          missingArtwork: missingArtwork, term: missingArtwork.simpleRepresentation)
-        if artworks.isEmpty {
-          throw NoArtworkError.noneFound(missingArtwork)
-        }
+      if let artworks = loadingState.value {
         artworkImages = artworks.map { ($0, .idle) }
-
-        loadingState = .loaded(artworks)
-      } catch {
-        loadingState = .error(error)
       }
     }
-  }
-
-  private func fetchArtworks(missingArtwork: MissingArtwork, term: String) async throws -> [Artwork]
-  {
-    var searchRequest = MusicCatalogSearchRequest(term: term, types: [Album.self])
-    searchRequest.limit = 2
-    let searchResponse = try await searchRequest.response()
-    return searchResponse.albums.compactMap(\.artwork)
   }
 }
 
