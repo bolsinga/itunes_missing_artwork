@@ -10,7 +10,6 @@ import SwiftUI
 
 private enum NoArtworkError: Error {
   case noneFound(MissingArtwork)
-  case error(Error, MissingArtwork)
 }
 
 extension NoArtworkError: LocalizedError {
@@ -18,8 +17,6 @@ extension NoArtworkError: LocalizedError {
     switch self {
     case .noneFound(let missingArtwork):
       return "No image for \(missingArtwork.description)"
-    case .error(let error, let missingArtwork):
-      return "Error retrieving \(missingArtwork.description). Error: \(error.localizedDescription)"
     }
   }
 }
