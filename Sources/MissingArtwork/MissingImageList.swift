@@ -9,7 +9,7 @@ import MusicKit
 import SwiftUI
 
 struct MissingImageList: View {
-  let missingArtwork: MissingArtwork
+  let missingArtwork: MissingArtwork?
   @Binding var loadingState: LoadingState<[(Artwork, LoadingState<NSImage>)]>
 
   @Binding var selectedArtworkImage: NSImage?
@@ -49,7 +49,9 @@ struct MissingImageList: View {
     }
     .overlay(imageListOverlay)
     .task {
-      await loadingState.load(missingArtwork: missingArtwork)
+      if let missingArtwork {
+        await loadingState.load(missingArtwork: missingArtwork)
+      }
     }
   }
 }
