@@ -128,13 +128,7 @@ struct DescriptionList<Content: View>: View {
   @ViewBuilder private var sidebarView: some View {
     VStack {
       List(displayableArtworks, selection: $selectedArtwork) { missingArtwork in
-        NavigationLink {
-          MissingImageList(
-            missingArtwork: missingArtwork,
-            loadingState: $artworkLoadingStates[missingArtwork].defaultValue(.idle),
-            selectedArtworkImage: $selectedArtworkImages[missingArtwork]
-          )
-        } label: {
+        NavigationLink(value: missingArtwork) {
           Description(
             missingArtwork: missingArtwork,
             processingState: $processingStates[missingArtwork].defaultValue(.none))
@@ -159,7 +153,7 @@ struct DescriptionList<Content: View>: View {
   }
 
   var body: some View {
-    NavigationView {
+    NavigationSplitView {
       sidebarView
         .navigationTitle(title)
         .frame(minWidth: 325)
@@ -193,10 +187,13 @@ struct DescriptionList<Content: View>: View {
             }
           }
         }
-
-      if displayableArtworks.count > 0 {
-        Text("Select an Item")
-      }
+    } detail: {
+      MissingImageList(
+        missingArtwork: selectedArtwork,
+        loadingState: (selectedArtwork != nil)
+          ? $artworkLoadingStates[selectedArtwork!].defaultValue(.idle) : .constant(.idle),
+        selectedArtworkImage: (selectedArtwork != nil)
+          ? $selectedArtworkImages[selectedArtwork!] : .constant(nil))
     }
   }
 
