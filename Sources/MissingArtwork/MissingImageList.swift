@@ -10,8 +10,7 @@ import SwiftUI
 
 struct MissingImageList: View {
   let missingArtwork: MissingArtwork
-  @Binding var artworkImages: [(Artwork, LoadingState<NSImage>)]
-  @Binding var loadingState: LoadingState<[Artwork]>
+  @Binding var loadingState: LoadingState<[(Artwork, LoadingState<NSImage>)]>
 
   @Binding var selectedArtworkImage: NSImage?
 
@@ -27,7 +26,16 @@ struct MissingImageList: View {
     GeometryReader { proxy in
       ScrollView {
         VStack {
-          ForEach($artworkImages, id: \.0) { $artworkImage in
+          ForEach(
+            Binding<[(Artwork, LoadingState<NSImage>)]> {
+              if let value = loadingState.value {
+                return value
+              }
+              return []
+            } set: {
+              loadingState = .loaded($0)
+            }, id: \.0
+          ) { $artworkImage in
             MissingArtworkImage(
               width: proxy.size.width, artwork: artworkImage.0,
               loadingState: $artworkImage.1
@@ -42,10 +50,6 @@ struct MissingImageList: View {
     .overlay(imageListOverlay)
     .task {
       await loadingState.load(missingArtwork: missingArtwork)
-
-      if let artworks = loadingState.value {
-        artworkImages = artworks.map { ($0, .idle) }
-      }
     }
   }
 }
@@ -55,7 +59,6 @@ struct MissingImageList_Previews: PreviewProvider {
     Group {
       MissingImageList(
         missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none),
-        artworkImages: .constant([]),
         loadingState: .constant(.idle),
         selectedArtworkImage: .constant(nil))
     }

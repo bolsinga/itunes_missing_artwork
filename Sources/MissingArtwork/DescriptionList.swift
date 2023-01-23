@@ -27,8 +27,8 @@ struct DescriptionList<Content: View>: View {
   @State private var searchString: String = ""
 
   @State private var selectedArtworkImages: [MissingArtwork: NSImage] = [:]
-  @State private var artworkImages: [MissingArtwork: [(Artwork, LoadingState<NSImage>)]] = [:]
-  @State private var artworkLoadingStates: [MissingArtwork: LoadingState<[Artwork]>] = [:]
+  @State private var artworkLoadingStates:
+    [MissingArtwork: LoadingState<[(Artwork, LoadingState<NSImage>)]>] = [:]
 
   let missingArtworks: [MissingArtwork]?
 
@@ -131,7 +131,6 @@ struct DescriptionList<Content: View>: View {
         NavigationLink {
           MissingImageList(
             missingArtwork: missingArtwork,
-            artworkImages: $artworkImages[missingArtwork].defaultValue([]),
             loadingState: $artworkLoadingStates[missingArtwork].defaultValue(.idle),
             selectedArtworkImage: $selectedArtworkImages[missingArtwork]
           )

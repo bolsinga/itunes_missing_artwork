@@ -5,6 +5,7 @@
 //  Created by Greg Bolsinga on 1/22/23.
 //
 
+import AppKit
 import Foundation
 import MusicKit
 
@@ -21,7 +22,7 @@ extension NoArtworkError: LocalizedError {
   }
 }
 
-extension LoadingState where Value == [Artwork] {
+extension LoadingState where Value == [(Artwork, LoadingState<NSImage>)] {
   private func fetchArtworks(missingArtwork: MissingArtwork, term: String) async throws -> [Artwork]
   {
     var searchRequest = MusicCatalogSearchRequest(term: term, types: [Album.self])
@@ -44,7 +45,7 @@ extension LoadingState where Value == [Artwork] {
         throw NoArtworkError.noneFound(missingArtwork)
       }
 
-      self = .loaded(artworks)
+      self = .loaded(artworks.map { ($0, .idle) })
     } catch {
       self = .error(error)
     }
