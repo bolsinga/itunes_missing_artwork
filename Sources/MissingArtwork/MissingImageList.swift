@@ -61,9 +61,25 @@ struct MissingImageList: View {
 struct MissingImageList_Previews: PreviewProvider {
   static var previews: some View {
     Group {
+      let missingArtwork = MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none)
       MissingImageList(
-        missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none),
+        missingArtwork: nil,
         loadingState: .constant(.idle),
+        selectedArtworkImage: .constant(nil))
+
+      MissingImageList(
+        missingArtwork: missingArtwork,
+        loadingState: .constant(.idle),
+        selectedArtworkImage: .constant(nil))
+
+      MissingImageList(
+        missingArtwork: missingArtwork,
+        loadingState: .constant(.loading),
+        selectedArtworkImage: .constant(nil))
+
+      MissingImageList(
+        missingArtwork: missingArtwork,
+        loadingState: .constant(.loaded([])),
         selectedArtworkImage: .constant(nil))
     }
   }
