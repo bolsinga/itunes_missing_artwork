@@ -230,34 +230,6 @@ struct DescriptionList_Previews: PreviewProvider {
         Button("1") {}
         Button("2") {}
       },
-      missingArtworks: missingArtworks,
-      showProgressOverlay: .constant(false),
-      processingStates: .constant(
-        missingArtworks.reduce(into: [MissingArtwork: Description.ProcessingState]()) {
-          $0[$1] = .success
-        }
-      )
-    )
-
-    DescriptionList(
-      imageContextMenuBuilder: { items in
-        Button("1") {}
-        Button("2") {}
-      },
-      missingArtworks: missingArtworks,
-      showProgressOverlay: .constant(false),
-      processingStates: .constant(
-        missingArtworks.reduce(into: [MissingArtwork: Description.ProcessingState]()) {
-          $0[$1] = .failure
-        }
-      )
-    )
-
-    DescriptionList(
-      imageContextMenuBuilder: { items in
-        Button("1") {}
-        Button("2") {}
-      },
       missingArtworks: [],
       showProgressOverlay: .constant(true),
       processingStates: .constant([:])
