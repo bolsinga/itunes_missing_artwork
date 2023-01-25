@@ -246,12 +246,7 @@ struct DescriptionList_Previews: PreviewProvider {
         Button("2") {}
       },
       loadingState: .constant(.idle),
-      processingStates: .constant(
-        missingArtworks.reduce(into: [MissingArtwork: Description.ProcessingState]()) {
-          $0[$1] = .processing
-        }
-      )
+      processingStates: .constant([:])
     )
-
   }
 }
