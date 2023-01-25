@@ -40,7 +40,7 @@ struct DescriptionList<Content: View>: View {
     if let missingArtworks {
       return missingArtworks.isEmpty
     }
-    return false
+    return true
   }
 
   var missingArtworksCount: Int {
@@ -207,20 +207,50 @@ struct DescriptionList<Content: View>: View {
 
 struct DescriptionList_Previews: PreviewProvider {
   static var previews: some View {
+    let missingArtworks = [
+      MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none),
+      MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1", .some),
+    ]
     DescriptionList(
       imageContextMenuBuilder: { items in
         Button("1") {}
         Button("2") {}
       },
-      missingArtworks: [
-        MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none),
-        MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1", .some),
-      ],
+      missingArtworks: missingArtworks,
       showProgressOverlay: .constant(false),
-      processingStates: .constant([
-        MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none): .processing,
-        MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1", .none): .success,
-      ])
+      processingStates: .constant(
+        missingArtworks.reduce(into: [MissingArtwork: Description.ProcessingState]()) {
+          $0[$1] = .processing
+        }
+      )
+    )
+
+    DescriptionList(
+      imageContextMenuBuilder: { items in
+        Button("1") {}
+        Button("2") {}
+      },
+      missingArtworks: missingArtworks,
+      showProgressOverlay: .constant(false),
+      processingStates: .constant(
+        missingArtworks.reduce(into: [MissingArtwork: Description.ProcessingState]()) {
+          $0[$1] = .success
+        }
+      )
+    )
+
+    DescriptionList(
+      imageContextMenuBuilder: { items in
+        Button("1") {}
+        Button("2") {}
+      },
+      missingArtworks: missingArtworks,
+      showProgressOverlay: .constant(false),
+      processingStates: .constant(
+        missingArtworks.reduce(into: [MissingArtwork: Description.ProcessingState]()) {
+          $0[$1] = .failure
+        }
+      )
     )
 
     DescriptionList(
@@ -229,6 +259,16 @@ struct DescriptionList_Previews: PreviewProvider {
         Button("2") {}
       },
       missingArtworks: [],
+      showProgressOverlay: .constant(true),
+      processingStates: .constant([:])
+    )
+
+    DescriptionList(
+      imageContextMenuBuilder: { items in
+        Button("1") {}
+        Button("2") {}
+      },
+      missingArtworks: nil,
       showProgressOverlay: .constant(true),
       processingStates: .constant([:])
     )
