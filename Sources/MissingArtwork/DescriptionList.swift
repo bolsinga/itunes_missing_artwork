@@ -30,28 +30,26 @@ struct DescriptionList<Content: View>: View {
   @State private var artworkLoadingStates:
     [MissingArtwork: LoadingState<[(Artwork, LoadingState<NSImage>)]>] = [:]
 
-  let missingArtworks: [MissingArtwork]?
-
-  @Binding var showProgressOverlay: Bool
+  @Binding var loadingState: LoadingState<[MissingArtwork]>
 
   @Binding var processingStates: [MissingArtwork: Description.ProcessingState]
 
   var missingArtworksIsEmpty: Bool {
-    if let missingArtworks {
+    if let missingArtworks = loadingState.value {
       return missingArtworks.isEmpty
     }
     return true
   }
 
   var missingArtworksCount: Int {
-    if let missingArtworks {
+    if let missingArtworks = loadingState.value {
       return missingArtworks.count
     }
     return 0
   }
 
   var displayableArtworks: [MissingArtwork] {
-    guard let missingArtworks else {
+    guard let missingArtworks = loadingState.value else {
       return []
     }
     return missingArtworks.filter { missingArtwork in
@@ -118,7 +116,7 @@ struct DescriptionList<Content: View>: View {
   }
 
   @ViewBuilder private var listStateOverlay: some View {
-    if showProgressOverlay {
+    if loadingState.isIdleOrLoading {
       ProgressView()
     } else if missingArtworksIsEmpty {
       Text("No Missing Artwork")
@@ -216,8 +214,7 @@ struct DescriptionList_Previews: PreviewProvider {
         Button("1") {}
         Button("2") {}
       },
-      missingArtworks: missingArtworks,
-      showProgressOverlay: .constant(false),
+      loadingState: .constant(.loaded(missingArtworks)),
       processingStates: .constant(
         missingArtworks.reduce(into: [MissingArtwork: Description.ProcessingState]()) {
           $0[$1] = .processing
@@ -230,8 +227,7 @@ struct DescriptionList_Previews: PreviewProvider {
         Button("1") {}
         Button("2") {}
       },
-      missingArtworks: [],
-      showProgressOverlay: .constant(true),
+      loadingState: .constant(.loaded([])),
       processingStates: .constant([:])
     )
 
@@ -240,9 +236,22 @@ struct DescriptionList_Previews: PreviewProvider {
         Button("1") {}
         Button("2") {}
       },
-      missingArtworks: nil,
-      showProgressOverlay: .constant(true),
+      loadingState: .constant(.loading),
       processingStates: .constant([:])
     )
+
+    DescriptionList(
+      imageContextMenuBuilder: { items in
+        Button("1") {}
+        Button("2") {}
+      },
+      loadingState: .constant(.idle),
+      processingStates: .constant(
+        missingArtworks.reduce(into: [MissingArtwork: Description.ProcessingState]()) {
+          $0[$1] = .processing
+        }
+      )
+    )
+
   }
 }
