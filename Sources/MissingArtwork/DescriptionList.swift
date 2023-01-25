@@ -188,6 +188,7 @@ struct DescriptionList<Content: View>: View {
     } detail: {
       MissingImageList(
         missingArtwork: selectedArtwork,
+        selectable: .constant(!loadingState.isIdleOrLoading && !missingArtworksIsEmpty),
         loadingState: (selectedArtwork != nil)
           ? $artworkLoadingStates[selectedArtwork!].defaultValue(.idle) : .constant(.idle),
         selectedArtworkImage: (selectedArtwork != nil)

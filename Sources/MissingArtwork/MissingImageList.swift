@@ -10,17 +10,20 @@ import SwiftUI
 
 struct MissingImageList: View {
   let missingArtwork: MissingArtwork?
+  @Binding var selectable: Bool
   @Binding var loadingState: LoadingState<[(Artwork, LoadingState<NSImage>)]>
 
   @Binding var selectedArtworkImage: NSImage?
 
   @ViewBuilder private var imageListOverlay: some View {
-    if missingArtwork == nil {
-      Text("Select an Item")
-    } else if loadingState.isIdleOrLoading {
-      ProgressView()
-    } else if case .error(let error) = loadingState {
-      Text("\(error.localizedDescription)")
+    if selectable {
+      if missingArtwork == nil {
+        Text("Select an Item")
+      } else if loadingState.isIdleOrLoading {
+        ProgressView()
+      } else if case .error(let error) = loadingState {
+        Text("\(error.localizedDescription)")
+      }
     }
   }
 
@@ -64,21 +67,31 @@ struct MissingImageList_Previews: PreviewProvider {
       let missingArtwork = MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none)
       MissingImageList(
         missingArtwork: nil,
+        selectable: .constant(true),
+        loadingState: .constant(.idle),
+        selectedArtworkImage: .constant(nil))
+
+      MissingImageList(
+        missingArtwork: nil,
+        selectable: .constant(false),
         loadingState: .constant(.idle),
         selectedArtworkImage: .constant(nil))
 
       MissingImageList(
         missingArtwork: missingArtwork,
+        selectable: .constant(true),
         loadingState: .constant(.idle),
         selectedArtworkImage: .constant(nil))
 
       MissingImageList(
         missingArtwork: missingArtwork,
+        selectable: .constant(true),
         loadingState: .constant(.loading),
         selectedArtworkImage: .constant(nil))
 
       MissingImageList(
         missingArtwork: missingArtwork,
+        selectable: .constant(true),
         loadingState: .constant(.loaded([])),
         selectedArtworkImage: .constant(nil))
     }
