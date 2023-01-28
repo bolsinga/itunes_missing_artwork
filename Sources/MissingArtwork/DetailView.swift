@@ -26,7 +26,7 @@ struct DetailView: View {
   var body: some View {
     MissingImageList(
       missingArtwork: selectedArtwork.first,
-      selectable: .constant(!loadingState.isIdleOrLoading && !missingArtworksIsEmpty),
+      showStatusOverlay: .constant(!loadingState.isIdleOrLoading && !missingArtworksIsEmpty),
       loadingState: (selectedArtwork.first != nil)
         ? $artworkLoadingStates[selectedArtwork.first!].defaultValue(.idle) : .constant(.idle),
       selectedArtworkImage: (selectedArtwork.first != nil)
