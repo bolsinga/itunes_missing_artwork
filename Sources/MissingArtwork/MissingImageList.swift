@@ -9,19 +9,16 @@ import MusicKit
 import SwiftUI
 
 struct MissingImageList: View {
-  let missingArtwork: MissingArtwork?
-  @Binding var showStatusOverlay: Bool
+  let missingArtwork: MissingArtwork
   @Binding var loadingState: LoadingState<[(Artwork, LoadingState<NSImage>)]>
 
   @Binding var selectedArtworkImage: NSImage?
 
   @ViewBuilder private var artworkLoadingStatusOverlay: some View {
-    if showStatusOverlay {
-      if loadingState.isIdleOrLoading {
-        ProgressView()
-      } else if case .error(let error) = loadingState {
-        Text("\(error.localizedDescription)")
-      }
+    if loadingState.isIdleOrLoading {
+      ProgressView()
+    } else if case .error(let error) = loadingState {
+      Text("\(error.localizedDescription)")
     }
   }
 
@@ -52,9 +49,7 @@ struct MissingImageList: View {
     }
     .overlay(artworkLoadingStatusOverlay)
     .task(id: missingArtwork) {
-      if let missingArtwork {
-        await loadingState.load(missingArtwork: missingArtwork)
-      }
+      await loadingState.load(missingArtwork: missingArtwork)
     }
   }
 }
@@ -64,32 +59,17 @@ struct MissingImageList_Previews: PreviewProvider {
     Group {
       let missingArtwork = MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none)
       MissingImageList(
-        missingArtwork: nil,
-        showStatusOverlay: .constant(true),
-        loadingState: .constant(.idle),
-        selectedArtworkImage: .constant(nil))
-
-      MissingImageList(
-        missingArtwork: nil,
-        showStatusOverlay: .constant(false),
+        missingArtwork: missingArtwork,
         loadingState: .constant(.idle),
         selectedArtworkImage: .constant(nil))
 
       MissingImageList(
         missingArtwork: missingArtwork,
-        showStatusOverlay: .constant(true),
-        loadingState: .constant(.idle),
-        selectedArtworkImage: .constant(nil))
-
-      MissingImageList(
-        missingArtwork: missingArtwork,
-        showStatusOverlay: .constant(true),
         loadingState: .constant(.loading),
         selectedArtworkImage: .constant(nil))
 
       MissingImageList(
         missingArtwork: missingArtwork,
-        showStatusOverlay: .constant(true),
         loadingState: .constant(.loaded([])),
         selectedArtworkImage: .constant(nil))
     }

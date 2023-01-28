@@ -27,22 +27,18 @@ struct DetailView: View {
     !loadingState.isIdleOrLoading && !missingArtworksIsEmpty
   }
 
-  @ViewBuilder private var detailOverlay: some View {
-    if missingArtworkIsSelectable && selectedArtwork.isEmpty {
-      Text("Select an Item")
-    }
-  }
-
   var body: some View {
-    MissingImageList(
-      missingArtwork: selectedArtwork.first,
-      showStatusOverlay: .constant(missingArtworkIsSelectable && !selectedArtwork.isEmpty),
-      loadingState: (selectedArtwork.first != nil)
-        ? $artworkLoadingStates[selectedArtwork.first!].defaultValue(.idle) : .constant(.idle),
-      selectedArtworkImage: (selectedArtwork.first != nil)
-        ? $selectedArtworkImages[selectedArtwork.first!] : .constant(nil)
-    )
-    .overlay(detailOverlay)
+    if selectedArtwork.isEmpty {
+      if missingArtworkIsSelectable {
+        Text("Select an Item")
+      }
+    } else {
+      MissingImageList(
+        missingArtwork: selectedArtwork.first!,
+        loadingState: $artworkLoadingStates[selectedArtwork.first!].defaultValue(.idle),
+        selectedArtworkImage: $selectedArtworkImages[selectedArtwork.first!]
+      )
+    }
   }
 }
 
