@@ -186,13 +186,11 @@ struct DescriptionList<Content: View>: View {
           }
         }
     } detail: {
-      MissingImageList(
-        missingArtwork: selectedArtwork,
-        selectable: .constant(!loadingState.isIdleOrLoading && !missingArtworksIsEmpty),
-        loadingState: (selectedArtwork != nil)
-          ? $artworkLoadingStates[selectedArtwork!].defaultValue(.idle) : .constant(.idle),
-        selectedArtworkImage: (selectedArtwork != nil)
-          ? $selectedArtworkImages[selectedArtwork!] : .constant(nil))
+      DetailView(
+        loadingState: $loadingState,
+        artworkLoadingStates: $artworkLoadingStates,
+        selectedArtwork: .constant((selectedArtwork != nil) ? [selectedArtwork!] : []),
+        selectedArtworkImages: $selectedArtworkImages)
     }
   }
 
