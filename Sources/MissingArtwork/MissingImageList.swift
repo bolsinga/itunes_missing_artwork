@@ -15,11 +15,9 @@ struct MissingImageList: View {
 
   @Binding var selectedArtworkImage: NSImage?
 
-  @ViewBuilder private var imageListOverlay: some View {
+  @ViewBuilder private var artworkLoadingStatusOverlay: some View {
     if showStatusOverlay {
-      if missingArtwork == nil {
-        Text("Select an Item")
-      } else if loadingState.isIdleOrLoading {
+      if loadingState.isIdleOrLoading {
         ProgressView()
       } else if case .error(let error) = loadingState {
         Text("\(error.localizedDescription)")
@@ -52,7 +50,7 @@ struct MissingImageList: View {
         }
       }
     }
-    .overlay(imageListOverlay)
+    .overlay(artworkLoadingStatusOverlay)
     .task(id: missingArtwork) {
       if let missingArtwork {
         await loadingState.load(missingArtwork: missingArtwork)
