@@ -27,12 +27,17 @@ struct DetailView: View {
     !loadingState.isIdleOrLoading && !missingArtworksIsEmpty
   }
 
+  private var missingArtworks: [MissingArtwork] {
+    if let missingArtworks = loadingState.value {
+      return missingArtworks
+    }
+    return []
+  }
+
   var body: some View {
     if selectedArtwork.isEmpty {
       if missingArtworkIsSelectable {
-        Text(
-          "Select an Item", bundle: .module,
-          comment: "Text shown to tell user to select a missing artwork.")
+        MissingArtworkTypeChart(missingArtworks: missingArtworks)
       }
     } else {
       MissingImageList(
