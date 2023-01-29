@@ -35,8 +35,10 @@ public struct MissingArtworkView<Content: View>: View {
     .alert(
       isPresented: .constant(loadingState.isError), error: loadingState.currentError,
       actions: { error in
-        Button("Quit", role: .destructive) {
+        Button(role: .destructive) {
           NSApplication.shared.terminate(nil)
+        } label: {
+          Text("Quit", bundle: .module, comment: "Button shown when an unrecoverable error occurs.")
         }
       },
       message: { error in
@@ -54,8 +56,7 @@ struct MissingArtworkView_Previews: PreviewProvider {
   static var previews: some View {
     MissingArtworkView(
       imageContextMenuBuilder: { items in
-        Button("1") {}
-        Button("2") {}
+        EmptyView()
       }, processingStates: .constant([:]))
   }
 }

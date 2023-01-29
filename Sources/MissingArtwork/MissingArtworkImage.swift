@@ -25,15 +25,19 @@ struct MissingArtworkImage: View {
           ProgressView()
         }
       case .error(let error):
-        Text("Unable to load image: \(error.localizedDescription)")
+        Text(
+          "Unable to load image: \(error.localizedDescription)", bundle: .module,
+          comment: "Message when an image URL cannot be loaded.")
       case .loaded(let nsImage):
         Image(nsImage: nsImage)
           .resizable().aspectRatio(contentMode: .fit)
           .contextMenu {
-            Button("Copy") {
+            Button {
               let pasteboard = NSPasteboard.general
               pasteboard.clearContents()
               pasteboard.writeObjects([nsImage])
+            } label: {
+              Text("Copy", bundle: .module, comment: "Text shown to copy an album artwork image.")
             }
           }
       }

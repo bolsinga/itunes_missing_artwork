@@ -18,7 +18,7 @@ struct MissingImageList: View {
     if loadingState.isIdleOrLoading {
       ProgressView()
     } else if case .error(let error) = loadingState {
-      Text("\(error.localizedDescription)")
+      Text(error.localizedDescription)
     }
   }
 
