@@ -8,12 +8,23 @@
 import MusicKit
 import SwiftUI
 
+extension Bundle {
+  fileprivate var applicationName: String {
+    object(forInfoDictionaryKey: "CFBundleDisplayName") as? String ?? object(
+      forInfoDictionaryKey: "CFBundleName") as? String ?? ""
+  }
+}
+
 struct AuthorizationView: View {
   @Binding var musicAuthorizationStatus: MusicAuthorization.Status
 
+  private var applicationName: String {
+    Bundle.main.applicationName
+  }
+
   var body: some View {
     VStack {
-      Text("Missing Artwork")
+      Text(applicationName)
         .font(.headline)
       explanatoryText
         .font(.caption)
@@ -32,12 +43,10 @@ struct AuthorizationView: View {
     switch musicAuthorizationStatus {
     case .restricted:
       explanatoryText =
-        Text("Missing Artwork cannot be used because usage of ")
-        + Text(Image(systemName: "applelogo")) + Text(" Music is restricted.")
+        Text("\(applicationName) cannot be used because usage of Apple Music is restricted.")
     default:
       explanatoryText =
-        Text("Missing Artwork uses ")
-        + Text(Image(systemName: "applelogo")) + Text(" Music to find artwork images.")
+        Text("\(applicationName) uses Apple Music to find artwork images.")
 
     }
     return explanatoryText
