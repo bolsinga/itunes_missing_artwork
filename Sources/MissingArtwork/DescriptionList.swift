@@ -119,7 +119,9 @@ struct DescriptionList<Content: View>: View {
     if loadingState.isIdleOrLoading {
       ProgressView()
     } else if missingArtworksIsEmpty {
-      Text("No Missing Artwork")
+      Text(
+        "No Missing Artwork", bundle: .module,
+        comment: "Shown when there is no missing artwork in iTunes")
     }
   }
 
@@ -145,8 +147,12 @@ struct DescriptionList<Content: View>: View {
         }
       }
       Divider()
-      Text("\(displayableArtworks.count) / \(missingArtworksCount) Missing")
-        .padding(EdgeInsets(top: 0, leading: 0, bottom: 6, trailing: 0))
+      Text(
+        "\(displayableArtworks.count) / \(missingArtworksCount) Missing", bundle: .module,
+        comment:
+          "Shown at the bottom of the Missing Artwork list to indicate how many filtered items out of the total items are shown."
+      )
+      .padding(EdgeInsets(top: 0, leading: 0, bottom: 6, trailing: 0))
     }
   }
 
@@ -158,30 +164,61 @@ struct DescriptionList<Content: View>: View {
         .toolbar {
           ToolbarItem {
             Menu {
-              Picker("Category", selection: $filter) {
+              Picker(selection: $filter) {
                 ForEach(FilterCategory.allCases) { category in
                   Text(category.rawValue).tag(category)
                 }
+              } label: {
+                Text(
+                  "Category", bundle: .module,
+                  comment:
+                    "Shown to allow user to filter by category of MissingArtwork (album or compilation)."
+                )
+
               }
-              Picker("Artwork Availability", selection: $availabilityFilter) {
+              Picker(selection: $availabilityFilter) {
                 ForEach(AvailabilityCategory.allCases) { category in
                   Text(category.rawValue).tag(category)
                 }
+              } label: {
+                Text(
+                  "Artwork Availability", bundle: .module,
+                  comment: "Shown to allow user to filter by artwork availability.")
               }
-              Picker("Sort Order", selection: $sortOrder) {
+              Picker(selection: $sortOrder) {
                 ForEach(SortOrder.allCases) { sortOrder in
                   Text(sortOrder.rawValue).tag(sortOrder)
                 }
+              } label: {
+                Text(
+                  "Sort Order", bundle: .module,
+                  comment: "Shown to change the sort order of the Missing Artwork.")
               }
             } label: {
-              Label("Filters", systemImage: "slider.horizontal.3")
+              Label {
+                Text(
+                  "Filters", bundle: .module,
+                  comment:
+                    "Title of the ToolbarItem that shows a popup of filters to apply to the displayed Missing Artwork."
+                )
+              } icon: {
+                Image(systemName: "slider.horizontal.3")
+              }
             }
           }
           ToolbarItem {
             Menu {
               self.imageContextMenuBuilder(displayableArtworks.map { ($0, nil) })
             } label: {
-              Label("Multiple", systemImage: "wand.and.rays")
+              Label {
+                Text(
+                  "Multiple", bundle: .module,
+                  comment:
+                    "Title of the ToolbarItem that shows a popup of actions to apply to multiple items."
+                )
+              } icon: {
+                Image(systemName: "wand.and.rays")
+              }
             }
           }
         }
@@ -208,10 +245,12 @@ struct DescriptionList_Previews: PreviewProvider {
       MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none),
       MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1", .some),
     ]
+    let fakeButton1Title = "1"
+    let fakeButton2Title = "2"
     DescriptionList(
       imageContextMenuBuilder: { items in
-        Button("1") {}
-        Button("2") {}
+        Button(fakeButton1Title) {}
+        Button(fakeButton2Title) {}
       },
       loadingState: .constant(.loaded(missingArtworks)),
       processingStates: .constant(
@@ -223,8 +262,8 @@ struct DescriptionList_Previews: PreviewProvider {
 
     DescriptionList(
       imageContextMenuBuilder: { items in
-        Button("1") {}
-        Button("2") {}
+        Button(fakeButton1Title) {}
+        Button(fakeButton2Title) {}
       },
       loadingState: .constant(.loaded([])),
       processingStates: .constant([:])
@@ -232,8 +271,8 @@ struct DescriptionList_Previews: PreviewProvider {
 
     DescriptionList(
       imageContextMenuBuilder: { items in
-        Button("1") {}
-        Button("2") {}
+        Button(fakeButton1Title) {}
+        Button(fakeButton2Title) {}
       },
       loadingState: .constant(.loading),
       processingStates: .constant([:])
@@ -241,8 +280,8 @@ struct DescriptionList_Previews: PreviewProvider {
 
     DescriptionList(
       imageContextMenuBuilder: { items in
-        Button("1") {}
-        Button("2") {}
+        Button(fakeButton1Title) {}
+        Button(fakeButton2Title) {}
       },
       loadingState: .constant(.idle),
       processingStates: .constant([:])

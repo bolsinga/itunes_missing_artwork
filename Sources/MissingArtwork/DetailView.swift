@@ -30,7 +30,9 @@ struct DetailView: View {
   var body: some View {
     if selectedArtwork.isEmpty {
       if missingArtworkIsSelectable {
-        Text("Select an Item")
+        Text(
+          "Select an Item", bundle: .module,
+          comment: "Text shown to tell user to select a missing artwork.")
       }
     } else {
       MissingImageList(
