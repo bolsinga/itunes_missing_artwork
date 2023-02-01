@@ -14,44 +14,58 @@ extension MissingArtwork {
   }
 }
 
-protocol ArtworksFetcher {
-  func fetchArtworks(missingArtwork: MissingArtwork, term: String) async throws -> [Artwork]
-}
-
 struct DescriptionList<Content: View>: View {
-  let fetcher: ArtworksFetcher
-  @ViewBuilder let partialImageContextMenuBuilder: (_ missingArtwork: MissingArtwork) -> Content
+  typealias ImageContextMenuBuilder = ([(MissingArtwork, NSImage?)]) -> Content
+
+  @ViewBuilder let imageContextMenuBuilder: ImageContextMenuBuilder
 
   @State private var filter = FilterCategory.all
   @State private var sortOrder = SortOrder.ascending
-  @State private var imageResult = ImageResult.all
   @State private var selectedArtwork: MissingArtwork?
   @State private var availabilityFilter = AvailabilityCategory.all
 
   @State private var searchString: String = ""
 
-  @State var showMissingImageListOverlayProgress: Bool = false
-  @State private var missingImageListOverlayMessage: String?
+  @State private var selectedArtworkImages: [MissingArtwork: NSImage] = [:]
+  @State private var artworkLoadingStates:
+    [MissingArtwork: LoadingState<[(Artwork, LoadingState<NSImage>)]>] = [:]
 
-  @Binding var missingArtworks: [(MissingArtwork, ArtworkAvailability)]
-  @Binding var artworks: [MissingArtwork: [Artwork]]
-  @Binding var showProgressOverlay: Bool
+  @Binding var loadingState: LoadingState<[MissingArtwork]>
 
-  var displayableArtworks: [(MissingArtwork, ArtworkAvailability)] {
-    return missingArtworks.filter { (missingArtwork, _) in
+  @Binding var processingStates: [MissingArtwork: Description.ProcessingState]
+
+  var missingArtworksIsEmpty: Bool {
+    if let missingArtworks = loadingState.value {
+      return missingArtworks.isEmpty
+    }
+    return true
+  }
+
+  var missingArtworksCount: Int {
+    if let missingArtworks = loadingState.value {
+      return missingArtworks.count
+    }
+    return 0
+  }
+
+  var displayableArtworks: [MissingArtwork] {
+    guard let missingArtworks = loadingState.value else {
+      return []
+    }
+    return missingArtworks.filter { missingArtwork in
       (filter == .all
         || {
           switch missingArtwork {
-          case .ArtistAlbum(_, _):
+          case .ArtistAlbum(_, _, _):
             return filter == .albums
-          case .CompilationAlbum(_):
+          case .CompilationAlbum(_, _):
             return filter == .compilations
           }
         }())
-    }.filter { (_, availability) in
+    }.filter { missingArtwork in
       (availabilityFilter == .all
         || {
-          switch availability {
+          switch missingArtwork.availability {
           case .some:
             return availabilityFilter == .partial
           case .none:
@@ -60,24 +74,15 @@ struct DescriptionList<Content: View>: View {
             return availabilityFilter == .unknown
           }
         }())
-    }.filter { (missingArtwork, _) in
-      switch imageResult {
-      case .all:
-        return true
-      case .notFound:
-        return artworks[missingArtwork]?.count == 0
-      case .found:
-        return artworks[missingArtwork]?.count ?? 0 > 0
-      }
-    }.filter { (missingArtwork, _) in
+    }.filter { missingArtwork in
       missingArtwork.matches(searchString)
     }
     .sorted {
       switch sortOrder {
       case .ascending:
-        return $0.0 < $1.0
+        return $0 < $1
       case .descending:
-        return $1.0 < $0.0
+        return $1 < $0
       }
     }
   }
@@ -110,124 +115,124 @@ struct DescriptionList<Content: View>: View {
     var id: SortOrder { self }
   }
 
-  enum ImageResult: String, CaseIterable, Identifiable {
-    case all = "All"
-    case notFound = "Not Found"
-    case found = "Found"
-
-    var id: ImageResult { self }
-  }
-
-  @ViewBuilder private var imageListOverlay: some View {
-    if showMissingImageListOverlayProgress {
+  @ViewBuilder private var listStateOverlay: some View {
+    if loadingState.isIdleOrLoading {
       ProgressView()
-    } else if let message = missingImageListOverlayMessage {
-      Text(message).textSelection(.enabled)
+    } else if missingArtworksIsEmpty {
+      Text(
+        "No Missing Artwork", bundle: .module,
+        comment: "Shown when there is no missing artwork in iTunes")
     }
   }
 
-  @ViewBuilder private var progressOverlay: some View {
-    if showProgressOverlay {
-      ProgressView()
+  @ViewBuilder private var sidebarView: some View {
+    VStack {
+      List(displayableArtworks, selection: $selectedArtwork) { missingArtwork in
+        NavigationLink(value: missingArtwork) {
+          Description(
+            missingArtwork: missingArtwork,
+            processingState: $processingStates[missingArtwork].defaultValue(.none))
+        }
+        .contextMenu {
+          self.imageContextMenuBuilder([
+            (missingArtwork, selectedArtworkImages[missingArtwork])
+          ])
+        }
+        .tag(missingArtwork)
+      }
+      .overlay(listStateOverlay)
+      .searchable(text: $searchString) {
+        ForEach(searchSuggestions) { suggestion in
+          Text(suggestion.description).searchCompletion(suggestion.description)
+        }
+      }
+      Divider()
+      Text(
+        "\(displayableArtworks.count) / \(missingArtworksCount) Missing", bundle: .module,
+        comment:
+          "Shown at the bottom of the Missing Artwork list to indicate how many filtered items out of the total items are shown."
+      )
+      .padding(EdgeInsets(top: 0, leading: 0, bottom: 6, trailing: 0))
     }
   }
 
   var body: some View {
-    NavigationView {
-      VStack {
-        List(selection: $selectedArtwork) {
-          ForEach(displayableArtworks, id: \.0) { (missingArtwork, availability) in
-            NavigationLink {
-              MissingImageList(artworks: $artworks[missingArtwork])
-                .overlay(imageListOverlay)
-                .task {
-                  missingImageListOverlayMessage = nil
-
-                  guard artworks[missingArtwork] == nil else {
-                    return
-                  }
-
-                  showMissingImageListOverlayProgress = true
-                  defer {
-                    showMissingImageListOverlayProgress = false
-                  }
-
-                  do {
-                    artworks[missingArtwork] = try await fetcher.fetchArtworks(
-                      missingArtwork: missingArtwork, term: missingArtwork.simpleRepresentation
-                    )
-
-                    if let items = artworks[missingArtwork], items.isEmpty {
-                      missingImageListOverlayMessage =
-                        "No image for \(missingArtwork.description)"
-                    }
-                  } catch {
-                    if missingArtwork == selectedArtwork {
-                      // only show this if the error occurred with the currently selected artwork.
-                      missingImageListOverlayMessage =
-                        "Error retrieving \(missingArtwork.description). Error: \(String(describing: error.localizedDescription))"
-                    }
-                  }
+    NavigationSplitView {
+      sidebarView
+        .navigationTitle(title)
+        .frame(minWidth: 325)
+        .toolbar {
+          ToolbarItem {
+            Menu {
+              Picker(selection: $filter) {
+                ForEach(FilterCategory.allCases) { category in
+                  Text(category.rawValue).tag(category)
                 }
-            } label: {
-              Description(missingArtwork: missingArtwork, availability: availability)
-            }
-            .contextMenu {
-              self.partialImageContextMenuBuilder(missingArtwork)
-                .disabled(availability != .some)
-            }
-            .tag(missingArtwork)
-          }
-        }
-        .overlay(progressOverlay)
-        .searchable(text: $searchString) {
-          ForEach(searchSuggestions) { suggestion in
-            Text(suggestion.description).searchCompletion(suggestion.description)
-          }
-        }
-        Divider()
-        Text("\(displayableArtworks.count) / \(missingArtworks.count) Missing")
-          .padding(EdgeInsets(top: 0, leading: 0, bottom: 6, trailing: 0))
-      }
-      .navigationTitle(title)
-      .frame(minWidth: 325)
-      .toolbar {
-        ToolbarItem {
-          Menu {
-            Picker("Category", selection: $filter) {
-              ForEach(FilterCategory.allCases) { category in
-                Text(category.rawValue).tag(category)
-              }
-            }
-            Picker("Artwork Availability", selection: $availabilityFilter) {
-              ForEach(AvailabilityCategory.allCases) { category in
-                Text(category.rawValue).tag(category)
-              }
-            }
-            Picker("Sort Order", selection: $sortOrder) {
-              ForEach(SortOrder.allCases) { sortOrder in
-                Text(sortOrder.rawValue).tag(sortOrder)
-              }
-            }
-            Picker("Image Result", selection: $imageResult) {
-              ForEach(ImageResult.allCases) { imageResult in
-                Text(imageResult.rawValue).tag(imageResult)
-              }
-            }
-          } label: {
-            Label("Filters", systemImage: "slider.horizontal.3")
-          }
-        }
-      }
+              } label: {
+                Text(
+                  "Category", bundle: .module,
+                  comment:
+                    "Shown to allow user to filter by category of MissingArtwork (album or compilation)."
+                )
 
-      if displayableArtworks.count > 0 {
-        Text("Select an Item")
-      }
+              }
+              Picker(selection: $availabilityFilter) {
+                ForEach(AvailabilityCategory.allCases) { category in
+                  Text(category.rawValue).tag(category)
+                }
+              } label: {
+                Text(
+                  "Artwork Availability", bundle: .module,
+                  comment: "Shown to allow user to filter by artwork availability.")
+              }
+              Picker(selection: $sortOrder) {
+                ForEach(SortOrder.allCases) { sortOrder in
+                  Text(sortOrder.rawValue).tag(sortOrder)
+                }
+              } label: {
+                Text(
+                  "Sort Order", bundle: .module,
+                  comment: "Shown to change the sort order of the Missing Artwork.")
+              }
+            } label: {
+              Label {
+                Text(
+                  "Filters", bundle: .module,
+                  comment:
+                    "Title of the ToolbarItem that shows a popup of filters to apply to the displayed Missing Artwork."
+                )
+              } icon: {
+                Image(systemName: "slider.horizontal.3")
+              }
+            }
+          }
+          ToolbarItem {
+            Menu {
+              self.imageContextMenuBuilder(displayableArtworks.map { ($0, nil) })
+            } label: {
+              Label {
+                Text(
+                  "Multiple", bundle: .module,
+                  comment:
+                    "Title of the ToolbarItem that shows a popup of actions to apply to multiple items."
+                )
+              } icon: {
+                Image(systemName: "wand.and.rays")
+              }
+            }
+          }
+        }
+    } detail: {
+      DetailView(
+        loadingState: $loadingState,
+        artworkLoadingStates: $artworkLoadingStates,
+        selectedArtwork: .constant((selectedArtwork != nil) ? [selectedArtwork!] : []),
+        selectedArtworkImages: $selectedArtworkImages)
     }
   }
 
   fileprivate var searchSuggestions: [MissingArtwork] {
-    displayableArtworks.map { $0.0 }.filter {
+    displayableArtworks.filter {
       $0.description.localizedCaseInsensitiveContains(searchString)
         && $0.description.localizedCaseInsensitiveCompare(searchString) != .orderedSame
     }
@@ -235,35 +240,51 @@ struct DescriptionList<Content: View>: View {
 }
 
 struct DescriptionList_Previews: PreviewProvider {
-  struct Fetcher: ArtworksFetcher {
-    func fetchArtworks(missingArtwork: MissingArtwork, term: String) async -> [Artwork] {
-      return []
-    }
-  }
-
   static var previews: some View {
+    let missingArtworks = [
+      MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none),
+      MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1", .some),
+    ]
+    let fakeButton1Title = "1"
+    let fakeButton2Title = "2"
     DescriptionList(
-      fetcher: Fetcher(),
-      partialImageContextMenuBuilder: { missingArtwork in
-        Button("") {}
+      imageContextMenuBuilder: { items in
+        Button(fakeButton1Title) {}
+        Button(fakeButton2Title) {}
       },
-      missingArtworks: .constant([
-        (MissingArtwork.ArtistAlbum("The Stooges", "Fun House"), .none),
-        (MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1"), .some),
-      ]),
-      artworks: .constant([:]),
-      showProgressOverlay: .constant(false)
+      loadingState: .constant(.loaded(missingArtworks)),
+      processingStates: .constant(
+        missingArtworks.reduce(into: [MissingArtwork: Description.ProcessingState]()) {
+          $0[$1] = .processing
+        }
+      )
     )
 
     DescriptionList(
-      fetcher: Fetcher(),
-      partialImageContextMenuBuilder: { missingArtwork in
-        Button("") {
-        }
+      imageContextMenuBuilder: { items in
+        Button(fakeButton1Title) {}
+        Button(fakeButton2Title) {}
       },
-      missingArtworks: .constant([]),
-      artworks: .constant([:]),
-      showProgressOverlay: .constant(true)
+      loadingState: .constant(.loaded([])),
+      processingStates: .constant([:])
+    )
+
+    DescriptionList(
+      imageContextMenuBuilder: { items in
+        Button(fakeButton1Title) {}
+        Button(fakeButton2Title) {}
+      },
+      loadingState: .constant(.loading),
+      processingStates: .constant([:])
+    )
+
+    DescriptionList(
+      imageContextMenuBuilder: { items in
+        Button(fakeButton1Title) {}
+        Button(fakeButton2Title) {}
+      },
+      loadingState: .constant(.idle),
+      processingStates: .constant([:])
     )
   }
 }

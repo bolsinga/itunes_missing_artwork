@@ -8,12 +8,23 @@
 import MusicKit
 import SwiftUI
 
+extension Bundle {
+  fileprivate var applicationName: String {
+    object(forInfoDictionaryKey: "CFBundleDisplayName") as? String ?? object(
+      forInfoDictionaryKey: "CFBundleName") as? String ?? ""
+  }
+}
+
 struct AuthorizationView: View {
   @Binding var musicAuthorizationStatus: MusicAuthorization.Status
 
+  private var applicationName: String {
+    Bundle.main.applicationName
+  }
+
   var body: some View {
     VStack {
-      Text("Missing Artwork")
+      Text(applicationName)
         .font(.headline)
       explanatoryText
         .font(.caption)
@@ -32,12 +43,19 @@ struct AuthorizationView: View {
     switch musicAuthorizationStatus {
     case .restricted:
       explanatoryText =
-        Text("Missing Artwork cannot be used because usage of ")
-        + Text(Image(systemName: "applelogo")) + Text(" Music is restricted.")
+        Text(
+          "\(applicationName) cannot be used because usage of Apple Music is restricted.",
+          bundle: .module,
+          comment:
+            "Shown when application was not granted access to MusicKit. Variable is the application name."
+        )
     default:
       explanatoryText =
-        Text("Missing Artwork uses ")
-        + Text(Image(systemName: "applelogo")) + Text(" Music to find artwork images.")
+        Text(
+          "\(applicationName) uses Apple Music to find artwork images.", bundle: .module,
+          comment:
+            "Shown when application was granted access to MusicKit. Variable is the application name."
+        )
 
     }
     return explanatoryText
@@ -61,7 +79,10 @@ struct AuthorizationView: View {
     let buttonText: Text
     switch musicAuthorizationStatus {
     case .notDetermined:
-      buttonText = Text("Continue")
+      buttonText = Text(
+        "Continue", bundle: .module,
+        comment:
+          "Button Text in alert shown when MusicKit authorization status cannot be determined.")
     default:
       fatalError(
         "No button should be displayed for current authorization status: \(musicAuthorizationStatus)."
@@ -111,7 +132,7 @@ struct AuthorizationView: View {
 }
 
 extension View {
-  func musicKitAuthorizationSheet() -> some View {
+  @MainActor func musicKitAuthorizationSheet() -> some View {
     modifier(AuthorizationView.SheetPresentationModifier())
   }
 }
