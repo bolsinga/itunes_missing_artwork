@@ -91,30 +91,6 @@ struct DescriptionList<Content: View>: View {
     filter == .all ? "Missing Artwork" : filter.rawValue
   }
 
-  enum FilterCategory: String, CaseIterable, Identifiable {
-    case all = "All"
-    case albums = "Albums"
-    case compilations = "Compliations"
-
-    var id: FilterCategory { self }
-  }
-
-  enum AvailabilityCategory: String, CaseIterable, Identifiable {
-    case all = "All"
-    case none = "No Artwork"
-    case partial = "Partial Artwork"
-    case unknown = "Unknown"
-
-    var id: AvailabilityCategory { self }
-  }
-
-  enum SortOrder: String, CaseIterable, Identifiable {
-    case ascending = "Ascending"
-    case descending = "Descending"
-
-    var id: SortOrder { self }
-  }
-
   @ViewBuilder private var listStateOverlay: some View {
     if loadingState.isIdleOrLoading {
       ProgressView()
