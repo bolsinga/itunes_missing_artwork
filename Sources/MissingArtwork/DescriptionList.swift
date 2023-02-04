@@ -8,12 +8,6 @@
 import MusicKit
 import SwiftUI
 
-extension MissingArtwork {
-  func matches(_ string: String) -> Bool {
-    string.isEmpty || description.localizedCaseInsensitiveContains(string)
-  }
-}
-
 struct DescriptionList<Content: View>: View {
   typealias ImageContextMenuBuilder = ([(MissingArtwork, NSImage?)]) -> Content
 
@@ -21,8 +15,9 @@ struct DescriptionList<Content: View>: View {
 
   @State private var filter = FilterCategory.all
   @State private var sortOrder = SortOrder.ascending
-  @State private var selectedArtwork: MissingArtwork?
   @State private var availabilityFilter = AvailabilityCategory.all
+
+  @State private var selectedArtwork: MissingArtwork?
 
   @State private var searchString: String = ""
 
@@ -52,39 +47,9 @@ struct DescriptionList<Content: View>: View {
     guard let missingArtworks = loadingState.value else {
       return []
     }
-    return missingArtworks.filter { missingArtwork in
-      (filter == .all
-        || {
-          switch missingArtwork {
-          case .ArtistAlbum(_, _, _):
-            return filter == .albums
-          case .CompilationAlbum(_, _):
-            return filter == .compilations
-          }
-        }())
-    }.filter { missingArtwork in
-      (availabilityFilter == .all
-        || {
-          switch missingArtwork.availability {
-          case .some:
-            return availabilityFilter == .partial
-          case .none:
-            return availabilityFilter == .none
-          case .unknown:
-            return availabilityFilter == .unknown
-          }
-        }())
-    }.filter { missingArtwork in
-      missingArtwork.matches(searchString)
-    }
-    .sorted {
-      switch sortOrder {
-      case .ascending:
-        return $0 < $1
-      case .descending:
-        return $1 < $0
-      }
-    }
+    return missingArtworks.filterForDisplay(
+      categoryFilter: filter, availabilityFilter: availabilityFilter, searchString: searchString,
+      sortOrder: sortOrder)
   }
 
   var title: String {
