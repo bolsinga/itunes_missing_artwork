@@ -7,9 +7,6 @@
 /* Shown at the bottom of the Missing Artwork list to indicate how many filtered items out of the total items are shown. */
 "%lld / %lld Missing" = "%lld / %lld Missing";
 
-/* Text to show how many albums there are, plural. Parameter is an Int. */
-"%lld Albums" = "%lld Albums";
-
 /* Shown to allow user to filter by artwork availability. */
 "Artwork Availability" = "Artwork Availability";
 
