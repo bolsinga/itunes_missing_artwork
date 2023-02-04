@@ -13,7 +13,7 @@ struct MissingArtworkTypeChart: View {
 
   private func albumCountText(_ count: Int) -> Text {
     Text(
-      "\(count) Albums",
+      "\(count) Album(s)",
       bundle: .module,
       comment: "Text to show how many albums there are, plural. Parameter is an Int.")
   }
@@ -57,9 +57,12 @@ struct MissingArtworkTypeChart: View {
 struct MissingArtworkTypeChart_Previews: PreviewProvider {
   static var previews: some View {
     let missingArtworks = [
+      MissingArtwork.ArtistAlbum("Sonic Youth", "Evol", .none),
       MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none),
       MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1", .some),
     ]
     MissingArtworkTypeChart(missingArtworks: missingArtworks)
+
+    MissingArtworkTypeChart(missingArtworks: [missingArtworks.first!])
   }
 }
