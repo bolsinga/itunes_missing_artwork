@@ -17,7 +17,7 @@ struct DescriptionList<Content: View>: View {
   @State private var sortOrder = SortOrder.ascending
   @State private var availabilityFilter = AvailabilityCategory.all
 
-  @State private var selectedArtwork: MissingArtwork?
+  @State private var selectedArtworks: Set<MissingArtwork> = []
 
   @State private var searchString: String = ""
 
@@ -57,9 +57,7 @@ struct DescriptionList<Content: View>: View {
   }
 
   private func clearSelectionIfNotDisplayable() {
-    if selectedArtwork != nil, !displayableArtworks.contains(selectedArtwork!) {
-      selectedArtwork = nil
-    }
+    selectedArtworks = selectedArtworks.intersection(displayableArtworks)
   }
 
   @ViewBuilder private var listStateOverlay: some View {
@@ -74,7 +72,7 @@ struct DescriptionList<Content: View>: View {
 
   @ViewBuilder private var sidebarView: some View {
     VStack {
-      List(displayableArtworks, selection: $selectedArtwork) { missingArtwork in
+      List(displayableArtworks, selection: $selectedArtworks) { missingArtwork in
         NavigationLink(value: missingArtwork) {
           Description(
             missingArtwork: missingArtwork,
@@ -115,7 +113,7 @@ struct DescriptionList<Content: View>: View {
       DetailView(
         loadingState: $loadingState,
         artworkLoadingStates: $artworkLoadingStates,
-        selectedArtworks: .constant((selectedArtwork != nil) ? [selectedArtwork!] : []),
+        selectedArtworks: $selectedArtworks,
         selectedArtworkImages: $selectedArtworkImages)
     }.onChange(of: categoryFilter) { _ in
       clearSelectionIfNotDisplayable()
