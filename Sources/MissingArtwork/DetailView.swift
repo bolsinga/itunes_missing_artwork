@@ -40,11 +40,17 @@ struct DetailView: View {
         MissingArtworkTypeChart(missingArtworks: missingArtworks)
       }
     } else {
-      MissingImageList(
-        missingArtwork: selectedArtworks.first!,
-        loadingState: $artworkLoadingStates[selectedArtworks.first!].defaultValue(.idle),
-        selectedArtworkImage: $selectedArtworkImages[selectedArtworks.first!]
-      )
+      if selectedArtworks.count == 1, let artwork = selectedArtworks.first {
+        MissingImageList(
+          missingArtwork: artwork,
+          loadingState: $artworkLoadingStates[artwork].defaultValue(.idle),
+          selectedArtworkImage: $selectedArtworkImages[artwork]
+        )
+      } else {
+        Text(
+          "\(selectedArtworks.count) Missing Artworks Selected", bundle: .module,
+          comment: "Shown when multiple missing artwork are selected.")
+      }
     }
   }
 }
