@@ -13,7 +13,7 @@ struct DetailView: View {
   @Binding var loadingState: LoadingState<[MissingArtwork]>
   @Binding var artworkLoadingStates:
     [MissingArtwork: LoadingState<[(Artwork, LoadingState<NSImage>)]>]
-  @Binding var selectedArtwork: Set<MissingArtwork>
+  @Binding var selectedArtworks: Set<MissingArtwork>
   @Binding var selectedArtworkImages: [MissingArtwork: NSImage]
 
   private var missingArtworksIsEmpty: Bool {
@@ -35,15 +35,15 @@ struct DetailView: View {
   }
 
   var body: some View {
-    if selectedArtwork.isEmpty {
+    if selectedArtworks.isEmpty {
       if missingArtworkIsSelectable {
         MissingArtworkTypeChart(missingArtworks: missingArtworks)
       }
     } else {
       MissingImageList(
-        missingArtwork: selectedArtwork.first!,
-        loadingState: $artworkLoadingStates[selectedArtwork.first!].defaultValue(.idle),
-        selectedArtworkImage: $selectedArtworkImages[selectedArtwork.first!]
+        missingArtwork: selectedArtworks.first!,
+        loadingState: $artworkLoadingStates[selectedArtworks.first!].defaultValue(.idle),
+        selectedArtworkImage: $selectedArtworkImages[selectedArtworks.first!]
       )
     }
   }
@@ -56,25 +56,25 @@ struct DetailView_Previews: PreviewProvider {
     DetailView(
       loadingState: .constant(.loading),
       artworkLoadingStates: .constant([:]),
-      selectedArtwork: .constant([]),
+      selectedArtworks: .constant([]),
       selectedArtworkImages: .constant([:]))
 
     DetailView(
       loadingState: .constant(.loaded([missingArtwork])),
       artworkLoadingStates: .constant([missingArtwork: .loading]),
-      selectedArtwork: .constant([]),
+      selectedArtworks: .constant([]),
       selectedArtworkImages: .constant([:]))
 
     DetailView(
       loadingState: .constant(.loaded([missingArtwork])),
       artworkLoadingStates: .constant([missingArtwork: .loading]),
-      selectedArtwork: .constant([missingArtwork]),
+      selectedArtworks: .constant([missingArtwork]),
       selectedArtworkImages: .constant([:]))
 
     DetailView(
       loadingState: .constant(.loaded([missingArtwork])),
       artworkLoadingStates: .constant([missingArtwork: .loaded([])]),
-      selectedArtwork: .constant([missingArtwork]),
+      selectedArtworks: .constant([missingArtwork]),
       selectedArtworkImages: .constant([:]))
   }
 }
