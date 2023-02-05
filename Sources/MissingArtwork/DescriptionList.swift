@@ -147,21 +147,6 @@ struct DescriptionList<Content: View>: View {
               }
             }
           }
-          ToolbarItem {
-            Menu {
-              self.imageContextMenuBuilder(displayableArtworks.map { ($0, nil) })
-            } label: {
-              Label {
-                Text(
-                  "Multiple", bundle: .module,
-                  comment:
-                    "Title of the ToolbarItem that shows a popup of actions to apply to multiple items."
-                )
-              } icon: {
-                Image(systemName: "wand.and.rays")
-              }
-            }
-          }
         }
     } detail: {
       DetailView(

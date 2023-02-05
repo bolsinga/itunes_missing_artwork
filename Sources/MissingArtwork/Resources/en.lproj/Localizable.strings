@@ -25,9 +25,6 @@
 /* Title of the ToolbarItem that shows a popup of filters to apply to the displayed Missing Artwork. */
 "Filters" = "Filters";
 
-/* Title of the ToolbarItem that shows a popup of actions to apply to multiple items. */
-"Multiple" = "Multiple";
-
 /* Shown when there is no missing artwork in iTunes */
 "No Missing Artwork" = "No Missing Artwork";
 
