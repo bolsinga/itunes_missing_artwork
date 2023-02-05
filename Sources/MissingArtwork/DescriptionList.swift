@@ -102,52 +102,9 @@ struct DescriptionList<Content: View>: View {
       sidebarView
         .navigationTitle(title)
         .frame(minWidth: 325)
-        .toolbar {
-          ToolbarItem {
-            Menu {
-              Picker(selection: $categoryFilter) {
-                ForEach(FilterCategory.allCases) { category in
-                  Text(category.rawValue).tag(category)
-                }
-              } label: {
-                Text(
-                  "Category", bundle: .module,
-                  comment:
-                    "Shown to allow user to filter by category of MissingArtwork (album or compilation)."
-                )
-
-              }
-              Picker(selection: $availabilityFilter) {
-                ForEach(AvailabilityCategory.allCases) { category in
-                  Text(category.rawValue).tag(category)
-                }
-              } label: {
-                Text(
-                  "Artwork Availability", bundle: .module,
-                  comment: "Shown to allow user to filter by artwork availability.")
-              }
-              Picker(selection: $sortOrder) {
-                ForEach(SortOrder.allCases) { sortOrder in
-                  Text(sortOrder.rawValue).tag(sortOrder)
-                }
-              } label: {
-                Text(
-                  "Sort Order", bundle: .module,
-                  comment: "Shown to change the sort order of the Missing Artwork.")
-              }
-            } label: {
-              Label {
-                Text(
-                  "Filters", bundle: .module,
-                  comment:
-                    "Title of the ToolbarItem that shows a popup of filters to apply to the displayed Missing Artwork."
-                )
-              } icon: {
-                Image(systemName: "slider.horizontal.3")
-              }
-            }
-          }
-        }
+        .filtersToolbar(
+          categoryFilter: $categoryFilter, availabilityFilter: $availabilityFilter,
+          sortOrder: $sortOrder)
     } detail: {
       DetailView(
         loadingState: $loadingState,
