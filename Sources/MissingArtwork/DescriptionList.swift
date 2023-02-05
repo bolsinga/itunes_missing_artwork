@@ -13,7 +13,7 @@ struct DescriptionList<Content: View>: View {
 
   @ViewBuilder let imageContextMenuBuilder: ImageContextMenuBuilder
 
-  @State private var filter = FilterCategory.all
+  @State private var categoryFilter = FilterCategory.all
   @State private var sortOrder = SortOrder.ascending
   @State private var availabilityFilter = AvailabilityCategory.all
 
@@ -48,12 +48,12 @@ struct DescriptionList<Content: View>: View {
       return []
     }
     return missingArtworks.filterForDisplay(
-      categoryFilter: filter, availabilityFilter: availabilityFilter, searchString: searchString,
-      sortOrder: sortOrder)
+      categoryFilter: categoryFilter, availabilityFilter: availabilityFilter,
+      searchString: searchString, sortOrder: sortOrder)
   }
 
   var title: String {
-    filter == .all ? "Missing Artwork" : filter.rawValue
+    categoryFilter == .all ? "Missing Artwork" : categoryFilter.rawValue
   }
 
   @ViewBuilder private var listStateOverlay: some View {
@@ -105,7 +105,7 @@ struct DescriptionList<Content: View>: View {
         .toolbar {
           ToolbarItem {
             Menu {
-              Picker(selection: $filter) {
+              Picker(selection: $categoryFilter) {
                 ForEach(FilterCategory.allCases) { category in
                   Text(category.rawValue).tag(category)
                 }
