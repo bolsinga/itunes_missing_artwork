@@ -115,7 +115,7 @@ struct DescriptionList<Content: View>: View {
       DetailView(
         loadingState: $loadingState,
         artworkLoadingStates: $artworkLoadingStates,
-        selectedArtwork: .constant((selectedArtwork != nil) ? [selectedArtwork!] : []),
+        selectedArtworks: .constant((selectedArtwork != nil) ? [selectedArtwork!] : []),
         selectedArtworkImages: $selectedArtworkImages)
     }.onChange(of: categoryFilter) { _ in
       clearSelectionIfNotDisplayable()
