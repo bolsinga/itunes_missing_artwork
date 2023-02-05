@@ -56,6 +56,12 @@ struct DescriptionList<Content: View>: View {
     categoryFilter == .all ? "Missing Artwork" : categoryFilter.rawValue
   }
 
+  private func clearSelectionIfNotDisplayable() {
+    if selectedArtwork != nil, !displayableArtworks.contains(selectedArtwork!) {
+      selectedArtwork = nil
+    }
+  }
+
   @ViewBuilder private var listStateOverlay: some View {
     if loadingState.isIdleOrLoading {
       ProgressView()
@@ -111,6 +117,12 @@ struct DescriptionList<Content: View>: View {
         artworkLoadingStates: $artworkLoadingStates,
         selectedArtwork: .constant((selectedArtwork != nil) ? [selectedArtwork!] : []),
         selectedArtworkImages: $selectedArtworkImages)
+    }.onChange(of: categoryFilter) { _ in
+      clearSelectionIfNotDisplayable()
+    }.onChange(of: availabilityFilter) { _ in
+      clearSelectionIfNotDisplayable()
+    }.onChange(of: searchString) { _ in
+      clearSelectionIfNotDisplayable()
     }
   }
 
