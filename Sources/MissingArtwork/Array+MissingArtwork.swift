@@ -32,8 +32,11 @@ extension Array where Element == MissingArtwork {
     }
     .filter { missingArtwork in
       missingArtwork.matches(searchString)
-    }
-    .sorted {
+    }.sorted(by: sortOrder)
+  }
+
+  func sorted(by sortOrder: SortOrder) -> [MissingArtwork] {
+    return self.sorted {
       switch sortOrder {
       case .ascending:
         return $0 < $1

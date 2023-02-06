@@ -7,9 +7,6 @@
 /* Shown at the bottom of the Missing Artwork list to indicate how many filtered items out of the total items are shown. */
 "%lld / %lld Missing" = "%lld / %lld Missing";
 
-/* Shown when multiple missing artwork are selected. */
-"%lld Missing Artworks Selected" = "%lld Missing Artworks Selected";
-
 /* Shown to allow user to filter by artwork availability. */
 "Artwork Availability" = "Artwork Availability";
 
@@ -31,8 +28,14 @@
 /* Help string shown when album artwork is in the process of being fixed. */
 "Fixing Album" = "Fixing Album";
 
+/* Help string shown when image is ready for fixing. */
+"Image Ready" = "Image Ready";
+
 /* Help string shown when album artwork does not exist and must be searched for. */
 "No Artwork" = "No Artwork";
+
+/* Help string shown when no image has been selected for fixing. */
+"No Image Selected" = "No Image Selected";
 
 /* Shown when there is no missing artwork in iTunes */
 "No Missing Artwork" = "No Missing Artwork";
