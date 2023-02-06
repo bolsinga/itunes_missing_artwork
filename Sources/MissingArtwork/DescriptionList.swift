@@ -79,9 +79,7 @@ struct DescriptionList<Content: View>: View {
             processingState: $processingStates[missingArtwork].defaultValue(.none))
         }
         .contextMenu {
-          self.imageContextMenuBuilder([
-            (missingArtwork, selectedArtworkImages[missingArtwork])
-          ])
+          self.imageContextMenuBuilder(selectedArtworks.map { ($0, selectedArtworkImages[$0]) })
         }
         .tag(missingArtwork)
       }
