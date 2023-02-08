@@ -26,7 +26,7 @@ struct DescriptionList<Content: View>: View {
 
   @Binding var loadingState: LoadingState<[MissingArtwork]>
 
-  @Binding var processingStates: [MissingArtwork: Description.ProcessingState]
+  @Binding var processingStates: [MissingArtwork: ProcessingState]
 
   var missingArtworksIsEmpty: Bool {
     if let missingArtworks = loadingState.value {
@@ -134,7 +134,7 @@ struct DescriptionList_Previews: PreviewProvider {
       },
       loadingState: .constant(.loaded(missingArtworks)),
       processingStates: .constant(
-        missingArtworks.reduce(into: [MissingArtwork: Description.ProcessingState]()) {
+        missingArtworks.reduce(into: [MissingArtwork: ProcessingState]()) {
           $0[$1] = .processing
         }
       )

@@ -8,13 +8,6 @@
 import SwiftUI
 
 public struct Description: View {
-  public enum ProcessingState {
-    case none  // no action has been taken
-    case processing  // the action is processing
-    case success  // the action has succeeded
-    case failure  // the action has failed.
-  }
-
   let missingArtwork: MissingArtwork
 
   @Binding var processingState: ProcessingState
@@ -101,18 +94,18 @@ struct Description_Previews: PreviewProvider {
     Group {
       Description(
         missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none),
-        processingState: .constant(Description.ProcessingState.none))
+        processingState: .constant(ProcessingState.none))
       Description(
         missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .some),
-        processingState: .constant(Description.ProcessingState.processing))
+        processingState: .constant(ProcessingState.processing))
       Description(
         missingArtwork: MissingArtwork.CompilationAlbum(
           "Beleza Tropical: Brazil Classics 1", .none),
-        processingState: .constant(Description.ProcessingState.success))
+        processingState: .constant(ProcessingState.success))
       Description(
         missingArtwork: MissingArtwork.CompilationAlbum(
           "Beleza Tropical: Brazil Classics 1", .some),
-        processingState: .constant(Description.ProcessingState.failure))
+        processingState: .constant(ProcessingState.failure))
     }
   }
 }
