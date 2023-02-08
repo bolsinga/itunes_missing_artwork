@@ -15,6 +15,8 @@ struct DetailView: View {
     [MissingArtwork: LoadingState<[(Artwork, LoadingState<NSImage>)]>]
   @Binding var selectedArtworks: Set<MissingArtwork>
   @Binding var selectedArtworkImages: [MissingArtwork: NSImage]
+  @Binding var processingStates: [MissingArtwork: ProcessingState]
+  @Binding var sortOrder: SortOrder
 
   private var missingArtworksIsEmpty: Bool {
     if let missingArtworks = loadingState.value {
@@ -47,9 +49,12 @@ struct DetailView: View {
           selectedArtworkImage: $selectedArtworkImages[artwork]
         )
       } else {
-        Text(
-          "\(selectedArtworks.count) Missing Artworks Selected", bundle: .module,
-          comment: "Shown when multiple missing artwork are selected.")
+        InformationListView(
+          missingArtworks: Array(selectedArtworks).sorted(by: sortOrder),
+          missingArtworkWithImages: .constant(
+            Set(selectedArtworks.filter { selectedArtworkImages[$0] != nil }.map { $0 }).union(
+              missingArtworks.filter { $0.availability == .some })),
+          processingStates: $processingStates)
       }
     }
   }
@@ -63,24 +68,32 @@ struct DetailView_Previews: PreviewProvider {
       loadingState: .constant(.loading),
       artworkLoadingStates: .constant([:]),
       selectedArtworks: .constant([]),
-      selectedArtworkImages: .constant([:]))
+      selectedArtworkImages: .constant([:]),
+      processingStates: .constant([:]),
+      sortOrder: .constant(.ascending))
 
     DetailView(
       loadingState: .constant(.loaded([missingArtwork])),
       artworkLoadingStates: .constant([missingArtwork: .loading]),
       selectedArtworks: .constant([]),
-      selectedArtworkImages: .constant([:]))
+      selectedArtworkImages: .constant([:]),
+      processingStates: .constant([missingArtwork: .none]),
+      sortOrder: .constant(.ascending))
 
     DetailView(
       loadingState: .constant(.loaded([missingArtwork])),
       artworkLoadingStates: .constant([missingArtwork: .loading]),
       selectedArtworks: .constant([missingArtwork]),
-      selectedArtworkImages: .constant([:]))
+      selectedArtworkImages: .constant([:]),
+      processingStates: .constant([missingArtwork: .none]),
+      sortOrder: .constant(.ascending))
 
     DetailView(
       loadingState: .constant(.loaded([missingArtwork])),
       artworkLoadingStates: .constant([missingArtwork: .loaded([])]),
       selectedArtworks: .constant([missingArtwork]),
-      selectedArtworkImages: .constant([:]))
+      selectedArtworkImages: .constant([:]),
+      processingStates: .constant([missingArtwork: .none]),
+      sortOrder: .constant(.ascending))
   }
 }
