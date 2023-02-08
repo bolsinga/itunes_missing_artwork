@@ -11,7 +11,7 @@ import SwiftUI
 public struct MissingArtworkView<Content: View>: View {
   @State private var loadingState: LoadingState<[MissingArtwork]> = .idle
 
-  @Binding var processingStates: [MissingArtwork: Description.ProcessingState]
+  @Binding var processingStates: [MissingArtwork: ProcessingState]
 
   public typealias ImageContextMenuBuilder = ([(missingArtwork: MissingArtwork, image: NSImage?)])
     -> Content
@@ -20,7 +20,7 @@ public struct MissingArtworkView<Content: View>: View {
 
   public init(
     @ViewBuilder imageContextMenuBuilder: @escaping ImageContextMenuBuilder,
-    processingStates: Binding<[MissingArtwork: Description.ProcessingState]>
+    processingStates: Binding<[MissingArtwork: ProcessingState]>
   ) {
     self.imageContextMenuBuilder = imageContextMenuBuilder
     self._processingStates = processingStates  // Note this for assigning a Binding<T> to a wrapped property.
