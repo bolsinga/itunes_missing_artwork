@@ -34,6 +34,7 @@ public struct Description: View {
         Text(album)
           .font(.headline)
         Image(systemName: "square.stack")
+          .imageScale(.large)
       }
     }
   }
@@ -41,11 +42,14 @@ public struct Description: View {
   @ViewBuilder private var processedStateView: some View {
     if case .processing = processingState {
       Image(systemName: "gearshape.circle")
+        .imageScale(.large)
     } else if case .success = processingState {
       Image(systemName: "checkmark.circle")
+        .imageScale(.large)
         .foregroundColor(.green)
     } else if case .failure = processingState {
       Image(systemName: "circle.slash")
+        .imageScale(.large)
         .foregroundColor(.red)
     }
   }
@@ -53,8 +57,10 @@ public struct Description: View {
   @ViewBuilder private var availabilityImage: some View {
     if case .some = missingArtwork.availability {
       Image(systemName: "questionmark.square.dashed")
+        .imageScale(.large)
     } else if case .unknown = missingArtwork.availability {
       Image(systemName: "questionmark.square.dashed").foregroundColor(.red)
+        .imageScale(.large)
     }
   }
 
