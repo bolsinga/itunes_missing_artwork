@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct DescriptionListFiltersToolbarModifier: ViewModifier {
-  @Binding var categoryFilter: FilterCategory
   @Binding var availabilityFilter: AvailabilityCategory
   @Binding var sortOrder: SortOrder
 
@@ -17,18 +16,6 @@ struct DescriptionListFiltersToolbarModifier: ViewModifier {
       .toolbar {
         ToolbarItem {
           Menu {
-            Picker(selection: $categoryFilter) {
-              ForEach(FilterCategory.allCases) { category in
-                Text(category.rawValue).tag(category)
-              }
-            } label: {
-              Text(
-                "Category", bundle: .module,
-                comment:
-                  "Shown to allow user to filter by category of MissingArtwork (album or compilation)."
-              )
-
-            }
             Picker(selection: $availabilityFilter) {
               ForEach(AvailabilityCategory.allCases) { category in
                 Text(category.rawValue).tag(category)
@@ -65,12 +52,10 @@ struct DescriptionListFiltersToolbarModifier: ViewModifier {
 
 extension View {
   func filtersToolbar(
-    categoryFilter: Binding<FilterCategory>, availabilityFilter: Binding<AvailabilityCategory>,
-    sortOrder: Binding<SortOrder>
+    availabilityFilter: Binding<AvailabilityCategory>, sortOrder: Binding<SortOrder>
   ) -> some View {
     modifier(
       DescriptionListFiltersToolbarModifier(
-        categoryFilter: categoryFilter, availabilityFilter: availabilityFilter, sortOrder: sortOrder
-      ))
+        availabilityFilter: availabilityFilter, sortOrder: sortOrder))
   }
 }
