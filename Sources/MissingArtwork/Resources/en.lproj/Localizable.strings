@@ -16,9 +16,6 @@
 /* Label in the chart for the Artwork Type of the missing artwork. */
 "Artwork Type" = "Artwork Type";
 
-/* Shown to allow user to filter by category of MissingArtwork (album or compilation). */
-"Category" = "Category";
-
 /* Button Text in alert shown when MusicKit authorization status cannot be determined. */
 "Continue" = "Continue";
 

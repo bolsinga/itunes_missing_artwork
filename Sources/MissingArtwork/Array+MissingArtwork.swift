@@ -15,20 +15,9 @@ extension MissingArtwork {
 
 extension Array where Element == MissingArtwork {
   func filterForDisplay(
-    categoryFilter: FilterCategory, availabilityFilter: AvailabilityCategory, searchString: String,
-    sortOrder: SortOrder
+    availabilityFilter: AvailabilityCategory, searchString: String, sortOrder: SortOrder
   ) -> [MissingArtwork] {
     return self.filter { missingArtwork in
-      (categoryFilter == .all
-        || {
-          switch missingArtwork {
-          case .ArtistAlbum(_, _, _):
-            return categoryFilter == .albums
-          case .CompilationAlbum(_, _):
-            return categoryFilter == .compilations
-          }
-        }())
-    }.filter { missingArtwork in
       (availabilityFilter == .all
         || {
           switch missingArtwork.availability {

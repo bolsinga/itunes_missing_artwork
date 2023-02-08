@@ -13,7 +13,6 @@ struct DescriptionList<Content: View>: View {
 
   @ViewBuilder let imageContextMenuBuilder: ImageContextMenuBuilder
 
-  @State private var categoryFilter = FilterCategory.all
   @State private var sortOrder = SortOrder.ascending
   @State private var availabilityFilter = AvailabilityCategory.all
 
@@ -48,12 +47,7 @@ struct DescriptionList<Content: View>: View {
       return []
     }
     return missingArtworks.filterForDisplay(
-      categoryFilter: categoryFilter, availabilityFilter: availabilityFilter,
-      searchString: searchString, sortOrder: sortOrder)
-  }
-
-  var title: String {
-    categoryFilter == .all ? "Missing Artwork" : categoryFilter.rawValue
+      availabilityFilter: availabilityFilter, searchString: searchString, sortOrder: sortOrder)
   }
 
   private func clearSelectionIfNotDisplayable() {
@@ -102,19 +96,14 @@ struct DescriptionList<Content: View>: View {
   var body: some View {
     NavigationSplitView {
       sidebarView
-        .navigationTitle(title)
         .frame(minWidth: 325)
-        .filtersToolbar(
-          categoryFilter: $categoryFilter, availabilityFilter: $availabilityFilter,
-          sortOrder: $sortOrder)
+        .filtersToolbar(availabilityFilter: $availabilityFilter, sortOrder: $sortOrder)
     } detail: {
       DetailView(
         loadingState: $loadingState,
         artworkLoadingStates: $artworkLoadingStates,
         selectedArtworks: $selectedArtworks,
         selectedArtworkImages: $selectedArtworkImages)
-    }.onChange(of: categoryFilter) { _ in
-      clearSelectionIfNotDisplayable()
     }.onChange(of: availabilityFilter) { _ in
       clearSelectionIfNotDisplayable()
     }.onChange(of: searchString) { _ in
