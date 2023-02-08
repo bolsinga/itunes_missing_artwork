@@ -32,58 +32,12 @@ public struct Description: View {
     }
   }
 
-  @ViewBuilder private var processedStateView: some View {
-    if case .processing = processingState {
-      Image(systemName: "gearshape.circle")
-        .imageScale(.large)
-        .help(
-          Text(
-            "Fixing Album", bundle: .module,
-            comment: "Help string shown when album artwork is in the process of being fixed."))
-    } else if case .success = processingState {
-      Image(systemName: "checkmark.circle")
-        .imageScale(.large)
-        .foregroundColor(.green)
-        .help(
-          Text(
-            "Fixed Album", bundle: .module,
-            comment: "Help string shown when album artwork has been fixed."))
-    } else if case .failure = processingState {
-      Image(systemName: "circle.slash")
-        .imageScale(.large)
-        .foregroundColor(.red)
-        .help(
-          Text(
-            "Unable to Fix Album", bundle: .module,
-            comment: "Help string shown when album artwork failed to be fixed."))
-    }
-  }
-
-  @ViewBuilder private var availabilityImage: some View {
-    if case .some = missingArtwork.availability {
-      Image(systemName: "questionmark.square.dashed")
-        .imageScale(.large)
-        .help(
-          Text(
-            "Partial Artwork", bundle: .module,
-            comment: "Help string shown when album artwork is partially set."))
-    } else if case .unknown = missingArtwork.availability {
-      Image(systemName: "questionmark.square.dashed").foregroundColor(.red)
-        .imageScale(.large)
-        .help(
-          Text(
-            "No Artwork", bundle: .module,
-            comment: "Help string shown when album artwork does not exist and must be searched for."
-          ))
-    }
-  }
-
   public var body: some View {
     HStack {
       nameView
-      processedStateView
+      processingState.representingView
       Spacer()
-      availabilityImage
+      missingArtwork.availability.representingView
     }
     .padding(.vertical, 4)
   }
