@@ -25,8 +25,20 @@
 /* Title of the ToolbarItem that shows a popup of filters to apply to the displayed Missing Artwork. */
 "Filters" = "Filters";
 
+/* Help string shown when album artwork has been fixed. */
+"Fixed Album" = "Fixed Album";
+
+/* Help string shown when album artwork is in the process of being fixed. */
+"Fixing Album" = "Fixing Album";
+
+/* Help string shown when album artwork does not exist and must be searched for. */
+"No Artwork" = "No Artwork";
+
 /* Shown when there is no missing artwork in iTunes */
 "No Missing Artwork" = "No Missing Artwork";
+
+/* Help string shown when album artwork is partially set. */
+"Partial Artwork" = "Partial Artwork";
 
 /* Label in the chart for the quantity of the missing artwork. */
 "Quantity" = "Quantity";
@@ -36,6 +48,9 @@
 
 /* Shown to change the sort order of the Missing Artwork. */
 "Sort Order" = "Sort Order";
+
+/* Help string shown when album artwork failed to be fixed. */
+"Unable to Fix Album" = "Unable to Fix Album";
 
 /* Message when an image URL cannot be loaded. */
 "Unable to load image: %@" = "Unable to load image: %@";
