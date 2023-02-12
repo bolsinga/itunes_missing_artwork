@@ -17,12 +17,14 @@ extension ITunesError: LocalizedError {
     case .cannotFetchMissingArtwork(let error):
       return String(
         localized: "iTunes Library unable to find missing artwork: \(error.localizedDescription)",
+        bundle: .module,
         comment: "Error message when iTunes is unable to find missing artwork.")
     }
   }
   fileprivate var recoverySuggestion: String? {
     String(
       localized: "iTunes was unable to find any missing artwork to fix.",
+      bundle: .module,
       comment: "Recovery message when iTunes is unable to find missing artwork.")
   }
 }

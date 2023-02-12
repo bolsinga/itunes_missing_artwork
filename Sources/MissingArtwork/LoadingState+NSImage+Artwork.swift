@@ -19,6 +19,7 @@ extension ArtworkImageError: LocalizedError {
     case .noURL(let artwork):
       return String(
         localized: "No Image URL Available: \(artwork.description).",
+        bundle: .module,
         comment: "Error message when MusicKit Artwork does not have an URL.")
     }
   }

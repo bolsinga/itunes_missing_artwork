@@ -18,6 +18,7 @@ extension NSImageError: LocalizedError {
     case .noImage:
       return String(
         localized: "No Image Created.",
+        bundle: .module,
         comment: "Error message when an Image cannot be created from the URL.")
     }
   }
