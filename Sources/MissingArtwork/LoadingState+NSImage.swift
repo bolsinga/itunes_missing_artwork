@@ -16,7 +16,9 @@ extension NSImageError: LocalizedError {
   fileprivate var errorDescription: String? {
     switch self {
     case .noImage:
-      return "No Image Created."
+      return String(
+        localized: "No Image Created.",
+        comment: "Error message when an Image cannot be created from the URL.")
     }
   }
 }

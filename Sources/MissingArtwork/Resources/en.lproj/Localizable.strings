@@ -31,11 +31,26 @@
 /* Help string shown when image is ready for fixing. */
 "Image Ready" = "Image Ready";
 
+/* Error message when iTunes is unable to find missing artwork. */
+"iTunes Library unable to find missing artwork: %@" = "iTunes Library unable to find missing artwork: %@";
+
+/* Recovery message when iTunes is unable to find missing artwork. */
+"iTunes was unable to find any missing artwork to fix." = "iTunes was unable to find any missing artwork to fix.";
+
 /* Help string shown when album artwork does not exist and must be searched for. */
 "No Artwork" = "No Artwork";
 
+/* Error message when an Image cannot be created from the URL. */
+"No Image Created." = "No Image Created.";
+
+/* Error message when no Missing Artworks are found. */
+"No image for %@" = "No image for %@";
+
 /* Help string shown when no image has been selected for fixing. */
 "No Image Selected" = "No Image Selected";
+
+/* Error message when MusicKit Artwork does not have an URL. */
+"No Image URL Available: %@." = "No Image URL Available: %@.";
 
 /* Shown when there is no missing artwork in iTunes */
 "No Missing Artwork" = "No Missing Artwork";

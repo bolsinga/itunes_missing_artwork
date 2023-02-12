@@ -17,7 +17,9 @@ extension NoArtworkError: LocalizedError {
   fileprivate var errorDescription: String? {
     switch self {
     case .noneFound(let missingArtwork):
-      return "No image for \(missingArtwork.description)"
+      return String(
+        localized: "No image for \(missingArtwork.description)",
+        comment: "Error message when no Missing Artworks are found.")
     }
   }
 }
