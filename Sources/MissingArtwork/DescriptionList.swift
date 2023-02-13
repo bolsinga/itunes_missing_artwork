@@ -85,17 +85,26 @@ struct DescriptionList<NoArtworkContextMenuContent: View, PartialArtworkContextM
               selectedArtworkImages[$0] != nil
             }.map { ($0, selectedArtworkImages[$0]!) }
             if noArtworkWithImages.isEmpty {
-              Text("No Images Selected", bundle: .module, comment: "Shown when context menu is being shown for No Artwork images and no artwork image has been selected.")
+              Text(
+                "No Images Selected", bundle: .module,
+                comment:
+                  "Shown when context menu is being shown for No Artwork images and no artwork image has been selected."
+              )
             } else {
               self.noArtworkContextMenuBuilder(noArtworkWithImages)
             }
           } label: {
-            Text("No Artwork", bundle: .module, comment: "Label for the context menu grouping No Artwork actions.")
+            Text(
+              "No Artwork", bundle: .module,
+              comment: "Label for the context menu grouping No Artwork actions.")
           }
           Menu {
-            self.partialArtworkContextMenuBuilder(selectedArtworks.filter { $0.availability == .some })
+            self.partialArtworkContextMenuBuilder(
+              selectedArtworks.filter { $0.availability == .some })
           } label: {
-            Text("Partial Artwork", bundle: .module, comment: "Label for the context menu grouping Partial Artwork actions.")
+            Text(
+              "Partial Artwork", bundle: .module,
+              comment: "Label for the context menu grouping Partial Artwork actions.")
           }
         }
         .tag(missingArtwork)
