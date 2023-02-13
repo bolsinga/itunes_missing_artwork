@@ -8,10 +8,17 @@
 import MusicKit
 import SwiftUI
 
-struct DescriptionList<Content: View>: View {
-  typealias ImageContextMenuBuilder = ([(MissingArtwork, NSImage?)]) -> Content
+struct DescriptionList<NoArtworkContextMenuContent: View, PartialArtworkContextMenuContent: View>:
+  View
+{
+  public typealias NoArtworkContextMenuBuilder = (
+    [(missingArtwork: MissingArtwork, image: NSImage)]
+  ) -> NoArtworkContextMenuContent
+  public typealias PartialArtworkContextMenuBuilder = ([MissingArtwork]) ->
+    PartialArtworkContextMenuContent
 
-  @ViewBuilder let imageContextMenuBuilder: ImageContextMenuBuilder
+  @ViewBuilder let noArtworkContextMenuBuilder: NoArtworkContextMenuBuilder
+  @ViewBuilder let partialArtworkContextMenuBuilder: PartialArtworkContextMenuBuilder
 
   @State private var sortOrder = SortOrder.ascending
   @State private var availabilityFilter = AvailabilityCategory.all
@@ -73,7 +80,23 @@ struct DescriptionList<Content: View>: View {
             processingState: $processingStates[missingArtwork].defaultValue(.none))
         }
         .contextMenu {
-          self.imageContextMenuBuilder(selectedArtworks.map { ($0, selectedArtworkImages[$0]) })
+          Menu {
+            let noArtworkWithImages = selectedArtworks.filter { $0.availability == .none }.filter {
+              selectedArtworkImages[$0] != nil
+            }.map { ($0, selectedArtworkImages[$0]!) }
+            if noArtworkWithImages.isEmpty {
+              Text("No Images Selected", bundle: .module, comment: "Shown when context menu is being shown for No Artwork images and no artwork image has been selected.")
+            } else {
+              self.noArtworkContextMenuBuilder(noArtworkWithImages)
+            }
+          } label: {
+            Text("No Artwork", bundle: .module, comment: "Label for the context menu grouping No Artwork actions.")
+          }
+          Menu {
+            self.partialArtworkContextMenuBuilder(selectedArtworks.filter { $0.availability == .some })
+          } label: {
+            Text("Partial Artwork", bundle: .module, comment: "Label for the context menu grouping Partial Artwork actions.")
+          }
         }
         .tag(missingArtwork)
       }
@@ -130,9 +153,12 @@ struct DescriptionList_Previews: PreviewProvider {
     let fakeButton1Title = "1"
     let fakeButton2Title = "2"
     DescriptionList(
-      imageContextMenuBuilder: { items in
+      noArtworkContextMenuBuilder: { items in
         Button(fakeButton1Title) {}
         Button(fakeButton2Title) {}
+      },
+      partialArtworkContextMenuBuilder: { items in
+        EmptyView()
       },
       loadingState: .constant(.loaded(missingArtworks)),
       processingStates: .constant(
@@ -143,27 +169,36 @@ struct DescriptionList_Previews: PreviewProvider {
     )
 
     DescriptionList(
-      imageContextMenuBuilder: { items in
+      noArtworkContextMenuBuilder: { items in
         Button(fakeButton1Title) {}
         Button(fakeButton2Title) {}
+      },
+      partialArtworkContextMenuBuilder: { items in
+        EmptyView()
       },
       loadingState: .constant(.loaded([])),
       processingStates: .constant([:])
     )
 
     DescriptionList(
-      imageContextMenuBuilder: { items in
+      noArtworkContextMenuBuilder: { items in
         Button(fakeButton1Title) {}
         Button(fakeButton2Title) {}
+      },
+      partialArtworkContextMenuBuilder: { items in
+        EmptyView()
       },
       loadingState: .constant(.loading),
       processingStates: .constant([:])
     )
 
     DescriptionList(
-      imageContextMenuBuilder: { items in
+      noArtworkContextMenuBuilder: { items in
         Button(fakeButton1Title) {}
         Button(fakeButton2Title) {}
+      },
+      partialArtworkContextMenuBuilder: { items in
+        EmptyView()
       },
       loadingState: .constant(.idle),
       processingStates: .constant([:])

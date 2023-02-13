@@ -8,27 +8,36 @@
 import MusicKit
 import SwiftUI
 
-public struct MissingArtworkView<Content: View>: View {
+public struct MissingArtworkView<
+  NoArtworkContextMenuContent: View, PartialArtworkContextMenuContent: View
+>: View {
   @State private var loadingState: LoadingState<[MissingArtwork]> = .idle
 
   @Binding var processingStates: [MissingArtwork: ProcessingState]
 
-  public typealias ImageContextMenuBuilder = ([(missingArtwork: MissingArtwork, image: NSImage?)])
-    -> Content
+  public typealias NoArtworkContextMenuBuilder = (
+    [(missingArtwork: MissingArtwork, image: NSImage)]
+  ) -> NoArtworkContextMenuContent
+  public typealias PartialArtworkContextMenuBuilder = ([MissingArtwork]) ->
+    PartialArtworkContextMenuContent
 
-  @ViewBuilder let imageContextMenuBuilder: ImageContextMenuBuilder
+  @ViewBuilder let noArtworkContextMenuBuilder: NoArtworkContextMenuBuilder
+  @ViewBuilder let partialArtworkContextMenuBuilder: PartialArtworkContextMenuBuilder
 
   public init(
-    @ViewBuilder imageContextMenuBuilder: @escaping ImageContextMenuBuilder,
+    @ViewBuilder noArtworkContextMenuBuilder: @escaping NoArtworkContextMenuBuilder,
+    @ViewBuilder partialArtworkContextMenuBuilder: @escaping PartialArtworkContextMenuBuilder,
     processingStates: Binding<[MissingArtwork: ProcessingState]>
   ) {
-    self.imageContextMenuBuilder = imageContextMenuBuilder
+    self.noArtworkContextMenuBuilder = noArtworkContextMenuBuilder
+    self.partialArtworkContextMenuBuilder = partialArtworkContextMenuBuilder
     self._processingStates = processingStates  // Note this for assigning a Binding<T> to a wrapped property.
   }
 
   public var body: some View {
     DescriptionList(
-      imageContextMenuBuilder: imageContextMenuBuilder,
+      noArtworkContextMenuBuilder: noArtworkContextMenuBuilder,
+      partialArtworkContextMenuBuilder: partialArtworkContextMenuBuilder,
       loadingState: $loadingState,
       processingStates: $processingStates
     )
@@ -55,7 +64,10 @@ public struct MissingArtworkView<Content: View>: View {
 struct MissingArtworkView_Previews: PreviewProvider {
   static var previews: some View {
     MissingArtworkView(
-      imageContextMenuBuilder: { items in
+      noArtworkContextMenuBuilder: { items in
+        EmptyView()
+      },
+      partialArtworkContextMenuBuilder: { items in
         EmptyView()
       }, processingStates: .constant([:]))
   }

@@ -37,7 +37,8 @@
 /* Recovery message when iTunes is unable to find missing artwork. */
 "iTunes was unable to find any missing artwork to fix." = "iTunes was unable to find any missing artwork to fix.";
 
-/* Help string shown when album artwork does not exist and must be searched for. */
+/* Help string shown when album artwork does not exist and must be searched for.
+Label for the context menu grouping No Artwork actions. */
 "No Artwork" = "No Artwork";
 
 /* Error message when an Image cannot be created from the URL. */
@@ -52,10 +53,14 @@
 /* Error message when MusicKit Artwork does not have an URL. */
 "No Image URL Available: %@." = "No Image URL Available: %@.";
 
+/* Shown when context menu is being shown for No Artwork images and no artwork image has been selected. */
+"No Images Selected" = "No Images Selected";
+
 /* Shown when there is no missing artwork in iTunes */
 "No Missing Artwork" = "No Missing Artwork";
 
-/* Help string shown when album artwork is partially set. */
+/* Help string shown when album artwork is partially set.
+Label for the context menu grouping Partial Artwork actions. */
 "Partial Artwork" = "Partial Artwork";
 
 /* Label in the chart for the quantity of the missing artwork. */
