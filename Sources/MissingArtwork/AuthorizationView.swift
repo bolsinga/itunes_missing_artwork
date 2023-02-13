@@ -117,11 +117,19 @@ struct AuthorizationView: View {
   }
 
   fileprivate struct SheetPresentationModifier: ViewModifier {
+    @Binding var readyToShowSheet: Bool
+
     @StateObject private var presentationCoordinator = PresentationCoordinator.shared
 
     func body(content: Content) -> some View {
       content
-        .sheet(isPresented: $presentationCoordinator.isAuthorizationSheetPresented) {
+        .sheet(
+          isPresented: Binding<Bool> {
+            return readyToShowSheet && presentationCoordinator.isAuthorizationSheetPresented
+          } set: {
+            presentationCoordinator.isAuthorizationSheetPresented = $0
+          }
+        ) {
           AuthorizationView(
             musicAuthorizationStatus: $presentationCoordinator.musicAuthorizationStatus
           )
@@ -132,8 +140,8 @@ struct AuthorizationView: View {
 }
 
 extension View {
-  @MainActor func musicKitAuthorizationSheet() -> some View {
-    modifier(AuthorizationView.SheetPresentationModifier())
+  @MainActor func musicKitAuthorizationSheet(readyToShowSheet: Binding<Bool>) -> some View {
+    modifier(AuthorizationView.SheetPresentationModifier(readyToShowSheet: readyToShowSheet))
   }
 }
 

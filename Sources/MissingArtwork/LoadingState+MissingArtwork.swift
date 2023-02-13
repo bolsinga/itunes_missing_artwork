@@ -52,4 +52,11 @@ extension LoadingState where Value == [MissingArtwork] {
       debugPrint("Unable to fetch missing artworks: \(missingError.localizedDescription)")
     }
   }
+
+  public var hasMissingArtwork: Bool {
+    if let missingArtworks = self.value, !missingArtworks.isEmpty {
+      return true
+    }
+    return false
+  }
 }
