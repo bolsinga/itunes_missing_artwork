@@ -78,9 +78,10 @@ extension MissingArtwork {
 
       let missingArtwork =
         missingItem.album.isCompilation
-        ? MissingArtwork.CompilationAlbum(missingItem.album.title!, .unknown)
+        ? MissingArtwork.CompilationAlbum(
+          missingItem.album.title ?? "Unknown Compilation Album Title", .unknown)
         : .ArtistAlbum(
-          missingItem.artist?.name ?? missingItem.album.albumArtist!,
+          (missingItem.artist?.name ?? missingItem.album.albumArtist) ?? "Unknown Artist Name",
           missingItem.album.title ?? missingItem.title,
           .unknown)
 
