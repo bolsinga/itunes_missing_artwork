@@ -11,7 +11,14 @@ let package = Package(
   products: [
     .library(name: "MissingArtwork", targets: ["MissingArtwork"])
   ],
+  dependencies: [
+    .package(url: "https://github.com/bolsinga/LoadingState", branch: "main")
+  ],
   targets: [
-    .target(name: "MissingArtwork", swiftSettings: [.unsafeFlags(["-strict-concurrency=targeted"])])
+    .target(
+      name: "MissingArtwork",
+      dependencies: [
+        .product(name: "LoadingState", package: "LoadingState")
+      ], swiftSettings: [.unsafeFlags(["-strict-concurrency=targeted"])])
   ]
 )
