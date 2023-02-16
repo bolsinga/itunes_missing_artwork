@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import LoadingState
 
 private enum ITunesError: Error {
   case cannotFetchMissingArtwork(Error)

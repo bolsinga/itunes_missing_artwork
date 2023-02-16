@@ -7,6 +7,7 @@
 
 import AppKit
 import Foundation
+import LoadingState
 
 private enum NSImageError: Error {
   case noImage
