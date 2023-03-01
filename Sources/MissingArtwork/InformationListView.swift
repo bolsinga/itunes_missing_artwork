@@ -15,13 +15,15 @@ struct InformationListView: View {
   @Binding var processingStates: [MissingArtwork: ProcessingState]
 
   var body: some View {
-    VStack(alignment: .leading) {
-      ForEach(missingArtworks) { missingArtwork in
-        Information(
-          missingArtwork: missingArtwork,
-          imageFound: missingArtworkWithImages.contains(missingArtwork),
-          processingState: processingStates[missingArtwork] != nil
-            ? processingStates[missingArtwork]! : .none)
+    ScrollView {
+      VStack(alignment: .leading) {
+        ForEach(missingArtworks) { missingArtwork in
+          Information(
+            missingArtwork: missingArtwork,
+            imageFound: missingArtworkWithImages.contains(missingArtwork),
+            processingState: processingStates[missingArtwork] != nil
+              ? processingStates[missingArtwork]! : .none)
+        }
       }
     }
   }
