@@ -9,18 +9,7 @@ import LoadingState
 import MusicKit
 import SwiftUI
 
-struct DescriptionList<NoArtworkContextMenuContent: View, PartialArtworkContextMenuContent: View>:
-  View
-{
-  public typealias NoArtworkContextMenuBuilder = (
-    [(missingArtwork: MissingArtwork, image: NSImage)]
-  ) -> NoArtworkContextMenuContent
-  public typealias PartialArtworkContextMenuBuilder = ([MissingArtwork]) ->
-    PartialArtworkContextMenuContent
-
-  @ViewBuilder let noArtworkContextMenuBuilder: NoArtworkContextMenuBuilder
-  @ViewBuilder let partialArtworkContextMenuBuilder: PartialArtworkContextMenuBuilder
-
+struct DescriptionList: View {
   @State private var sortOrder = SortOrder.ascending
   @State private var availabilityFilter = AvailabilityCategory.all
 
@@ -80,34 +69,6 @@ struct DescriptionList<NoArtworkContextMenuContent: View, PartialArtworkContextM
             missingArtwork: missingArtwork,
             processingState: $processingStates[missingArtwork].defaultValue(.none))
         }
-        .contextMenu {
-          Menu {
-            let noArtworkWithImages = selectedArtworks.filter { $0.availability == .none }.filter {
-              selectedArtworkImages[$0] != nil
-            }.map { ($0, selectedArtworkImages[$0]!) }
-            if noArtworkWithImages.isEmpty {
-              Text(
-                "No Images Selected", bundle: .module,
-                comment:
-                  "Shown when context menu is being shown for No Artwork images and no artwork image has been selected."
-              )
-            } else {
-              self.noArtworkContextMenuBuilder(noArtworkWithImages)
-            }
-          } label: {
-            Text(
-              "No Artwork", bundle: .module,
-              comment: "Label for the context menu grouping No Artwork actions.")
-          }
-          Menu {
-            self.partialArtworkContextMenuBuilder(
-              selectedArtworks.filter { $0.availability == .some })
-          } label: {
-            Text(
-              "Partial Artwork", bundle: .module,
-              comment: "Label for the context menu grouping Partial Artwork actions.")
-          }
-        }
         .tag(missingArtwork)
       }
       .overlay(listStateOverlay)
@@ -116,6 +77,15 @@ struct DescriptionList<NoArtworkContextMenuContent: View, PartialArtworkContextM
           Text(suggestion.description).searchCompletion(suggestion.description)
         }
       }
+      .focusedValue(
+        \.partialArtworks, .constant(selectedArtworks.filter { $0.availability == .some })
+      )
+      .focusedValue(
+        \.noArtworks,
+        .constant(
+          selectedArtworks.filter { $0.availability == .none }.filter {
+            selectedArtworkImages[$0] != nil
+          }.map { ($0, selectedArtworkImages[$0]!) }))
       Divider()
       Text(
         "\(displayableArtworks.count) / \(missingArtworksCount) Missing", bundle: .module,
@@ -163,13 +133,6 @@ struct DescriptionList_Previews: PreviewProvider {
     let fakeButton1Title = "1"
     let fakeButton2Title = "2"
     DescriptionList(
-      noArtworkContextMenuBuilder: { items in
-        Button(fakeButton1Title) {}
-        Button(fakeButton2Title) {}
-      },
-      partialArtworkContextMenuBuilder: { items in
-        EmptyView()
-      },
       loadingState: .constant(.loaded(missingArtworks)),
       processingStates: .constant(
         missingArtworks.reduce(into: [MissingArtwork: ProcessingState]()) {
@@ -178,40 +141,10 @@ struct DescriptionList_Previews: PreviewProvider {
       )
     )
 
-    DescriptionList(
-      noArtworkContextMenuBuilder: { items in
-        Button(fakeButton1Title) {}
-        Button(fakeButton2Title) {}
-      },
-      partialArtworkContextMenuBuilder: { items in
-        EmptyView()
-      },
-      loadingState: .constant(.loaded([])),
-      processingStates: .constant([:])
-    )
+    DescriptionList(loadingState: .constant(.loaded([])), processingStates: .constant([:]))
 
-    DescriptionList(
-      noArtworkContextMenuBuilder: { items in
-        Button(fakeButton1Title) {}
-        Button(fakeButton2Title) {}
-      },
-      partialArtworkContextMenuBuilder: { items in
-        EmptyView()
-      },
-      loadingState: .constant(.loading),
-      processingStates: .constant([:])
-    )
+    DescriptionList(loadingState: .constant(.loading), processingStates: .constant([:]))
 
-    DescriptionList(
-      noArtworkContextMenuBuilder: { items in
-        Button(fakeButton1Title) {}
-        Button(fakeButton2Title) {}
-      },
-      partialArtworkContextMenuBuilder: { items in
-        EmptyView()
-      },
-      loadingState: .constant(.idle),
-      processingStates: .constant([:])
-    )
+    DescriptionList(loadingState: .constant(.idle), processingStates: .constant([:]))
   }
 }
