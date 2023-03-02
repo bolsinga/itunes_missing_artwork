@@ -26,10 +26,9 @@ public struct MissingArtworkView: View {
     .alert(
       isPresented: .constant(loadingState.isError), error: loadingState.currentError,
       actions: { error in
-        Button(role: .destructive) {
-          NSApplication.shared.terminate(nil)
+        Button() {
         } label: {
-          Text("Quit", bundle: .module, comment: "Button shown when an unrecoverable error occurs.")
+          Text("OK", bundle: .module, comment: "Button shown when an unrecoverable error occurs.")
         }
       },
       message: { error in
