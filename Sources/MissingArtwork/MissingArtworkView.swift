@@ -9,36 +9,17 @@ import LoadingState
 import MusicKit
 import SwiftUI
 
-public struct MissingArtworkView<
-  NoArtworkContextMenuContent: View, PartialArtworkContextMenuContent: View
->: View {
+public struct MissingArtworkView: View {
   @State private var loadingState: LoadingState<[MissingArtwork]> = .idle
 
   @Binding var processingStates: [MissingArtwork: ProcessingState]
 
-  public typealias NoArtworkContextMenuBuilder = (
-    [(missingArtwork: MissingArtwork, image: NSImage)]
-  ) -> NoArtworkContextMenuContent
-  public typealias PartialArtworkContextMenuBuilder = ([MissingArtwork]) ->
-    PartialArtworkContextMenuContent
-
-  @ViewBuilder let noArtworkContextMenuBuilder: NoArtworkContextMenuBuilder
-  @ViewBuilder let partialArtworkContextMenuBuilder: PartialArtworkContextMenuBuilder
-
-  public init(
-    @ViewBuilder noArtworkContextMenuBuilder: @escaping NoArtworkContextMenuBuilder,
-    @ViewBuilder partialArtworkContextMenuBuilder: @escaping PartialArtworkContextMenuBuilder,
-    processingStates: Binding<[MissingArtwork: ProcessingState]>
-  ) {
-    self.noArtworkContextMenuBuilder = noArtworkContextMenuBuilder
-    self.partialArtworkContextMenuBuilder = partialArtworkContextMenuBuilder
-    self._processingStates = processingStates  // Note this for assigning a Binding<T> to a wrapped property.
+  public init(processingStates: Binding<[MissingArtwork: ProcessingState]>) {
+    self._processingStates = processingStates
   }
 
   public var body: some View {
     DescriptionList(
-      noArtworkContextMenuBuilder: noArtworkContextMenuBuilder,
-      partialArtworkContextMenuBuilder: partialArtworkContextMenuBuilder,
       loadingState: $loadingState,
       processingStates: $processingStates
     )
@@ -64,12 +45,6 @@ public struct MissingArtworkView<
 
 struct MissingArtworkView_Previews: PreviewProvider {
   static var previews: some View {
-    MissingArtworkView(
-      noArtworkContextMenuBuilder: { items in
-        EmptyView()
-      },
-      partialArtworkContextMenuBuilder: { items in
-        EmptyView()
-      }, processingStates: .constant([:]))
+    MissingArtworkView(processingStates: .constant([:]))
   }
 }
