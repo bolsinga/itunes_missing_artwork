@@ -23,18 +23,20 @@ struct MissingImageList: View {
     }
   }
 
+  private var missingArtworkImages: Binding<[(Artwork, LoadingState<NSImage>)]> {
+    Binding<[(Artwork, LoadingState<NSImage>)]> {
+      if let value = loadingState.value {
+        return value
+      }
+      return []
+    } set: {
+      loadingState = .loaded($0)
+    }
+  }
+
   var body: some View {
     GeometryReader { proxy in
-      List(
-        Binding<[(Artwork, LoadingState<NSImage>)]> {
-          if let value = loadingState.value {
-            return value
-          }
-          return []
-        } set: {
-          loadingState = .loaded($0)
-        }, id: \.0
-      ) { $artworkImage in
+      List(missingArtworkImages, id: \.0) { $artworkImage in
         MissingArtworkImage(
           width: proxy.size.width, artwork: artworkImage.0,
           loadingState: $artworkImage.1
