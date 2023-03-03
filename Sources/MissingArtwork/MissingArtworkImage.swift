@@ -32,15 +32,7 @@ struct MissingArtworkImage: View {
       case .loaded(let nsImage):
         Image(nsImage: nsImage)
           .resizable().aspectRatio(contentMode: .fit)
-          .contextMenu {
-            Button {
-              let pasteboard = NSPasteboard.general
-              pasteboard.clearContents()
-              pasteboard.writeObjects([nsImage])
-            } label: {
-              Text("Copy", bundle: .module, comment: "Text shown to copy an album artwork image.")
-            }
-          }
+          .focusable().copyable([Image(nsImage: nsImage)])
       }
     }
     .frame(width: width)
