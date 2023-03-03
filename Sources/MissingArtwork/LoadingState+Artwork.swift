@@ -26,7 +26,7 @@ extension NoArtworkError: LocalizedError {
   }
 }
 
-extension LoadingState where Value == [(Artwork, LoadingState<NSImage>)] {
+extension LoadingState where Value == [ArtworkLoadingImage] {
   private func fetchArtworks(missingArtwork: MissingArtwork, term: String) async throws -> [Artwork]
   {
     var searchRequest = MusicCatalogSearchRequest(term: term, types: [Album.self])
@@ -49,7 +49,7 @@ extension LoadingState where Value == [(Artwork, LoadingState<NSImage>)] {
         throw NoArtworkError.noneFound(missingArtwork)
       }
 
-      self = .loaded(artworks.map { ($0, .idle) })
+      self = .loaded(artworks.map { ArtworkLoadingImage(artwork: $0, loadingState: .idle) })
     } catch {
       self = .error(error)
     }

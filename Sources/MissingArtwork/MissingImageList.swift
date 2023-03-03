@@ -11,7 +11,7 @@ import SwiftUI
 
 struct MissingImageList: View {
   let missingArtwork: MissingArtwork
-  @Binding var loadingState: LoadingState<[(Artwork, LoadingState<NSImage>)]>
+  @Binding var loadingState: LoadingState<[ArtworkLoadingImage]>
 
   @Binding var selectedArtworkImage: NSImage?
 
@@ -23,8 +23,8 @@ struct MissingImageList: View {
     }
   }
 
-  private var missingArtworkImages: Binding<[(Artwork, LoadingState<NSImage>)]> {
-    Binding<[(Artwork, LoadingState<NSImage>)]> {
+  private var missingArtworkImages: Binding<[ArtworkLoadingImage]> {
+    Binding<[ArtworkLoadingImage]> {
       if let value = loadingState.value {
         return value
       }
@@ -36,14 +36,14 @@ struct MissingImageList: View {
 
   var body: some View {
     GeometryReader { proxy in
-      List(missingArtworkImages, id: \.0) { $artworkImage in
+      List(missingArtworkImages, id: \.artwork) { $artworkImage in
         MissingArtworkImage(
-          width: proxy.size.width, artwork: artworkImage.0,
-          loadingState: $artworkImage.1
+          width: proxy.size.width, artwork: artworkImage.artwork,
+          loadingState: $artworkImage.loadingState
         )
-        .onTapGesture { selectedArtworkImage = artworkImage.1.value }
+        .onTapGesture { selectedArtworkImage = artworkImage.loadingState.value }
         .border(
-          .selection, width: selectedArtworkImage == artworkImage.1.value ? 2.0 : 0)
+          .selection, width: selectedArtworkImage == artworkImage.loadingState.value ? 2.0 : 0)
       }
     }
     .overlay(artworkLoadingStatusOverlay)
