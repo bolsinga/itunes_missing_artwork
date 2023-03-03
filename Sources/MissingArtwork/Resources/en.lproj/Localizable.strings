@@ -16,9 +16,6 @@
 /* Button Text in alert shown when MusicKit authorization status cannot be determined. */
 "Continue" = "Continue";
 
-/* Text shown to copy an album artwork image. */
-"Copy" = "Copy";
-
 /* Title of the ToolbarItem that shows a popup of filters to apply to the displayed Missing Artwork. */
 "Filters" = "Filters";
 
