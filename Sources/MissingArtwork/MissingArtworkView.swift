@@ -26,7 +26,7 @@ public struct MissingArtworkView: View {
     .alert(
       isPresented: .constant(loadingState.isError), error: loadingState.currentError,
       actions: { error in
-        Button() {
+        Button {
         } label: {
           Text("OK", bundle: .module, comment: "Button shown when an unrecoverable error occurs.")
         }
