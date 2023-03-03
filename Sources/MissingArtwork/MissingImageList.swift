@@ -25,27 +25,23 @@ struct MissingImageList: View {
 
   var body: some View {
     GeometryReader { proxy in
-      ScrollView {
-        VStack {
-          ForEach(
-            Binding<[(Artwork, LoadingState<NSImage>)]> {
-              if let value = loadingState.value {
-                return value
-              }
-              return []
-            } set: {
-              loadingState = .loaded($0)
-            }, id: \.0
-          ) { $artworkImage in
-            MissingArtworkImage(
-              width: proxy.size.width, artwork: artworkImage.0,
-              loadingState: $artworkImage.1
-            )
-            .onTapGesture { selectedArtworkImage = artworkImage.1.value }
-            .border(
-              .selection, width: selectedArtworkImage == artworkImage.1.value ? 2.0 : 0)
+      List(
+        Binding<[(Artwork, LoadingState<NSImage>)]> {
+          if let value = loadingState.value {
+            return value
           }
-        }
+          return []
+        } set: {
+          loadingState = .loaded($0)
+        }, id: \.0
+      ) { $artworkImage in
+        MissingArtworkImage(
+          width: proxy.size.width, artwork: artworkImage.0,
+          loadingState: $artworkImage.1
+        )
+        .onTapGesture { selectedArtworkImage = artworkImage.1.value }
+        .border(
+          .selection, width: selectedArtworkImage == artworkImage.1.value ? 2.0 : 0)
       }
     }
     .overlay(artworkLoadingStatusOverlay)
