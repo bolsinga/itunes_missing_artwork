@@ -130,8 +130,6 @@ struct DescriptionList_Previews: PreviewProvider {
       MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none),
       MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1", .some),
     ]
-    let fakeButton1Title = "1"
-    let fakeButton2Title = "2"
     DescriptionList(
       loadingState: .constant(.loaded(missingArtworks)),
       processingStates: .constant(
