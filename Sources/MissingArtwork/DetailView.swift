@@ -12,8 +12,7 @@ import SwiftUI
 
 struct DetailView: View {
   @Binding var loadingState: LoadingState<[MissingArtwork]>
-  @Binding var artworkLoadingStates:
-    [MissingArtwork: LoadingState<[(Artwork, LoadingState<NSImage>)]>]
+  @Binding var artworkLoadingStates: [MissingArtwork: LoadingState<[ArtworkLoadingImage]>]
   @Binding var selectedArtworks: Set<MissingArtwork>
   @Binding var selectedArtworkImages: [MissingArtwork: NSImage]
   @Binding var processingStates: [MissingArtwork: ProcessingState]

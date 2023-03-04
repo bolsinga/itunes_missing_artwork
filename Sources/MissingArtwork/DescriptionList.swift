@@ -18,8 +18,8 @@ struct DescriptionList: View {
   @State private var searchString: String = ""
 
   @State private var selectedArtworkImages: [MissingArtwork: NSImage] = [:]
-  @State private var artworkLoadingStates:
-    [MissingArtwork: LoadingState<[(Artwork, LoadingState<NSImage>)]>] = [:]
+  @State private var artworkLoadingStates: [MissingArtwork: LoadingState<[ArtworkLoadingImage]>] =
+    [:]
 
   @Binding var loadingState: LoadingState<[MissingArtwork]>
 
