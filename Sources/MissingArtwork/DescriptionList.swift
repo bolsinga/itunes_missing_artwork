@@ -47,6 +47,22 @@ struct DescriptionList: View {
       availabilityFilter: availabilityFilter, searchString: searchString, sortOrder: sortOrder)
   }
 
+  private var partialSelectedArtworks: [MissingArtwork] {
+    selectedArtworks.filter { $0.availability == .some }
+  }
+
+  private var noArtSelectedArtworks: [MissingArtwork] {
+    selectedArtworks.filter { $0.availability == .none }
+  }
+
+  private var noArtSelectedArtworksContainingSelectedImage: [MissingArtwork] {
+    noArtSelectedArtworks.filter { selectedArtworkImages[$0] != nil }
+  }
+
+  private var noArtSelectedArtworksWithImage: [(MissingArtwork, NSImage)] {
+    noArtSelectedArtworksContainingSelectedImage.map { ($0, selectedArtworkImages[$0]!) }
+  }
+
   private func clearSelectionIfNotDisplayable() {
     selectedArtworks = selectedArtworks.intersection(displayableArtworks)
   }
@@ -77,15 +93,8 @@ struct DescriptionList: View {
           Text(suggestion.description).searchCompletion(suggestion.description)
         }
       }
-      .focusedValue(
-        \.partialArtworks, .constant(selectedArtworks.filter { $0.availability == .some })
-      )
-      .focusedValue(
-        \.noArtworks,
-        .constant(
-          selectedArtworks.filter { $0.availability == .none }.filter {
-            selectedArtworkImages[$0] != nil
-          }.map { ($0, selectedArtworkImages[$0]!) }))
+      .focusedValue(\.partialArtworks, .constant(partialSelectedArtworks))
+      .focusedValue(\.noArtworks, .constant(noArtSelectedArtworksWithImage))
       Divider()
       Text(
         "\(displayableArtworks.count) / \(missingArtworksCount) Missing", bundle: .module,
