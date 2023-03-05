@@ -14,7 +14,7 @@ struct DetailView: View {
   @Binding var loadingState: LoadingState<[MissingArtwork]>
   @Binding var artworkLoadingStates: [MissingArtwork: LoadingState<[ArtworkLoadingImage]>]
   @Binding var selectedArtworks: Set<MissingArtwork>
-  @Binding var selectedArtworkImages: [MissingArtwork: NSImage]
+  @Binding var selectedArtworkImages: [MissingArtwork: ArtworkLoadingImage]
   @Binding var processingStates: [MissingArtwork: ProcessingState]
   @Binding var sortOrder: SortOrder
 
