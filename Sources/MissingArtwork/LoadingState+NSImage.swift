@@ -47,3 +47,20 @@ extension LoadingState where Value == NSImage {
     }
   }
 }
+
+extension LoadingState: Equatable where Value == NSImage {
+  public static func == (lhs: LoadingState<Value>, rhs: LoadingState<Value>) -> Bool {
+    switch (lhs, rhs) {
+    case (.idle, .idle):
+      return true
+    case (.loading, .loading):
+      return true
+    case (.error(let error1), .error(let error2)):
+      return error1.localizedDescription == error2.localizedDescription  // Questionable.
+    case (.loaded(let lhValue), .loaded(let rhValue)):
+      return lhValue == rhValue
+    default:
+      return false
+    }
+  }
+}

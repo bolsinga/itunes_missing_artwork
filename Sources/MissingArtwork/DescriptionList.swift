@@ -17,7 +17,7 @@ struct DescriptionList: View {
 
   @State private var searchString: String = ""
 
-  @State private var selectedArtworkImages: [MissingArtwork: NSImage] = [:]
+  @State private var selectedArtworkImages: [MissingArtwork: ArtworkLoadingImage] = [:]
   @State private var artworkLoadingStates: [MissingArtwork: LoadingState<[ArtworkLoadingImage]>] =
     [:]
 
@@ -59,8 +59,22 @@ struct DescriptionList: View {
     noArtSelectedArtworks.filter { selectedArtworkImages[$0] != nil }
   }
 
-  private var noArtSelectedArtworksWithImage: [(MissingArtwork, NSImage)] {
+  private var noArtSelectedArtworksContainingSelectedArtworkLoadingImage:
+    [(MissingArtwork, ArtworkLoadingImage)]
+  {
     noArtSelectedArtworksContainingSelectedImage.map { ($0, selectedArtworkImages[$0]!) }
+  }
+
+  private var noArtSelectedArtworksContainingSelectedAndLoadedImage:
+    [(MissingArtwork, ArtworkLoadingImage)]
+  {
+    noArtSelectedArtworksContainingSelectedArtworkLoadingImage.filter {
+      $1.loadingState.value != nil
+    }
+  }
+
+  private var noArtSelectedArtworksWithImage: [(MissingArtwork, NSImage)] {
+    noArtSelectedArtworksContainingSelectedAndLoadedImage.map { ($0, $1.loadingState.value!) }
   }
 
   private func clearSelectionIfNotDisplayable() {

@@ -10,7 +10,7 @@ import Foundation
 import LoadingState
 import MusicKit
 
-struct ArtworkLoadingImage {
+struct ArtworkLoadingImage: Equatable {
   let artwork: Artwork
   var loadingState: LoadingState<NSImage>
 }
