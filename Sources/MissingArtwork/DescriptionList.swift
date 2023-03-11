@@ -130,7 +130,7 @@ struct DescriptionList: View {
         artworkLoadingStates: $artworkLoadingStates,
         selectedArtworks: $selectedArtworks,
         selectedArtworkImages: $selectedArtworkImages,
-        processingStates: $processingStates,
+        processingStates: processingStates,
         sortOrder: sortOrder)
     }.onChange(of: availabilityFilter) { _ in
       clearSelectionIfNotDisplayable()
