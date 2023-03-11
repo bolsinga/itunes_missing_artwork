@@ -38,6 +38,9 @@
 Label for the context menu grouping No Artwork actions. */
 "No Artwork" = "No Artwork";
 
+/* Help string shown when no image is available for fixing. */
+"No Image Available" = "No Image Available";
+
 /* Error message when an Image cannot be created from the URL. */
 "No Image Created." = "No Image Created.";
 

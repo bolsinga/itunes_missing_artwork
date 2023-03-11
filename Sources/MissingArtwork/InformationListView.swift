@@ -12,6 +12,7 @@ import SwiftUI
 struct InformationListView: View {
   let missingArtworks: [MissingArtwork]
   let missingArtworkWithImages: Set<MissingArtwork>
+  let missingArtworksNoImageFound: Set<MissingArtwork>
   let processingStates: [MissingArtwork: ProcessingState]
 
   var body: some View {
@@ -20,7 +21,9 @@ struct InformationListView: View {
         ForEach(missingArtworks) { missingArtwork in
           Information(
             missingArtwork: missingArtwork,
-            imageFound: missingArtworkWithImages.contains(missingArtwork),
+            imageRepair: missingArtworksNoImageFound.contains(missingArtwork)
+              ? .notAvailable
+              : missingArtworkWithImages.contains(missingArtwork) ? .ready : .notSelected,
             processingState: processingStates[missingArtwork] != nil
               ? processingStates[missingArtwork]! : .none)
         }
@@ -39,7 +42,8 @@ struct InformationListView_Previews: PreviewProvider {
 
     InformationListView(
       missingArtworks: missingArtworks,
-      missingArtworkWithImages: Set([missingArtworks[1]]),
+      missingArtworkWithImages: [missingArtworks[1]],
+      missingArtworksNoImageFound: [missingArtworks[2]],
       processingStates: [missingArtworks[1]: .processing])
   }
 }
