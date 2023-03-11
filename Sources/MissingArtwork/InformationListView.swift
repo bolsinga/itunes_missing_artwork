@@ -12,7 +12,7 @@ import SwiftUI
 struct InformationListView: View {
   let missingArtworks: [MissingArtwork]
   @Binding var missingArtworkWithImages: Set<MissingArtwork>
-  @Binding var processingStates: [MissingArtwork: ProcessingState]
+  let processingStates: [MissingArtwork: ProcessingState]
 
   var body: some View {
     ScrollView {
@@ -40,6 +40,6 @@ struct InformationListView_Previews: PreviewProvider {
     InformationListView(
       missingArtworks: missingArtworks,
       missingArtworkWithImages: .constant(Set([missingArtworks[1]])),
-      processingStates: .constant([missingArtworks[1]: .processing]))
+      processingStates: [missingArtworks[1]: .processing])
   }
 }
