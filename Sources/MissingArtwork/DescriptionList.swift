@@ -131,7 +131,7 @@ struct DescriptionList: View {
         selectedArtworks: $selectedArtworks,
         selectedArtworkImages: $selectedArtworkImages,
         processingStates: $processingStates,
-        sortOrder: $sortOrder)
+        sortOrder: sortOrder)
     }.onChange(of: availabilityFilter) { _ in
       clearSelectionIfNotDisplayable()
     }.onChange(of: searchString) { _ in
