@@ -64,3 +64,18 @@ extension LoadingState: Equatable where Value == NSImage {
     }
   }
 }
+
+extension LoadingState: Hashable where Value == NSImage {
+  public func hash(into hasher: inout Hasher) {
+    switch self {
+    case .idle:
+      hasher.combine("idle")
+    case .loading:
+      hasher.combine("loading")
+    case .error(let error):
+      hasher.combine(error.localizedDescription)  // Questionable.
+    case .loaded(let nsImage):
+      hasher.combine(nsImage)
+    }
+  }
+}

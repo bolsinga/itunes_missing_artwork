@@ -36,14 +36,13 @@ struct MissingImageList: View {
 
   var body: some View {
     GeometryReader { proxy in
-      List(missingArtworkImages, id: \.artwork) { $artworkImage in
+      List(missingArtworkImages, id: \.artwork, selection: $selectedArtworkImage) {
+        $artworkImage in
         MissingArtworkImage(
           width: proxy.size.width, artwork: artworkImage.artwork,
           loadingState: $artworkImage.loadingState
         )
-        .onTapGesture { selectedArtworkImage = artworkImage }
-        .border(
-          .selection, width: selectedArtworkImage == artworkImage ? 2.0 : 0)
+        .tag(artworkImage)
       }
     }
     .overlay(artworkLoadingStatusOverlay)
