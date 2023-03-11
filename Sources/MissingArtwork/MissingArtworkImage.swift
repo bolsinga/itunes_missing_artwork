@@ -32,7 +32,6 @@ struct MissingArtworkImage: View {
       case .loaded(let nsImage):
         Image(nsImage: nsImage)
           .resizable().aspectRatio(contentMode: .fit)
-          .focusable().copyable([Image(nsImage: nsImage)])
       }
     }
     .frame(width: width)
