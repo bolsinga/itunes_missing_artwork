@@ -15,7 +15,7 @@ struct DetailView: View {
   @Binding var artworkLoadingStates: [MissingArtwork: LoadingState<[ArtworkLoadingImage]>]
   @Binding var selectedArtworks: Set<MissingArtwork>
   @Binding var selectedArtworkImages: [MissingArtwork: ArtworkLoadingImage]
-  @Binding var processingStates: [MissingArtwork: ProcessingState]
+  let processingStates: [MissingArtwork: ProcessingState]
   let sortOrder: SortOrder
 
   private var missingArtworksIsEmpty: Bool {
@@ -69,7 +69,7 @@ struct DetailView_Previews: PreviewProvider {
       artworkLoadingStates: .constant([:]),
       selectedArtworks: .constant([]),
       selectedArtworkImages: .constant([:]),
-      processingStates: .constant([:]),
+      processingStates: [:],
       sortOrder: .ascending)
 
     DetailView(
@@ -77,7 +77,7 @@ struct DetailView_Previews: PreviewProvider {
       artworkLoadingStates: .constant([missingArtwork: .loading]),
       selectedArtworks: .constant([]),
       selectedArtworkImages: .constant([:]),
-      processingStates: .constant([missingArtwork: .none]),
+      processingStates: [missingArtwork: .none],
       sortOrder: .ascending)
 
     DetailView(
@@ -85,7 +85,7 @@ struct DetailView_Previews: PreviewProvider {
       artworkLoadingStates: .constant([missingArtwork: .loading]),
       selectedArtworks: .constant([missingArtwork]),
       selectedArtworkImages: .constant([:]),
-      processingStates: .constant([missingArtwork: .none]),
+      processingStates: [missingArtwork: .none],
       sortOrder: .ascending)
 
     DetailView(
@@ -93,7 +93,7 @@ struct DetailView_Previews: PreviewProvider {
       artworkLoadingStates: .constant([missingArtwork: .loaded([])]),
       selectedArtworks: .constant([missingArtwork]),
       selectedArtworkImages: .constant([:]),
-      processingStates: .constant([missingArtwork: .none]),
+      processingStates: [missingArtwork: .none],
       sortOrder: .ascending)
   }
 }
