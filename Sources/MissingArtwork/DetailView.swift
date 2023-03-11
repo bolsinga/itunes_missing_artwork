@@ -13,7 +13,7 @@ import SwiftUI
 struct DetailView: View {
   let loadingState: LoadingState<[MissingArtwork]>
   @Binding var artworkLoadingStates: [MissingArtwork: LoadingState<[ArtworkLoadingImage]>]
-  @Binding var selectedArtworks: Set<MissingArtwork>
+  let selectedArtworks: Set<MissingArtwork>
   @Binding var selectedArtworkImages: [MissingArtwork: ArtworkLoadingImage]
   let processingStates: [MissingArtwork: ProcessingState]
   let sortOrder: SortOrder
@@ -67,7 +67,7 @@ struct DetailView_Previews: PreviewProvider {
     DetailView(
       loadingState: .loading,
       artworkLoadingStates: .constant([:]),
-      selectedArtworks: .constant([]),
+      selectedArtworks: [],
       selectedArtworkImages: .constant([:]),
       processingStates: [:],
       sortOrder: .ascending)
@@ -75,7 +75,7 @@ struct DetailView_Previews: PreviewProvider {
     DetailView(
       loadingState: .loaded([missingArtwork]),
       artworkLoadingStates: .constant([missingArtwork: .loading]),
-      selectedArtworks: .constant([]),
+      selectedArtworks: [],
       selectedArtworkImages: .constant([:]),
       processingStates: [missingArtwork: .none],
       sortOrder: .ascending)
@@ -83,7 +83,7 @@ struct DetailView_Previews: PreviewProvider {
     DetailView(
       loadingState: .loaded([missingArtwork]),
       artworkLoadingStates: .constant([missingArtwork: .loading]),
-      selectedArtworks: .constant([missingArtwork]),
+      selectedArtworks: [missingArtwork],
       selectedArtworkImages: .constant([:]),
       processingStates: [missingArtwork: .none],
       sortOrder: .ascending)
@@ -91,7 +91,7 @@ struct DetailView_Previews: PreviewProvider {
     DetailView(
       loadingState: .loaded([missingArtwork]),
       artworkLoadingStates: .constant([missingArtwork: .loaded([])]),
-      selectedArtworks: .constant([missingArtwork]),
+      selectedArtworks: [missingArtwork],
       selectedArtworkImages: .constant([:]),
       processingStates: [missingArtwork: .none],
       sortOrder: .ascending)
