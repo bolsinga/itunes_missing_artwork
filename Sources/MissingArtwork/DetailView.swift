@@ -54,6 +54,8 @@ struct DetailView: View {
           missingArtworkWithImages: Set(
             selectedArtworks.filter { selectedArtworkImages[$0] != nil }.map { $0 }
           ).union(missingArtworks.filter { $0.availability == .some }),
+          missingArtworksNoImageFound: Set(
+            selectedArtworks.filter { artworkLoadingStates[$0]?.isError ?? false }),
           processingStates: processingStates)
       }
     }

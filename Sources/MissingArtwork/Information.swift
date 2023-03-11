@@ -7,9 +7,15 @@
 
 import SwiftUI
 
+enum ImageRepair {
+  case ready  // image is ready for repair
+  case notSelected  // no image is selected for repair
+  case notAvailable  // no image is available to select to repair
+}
+
 struct Information: View {
   let missingArtwork: MissingArtwork
-  let imageFound: Bool
+  let imageRepair: ImageRepair
   let processingState: ProcessingState
 
   @ViewBuilder private var nameView: some View {
@@ -30,21 +36,28 @@ struct Information: View {
     }
   }
 
-  @ViewBuilder private var imageFoundView: some View {
-    imageFound
-      ? Text(
+  @ViewBuilder private var imageRepairView: some View {
+    switch imageRepair {
+    case .ready:
+      Text(
         "Image Ready", bundle: .module,
         comment: "Help string shown when image is ready for fixing.")
-      : Text(
+    case .notSelected:
+      Text(
         "No Image Selected", bundle: .module,
         comment: "Help string shown when no image has been selected for fixing.")
+    case .notAvailable:
+      Text(
+        "No Image Available", bundle: .module,
+        comment: "Help string shown when no image is available for fixing.")
+    }
   }
 
   var body: some View {
     HStack {
       nameView
       Spacer()
-      imageFoundView
+      imageRepairView
       processingState.representingView
     }
     .padding(.all)
@@ -56,9 +69,10 @@ struct Information_Previews: PreviewProvider {
     let album = MissingArtwork.ArtistAlbum("Sonic Youth", "Evol", .none)
     let compilation = MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1", .some)
 
-    Information(missingArtwork: album, imageFound: true, processingState: .none)
-    Information(missingArtwork: compilation, imageFound: false, processingState: .processing)
-    Information(missingArtwork: album, imageFound: true, processingState: .success)
-    Information(missingArtwork: compilation, imageFound: false, processingState: .failure)
+    Information(missingArtwork: album, imageRepair: .notAvailable, processingState: .none)
+    Information(
+      missingArtwork: compilation, imageRepair: .notSelected, processingState: .processing)
+    Information(missingArtwork: album, imageRepair: .ready, processingState: .success)
+    Information(missingArtwork: compilation, imageRepair: .ready, processingState: .failure)
   }
 }
