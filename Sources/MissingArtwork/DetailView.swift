@@ -51,9 +51,9 @@ struct DetailView: View {
       } else {
         InformationListView(
           missingArtworks: Array(selectedArtworks).sorted(by: sortOrder),
-          missingArtworkWithImages: .constant(
-            Set(selectedArtworks.filter { selectedArtworkImages[$0] != nil }.map { $0 }).union(
-              missingArtworks.filter { $0.availability == .some })),
+          missingArtworkWithImages: Set(
+            selectedArtworks.filter { selectedArtworkImages[$0] != nil }.map { $0 }
+          ).union(missingArtworks.filter { $0.availability == .some }),
           processingStates: processingStates)
       }
     }
