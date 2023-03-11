@@ -20,7 +20,7 @@ public struct MissingArtworkView: View {
 
   public var body: some View {
     DescriptionList(
-      loadingState: $loadingState,
+      loadingState: loadingState,
       processingStates: $processingStates
     )
     .alert(

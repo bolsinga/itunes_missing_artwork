@@ -21,7 +21,7 @@ struct DescriptionList: View {
   @State private var artworkLoadingStates: [MissingArtwork: LoadingState<[ArtworkLoadingImage]>] =
     [:]
 
-  @Binding var loadingState: LoadingState<[MissingArtwork]>
+  let loadingState: LoadingState<[MissingArtwork]>
 
   @Binding var processingStates: [MissingArtwork: ProcessingState]
 
@@ -126,7 +126,7 @@ struct DescriptionList: View {
         .filtersToolbar(availabilityFilter: $availabilityFilter, sortOrder: $sortOrder)
     } detail: {
       DetailView(
-        loadingState: $loadingState,
+        loadingState: loadingState,
         artworkLoadingStates: $artworkLoadingStates,
         selectedArtworks: $selectedArtworks,
         selectedArtworkImages: $selectedArtworkImages,
@@ -154,7 +154,7 @@ struct DescriptionList_Previews: PreviewProvider {
       MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1", .some),
     ]
     DescriptionList(
-      loadingState: .constant(.loaded(missingArtworks)),
+      loadingState: .loaded(missingArtworks),
       processingStates: .constant(
         missingArtworks.reduce(into: [MissingArtwork: ProcessingState]()) {
           $0[$1] = .processing
@@ -162,10 +162,10 @@ struct DescriptionList_Previews: PreviewProvider {
       )
     )
 
-    DescriptionList(loadingState: .constant(.loaded([])), processingStates: .constant([:]))
+    DescriptionList(loadingState: .loaded([]), processingStates: .constant([:]))
 
-    DescriptionList(loadingState: .constant(.loading), processingStates: .constant([:]))
+    DescriptionList(loadingState: .loading, processingStates: .constant([:]))
 
-    DescriptionList(loadingState: .constant(.idle), processingStates: .constant([:]))
+    DescriptionList(loadingState: .idle, processingStates: .constant([:]))
   }
 }
