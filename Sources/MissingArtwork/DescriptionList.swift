@@ -128,7 +128,7 @@ struct DescriptionList: View {
       DetailView(
         loadingState: loadingState,
         artworkLoadingStates: $artworkLoadingStates,
-        selectedArtworks: $selectedArtworks,
+        selectedArtworks: selectedArtworks,
         selectedArtworkImages: $selectedArtworkImages,
         processingStates: processingStates,
         sortOrder: sortOrder)
