@@ -12,7 +12,7 @@ let package = Package(
     .library(name: "MissingArtwork", targets: ["MissingArtwork"])
   ],
   dependencies: [
-    .package(url: "https://github.com/bolsinga/LoadingState", branch: "MissingArt-1.1")
+    .package(url: "https://github.com/bolsinga/LoadingState", branch: "main")
   ],
   targets: [
     .target(
