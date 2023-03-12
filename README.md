@@ -3,7 +3,7 @@
 
 This is a SwifUI framework. It uses the [iTunesLibrary framework](https://developer.apple.com/documentation/ituneslibrary) to learn what media in Music.app do not have artwork. It then uses the [MusicKit](https://developer.apple.com/documentation/MusicKit/) to search for the artwork on Apple's Catalog.
 
-It will display everything that is missing, but leave it to the hosting application what to do about it. This is because the best way I found to fix the artwork in Music.app was to run AppleScripts that would repair. it. I didn't want to have an AppleScript dependency in this SwiftUI framework. I also wanted to write a library that was published by the Swift Package Manager. 
+It will display everything that is missing, but leave it to the hosting application what to do about it. This is because the best way I found to fix the artwork in Music.app was to run AppleScripts that would repair it. I didn't want to have an AppleScript dependency in this SwiftUI framework. I also wanted to write a library that was published by the Swift Package Manager. 
 
 The inspiration for this was that in macos Catalina, the Music.app has lost 100s of the artwork it used to have for years. The application itself cannot find this artwork. However using the API provided by Apple, much of the artwork can be found. 
 
