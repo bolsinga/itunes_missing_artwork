@@ -1,4 +1,4 @@
-# itunes_missing_artwork
+# iTunes Missing Artwork
 <img src="https://raw.github.com/bolsinga/MissingArt/main/MissingArt/Assets.xcassets/AppIcon.appiconset/Icon.png" width="100">
 
 This is a SwifUI framework. It uses the [iTunesLibrary framework](https://developer.apple.com/documentation/ituneslibrary) to learn what media in Music.app do not have artwork. It then uses the [MusicKit](https://developer.apple.com/documentation/MusicKit/) to search for the artwork on Apple's Catalog.
