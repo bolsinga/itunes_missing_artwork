@@ -5,6 +5,7 @@
 //  Created by Greg Bolsinga on 3/1/23.
 //
 
+import AppKit
 import SwiftUI
 
 public struct MissingArtworkCommands<

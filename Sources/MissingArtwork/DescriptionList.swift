@@ -5,6 +5,7 @@
 //  Created by Greg Bolsinga on 4/19/22.
 //
 
+import AppKit
 import LoadingState
 import MusicKit
 import SwiftUI
