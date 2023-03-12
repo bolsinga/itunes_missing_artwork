@@ -19,6 +19,6 @@ let package = Package(
       name: "MissingArtwork",
       dependencies: [
         .product(name: "LoadingState", package: "LoadingState")
-      ], swiftSettings: [.unsafeFlags(["-strict-concurrency=targeted"])])
+      ])
   ]
 )
