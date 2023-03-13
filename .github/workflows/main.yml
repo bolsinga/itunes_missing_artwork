@@ -15,6 +15,6 @@ jobs:
     - name: Switch to Xcode 14.1
       run: sudo xcode-select -s "/Applications/Xcode_14.1.app"
     - name: Show Destinations
-      run xcodebuild -scheme itunes_missing_artwork -showdestinations
+      run: xcodebuild -scheme itunes_missing_artwork -showdestinations
     - name: Build (macos)
       run: swift build -v
