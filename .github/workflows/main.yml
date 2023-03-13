@@ -14,5 +14,12 @@ jobs:
     - uses: actions/checkout@v3
     - name: Switch to Xcode 14.1
       run: sudo xcode-select -s "/Applications/Xcode_14.1.app"
-    - name: Build
-      run: swift build -v
+    - name: Build (macos)
+      run: xcodebuild -scheme itunes_missing_artwork -destination "platform=macOS"
+    - name: Build (ios)
+      run: xcodebuild -scheme itunes_missing_artwork -destination "name=iPhone 14"
+
+#    - name: Show Destinations
+#      run: xcodebuild -scheme itunes_missing_artwork -showdestinations
+#    - name: Build (swift package manager macos default)
+#      run: swift build -v
