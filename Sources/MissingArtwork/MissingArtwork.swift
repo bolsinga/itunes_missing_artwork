@@ -130,6 +130,7 @@ extension MissingArtwork {
         .ArtistAlbum("Wire", "Pink Flag", .none),
         .CompilationAlbum("The Lounge Ax Defense & Relocation Compact Disc", .some),
       ]
+      return items
     #endif
   }
 }
