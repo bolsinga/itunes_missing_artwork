@@ -6,7 +6,6 @@
 //
 
 import LoadingState
-import MusicKit
 import SwiftUI
 
 struct DetailView: View {

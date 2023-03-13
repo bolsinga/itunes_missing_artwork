@@ -6,7 +6,6 @@
 //
 
 import LoadingState
-import MusicKit
 import SwiftUI
 
 public struct MissingArtworkView: View {
