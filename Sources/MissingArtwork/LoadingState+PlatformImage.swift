@@ -1,31 +1,14 @@
 //
-//  LoadingState+NSImage.swift
+//  LoadingState+PlatformImage.swift
 //
 //
 //  Created by Greg Bolsinga on 1/20/23.
 //
 
-import AppKit
 import Foundation
 import LoadingState
 
-private enum NSImageError: Error {
-  case noImage
-}
-
-extension NSImageError: LocalizedError {
-  fileprivate var errorDescription: String? {
-    switch self {
-    case .noImage:
-      return String(
-        localized: "No Image Created.",
-        bundle: .module,
-        comment: "Error message when an Image cannot be created from the URL.")
-    }
-  }
-}
-
-extension LoadingState where Value == NSImage {
+extension LoadingState where Value == PlatformImage {
   mutating func load(url: URL) async {
     guard case .idle = self else {
       return
@@ -35,20 +18,14 @@ extension LoadingState where Value == NSImage {
 
     do {
       let (data, _) = try await URLSession.shared.data(from: url)
-      let nsImage = NSImage.init(data: data)
-
-      if let nsImage {
-        self = .loaded(nsImage)
-      } else {
-        throw NSImageError.noImage
-      }
+      self = .loaded(try PlatformImage(data: data))
     } catch {
       self = .error(error)
     }
   }
 }
 
-extension LoadingState: Equatable where Value == NSImage {
+extension LoadingState: Equatable where Value == PlatformImage {
   public static func == (lhs: LoadingState<Value>, rhs: LoadingState<Value>) -> Bool {
     switch (lhs, rhs) {
     case (.idle, .idle):
@@ -65,7 +42,7 @@ extension LoadingState: Equatable where Value == NSImage {
   }
 }
 
-extension LoadingState: Hashable where Value == NSImage {
+extension LoadingState: Hashable where Value == PlatformImage {
   public func hash(into hasher: inout Hasher) {
     switch self {
     case .idle:
@@ -74,8 +51,8 @@ extension LoadingState: Hashable where Value == NSImage {
       hasher.combine("loading")
     case .error(let error):
       hasher.combine(error.localizedDescription)  // Questionable.
-    case .loaded(let nsImage):
-      hasher.combine(nsImage)
+    case .loaded(let platformImage):
+      hasher.combine(platformImage)
     }
   }
 }
