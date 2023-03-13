@@ -5,7 +5,6 @@
 //  Created by Greg Bolsinga on 3/1/23.
 //
 
-import AppKit
 import SwiftUI
 
 public struct MissingArtworkCommands<
@@ -16,7 +15,7 @@ public struct MissingArtworkCommands<
   @FocusedBinding(\.noArtworks) var noArtworks
 
   public typealias NoArtworkContextMenuBuilder = (
-    [(missingArtwork: MissingArtwork, image: NSImage)]
+    [(missingArtwork: MissingArtwork, image: PlatformImage)]
   ) -> NoArtworkContextMenuContent
   public typealias PartialArtworkContextMenuBuilder = ([MissingArtwork]) ->
     PartialArtworkContextMenuContent
@@ -66,7 +65,7 @@ private struct PartialArtworksKey: FocusedValueKey {
 }
 
 private struct NoArtworksKey: FocusedValueKey {
-  typealias Value = Binding<[(MissingArtwork, NSImage)]>
+  typealias Value = Binding<[(MissingArtwork, PlatformImage)]>
 }
 
 extension FocusedValues {
@@ -75,7 +74,7 @@ extension FocusedValues {
     set { self[PartialArtworksKey.self] = newValue }
   }
 
-  var noArtworks: Binding<[(MissingArtwork, NSImage)]>? {
+  var noArtworks: Binding<[(MissingArtwork, PlatformImage)]>? {
     get { self[NoArtworksKey.self] }
     set { self[NoArtworksKey.self] = newValue }
   }

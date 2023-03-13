@@ -1,11 +1,10 @@
 //
-//  LoadingState+NSImage+Artwork.swift
+//  LoadingState+PlatformImage+Artwork.swift
 //
 //
 //  Created by Greg Bolsinga on 1/21/23.
 //
 
-import AppKit
 import Foundation
 import LoadingState
 import MusicKit
@@ -26,7 +25,7 @@ extension ArtworkImageError: LocalizedError {
   }
 }
 
-extension LoadingState where Value == NSImage {
+extension LoadingState where Value == PlatformImage {
   mutating func load(artwork: Artwork) async {
     do {
       guard let url = artwork.url(width: artwork.maximumWidth, height: artwork.maximumHeight)

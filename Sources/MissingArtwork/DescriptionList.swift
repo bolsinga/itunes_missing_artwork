@@ -5,7 +5,6 @@
 //  Created by Greg Bolsinga on 4/19/22.
 //
 
-import AppKit
 import LoadingState
 import MusicKit
 import SwiftUI
@@ -74,7 +73,7 @@ struct DescriptionList: View {
     }
   }
 
-  private var noArtSelectedArtworksWithImage: [(MissingArtwork, NSImage)] {
+  private var noArtSelectedArtworksWithImage: [(MissingArtwork, PlatformImage)] {
     noArtSelectedArtworksContainingSelectedAndLoadedImage.map { ($0, $1.loadingState.value!) }
   }
 
