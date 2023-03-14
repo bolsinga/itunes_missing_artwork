@@ -64,16 +64,16 @@ extension MissingArtwork {
     self.simpleRepresentation.replacingOccurrences(of: " ", with: "_")
   }
 
-  public static func gatherMissingArtwork() throws -> [MissingArtwork] {
+  public static func gatherMissingArtwork() async throws -> [MissingArtwork] {
     #if canImport(iTunesLibrary)
       let itunes = try ITLibrary(apiVersion: "1.1")
-      let missingItems = itunes.allMediaItems
+      async let missingItems = itunes.allMediaItems
         .filter { $0.mediaKind == .kindSong }
         .filter { !$0.hasArtworkAvailable || $0.artwork == nil }
 
       var partial = [MissingArtwork: [Int: Int]]()  // MissingItem : [discNumber: missingArtworkCount]
 
-      for missingItem in missingItems {
+      for missingItem in await missingItems {
         var discNumber = missingItem.album.discNumber
         let discCount = missingItem.album.discCount
         if discNumber == 1, discCount == 1 {
