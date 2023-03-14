@@ -31,11 +31,6 @@ extension ITunesError: LocalizedError {
 }
 
 extension LoadingState where Value == [MissingArtwork] {
-  private func fetchMissingArtworks() async throws -> [MissingArtwork] {
-    async let missingArtworks = try MissingArtwork.gatherMissingArtwork()
-    return try await missingArtworks
-  }
-
   mutating func load() async {
     guard case .idle = self else {
       return
@@ -44,7 +39,7 @@ extension LoadingState where Value == [MissingArtwork] {
     self = .loading
 
     do {
-      let missingArtworks = try await fetchMissingArtworks()
+      let missingArtworks = try await MissingArtwork.gatherMissingArtwork()
 
       self = .loaded(missingArtworks)
     } catch {
