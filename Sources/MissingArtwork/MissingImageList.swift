@@ -19,7 +19,21 @@ struct MissingImageList: View {
     if loadingState.isIdleOrLoading {
       ProgressView()
     } else if case .error(let error) = loadingState {
-      Text(error.localizedDescription)
+      VStack(alignment: .center) {
+        Text(error.localizedDescription)
+        if error as? NoArtworkError == nil {
+          Button {
+            Task {
+              loadingState = .idle
+              await loadingState.load(missingArtwork: missingArtwork)
+            }
+          } label: {
+            Text(
+              "Retry Loading Image", bundle: .module,
+              comment: "Button title to retry loading an image.")
+          }
+        }
+      }
     }
   }
 
@@ -63,6 +77,10 @@ struct MissingImageList: View {
 }
 
 struct MissingImageList_Previews: PreviewProvider {
+  enum MyError: Error {
+    case retriableError
+  }
+
   static var previews: some View {
     Group {
       let missingArtwork = MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none)
@@ -79,6 +97,16 @@ struct MissingImageList_Previews: PreviewProvider {
       MissingImageList(
         missingArtwork: missingArtwork,
         loadingState: .constant(.loaded([])),
+        selectedArtworkImage: .constant(nil))
+
+      MissingImageList(
+        missingArtwork: missingArtwork,
+        loadingState: .constant(.error(NoArtworkError.noneFound(missingArtwork))),
+        selectedArtworkImage: .constant(nil))
+
+      MissingImageList(
+        missingArtwork: missingArtwork,
+        loadingState: .constant(.error(MyError.retriableError)),
         selectedArtworkImage: .constant(nil))
     }
   }
