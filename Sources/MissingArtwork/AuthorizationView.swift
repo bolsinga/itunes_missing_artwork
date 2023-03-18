@@ -24,18 +24,23 @@ struct AuthorizationView: View {
 
   var body: some View {
     VStack {
+      Spacer()
       Text(applicationName)
-        .font(.headline)
+        .font(.title)
+      Divider()
       explanatoryText
-        .font(.caption)
+        .font(.body)
       if musicAuthorizationStatus == .notDetermined {
+        Spacer()
         Button(action: handleButtonPressed) {
           buttonText
             .padding([.leading, .trailing], 10)
         }
+        Spacer()
       }
     }
-    .frame(width: 300, height: 200)
+    .padding()
+    .frame(width: .infinity, height: .infinity)
   }
 
   private var explanatoryText: Text {
@@ -52,7 +57,12 @@ struct AuthorizationView: View {
     default:
       explanatoryText =
         Text(
-          "\(applicationName) uses Apple Music to find artwork images.", bundle: .module,
+          """
+          **\(applicationName)** uses Apple Music to find artwork images.
+          * Partial Artwork is when some of the tracks of an album have artwork. These can be fixed right away.
+          * No Artwork is when none of the tracks have artwork. Select some artwork for the program to use.
+          * Once artwork and its image (if necessary) are selected, use the Repair menu.
+          """, bundle: .module,
           comment:
             "Shown when application was granted access to MusicKit. Variable is the application name."
         )
