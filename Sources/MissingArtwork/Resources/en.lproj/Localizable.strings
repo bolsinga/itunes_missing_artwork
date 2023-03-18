@@ -72,6 +72,9 @@ Label for the context menu grouping Partial Artwork actions. */
 /* Command Menu for repairing artwork */
 "Repair" = "Repair";
 
+/* Shown when Missing Image List has images for a missing artwork with no artwork. */
+"Select an Image to Use for Repair" = "Select an Image to Use for Repair";
+
 /* Shown to change the sort order of the Missing Artwork. */
 "Sort Order" = "Sort Order";
 

@@ -35,14 +35,24 @@ struct MissingImageList: View {
   }
 
   var body: some View {
-    GeometryReader { proxy in
-      List(missingArtworkImages, id: \.artwork, selection: $selectedArtworkImage) {
-        $artworkImage in
-        MissingArtworkImage(
-          width: proxy.size.width, artwork: artworkImage.artwork,
-          loadingState: $artworkImage.loadingState
+    VStack {
+      if missingArtwork.availability == .none, !missingArtworkImages.isEmpty {
+        Text(
+          "Select an Image to Use for Repair", bundle: .module,
+          comment: "Shown when Missing Image List has images for a missing artwork with no artwork."
         )
-        .tag(artworkImage)
+        .font(.headline)
+        .padding(EdgeInsets(top: 10, leading: 0, bottom: 0, trailing: 0))
+      }
+      GeometryReader { proxy in
+        List(missingArtworkImages, id: \.artwork, selection: $selectedArtworkImage) {
+          $artworkImage in
+          MissingArtworkImage(
+            width: proxy.size.width, artwork: artworkImage.artwork,
+            loadingState: $artworkImage.loadingState
+          )
+          .tag(artworkImage)
+        }
       }
     }
     .overlay(artworkLoadingStatusOverlay)
