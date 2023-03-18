@@ -50,6 +50,10 @@ struct DescriptionList: View {
     selectedArtworks.filter { $0.availability == .some }
   }
 
+  private var partialSelectedArtworksNotProcessed: [MissingArtwork] {
+    partialSelectedArtworks.filter { processingStates[$0] == nil || processingStates[$0]! == .none }
+  }
+
   private var noArtSelectedArtworks: [MissingArtwork] {
     selectedArtworks.filter { $0.availability == .none }
   }
@@ -74,6 +78,12 @@ struct DescriptionList: View {
 
   private var noArtSelectedArtworksWithImage: [(MissingArtwork, PlatformImage)] {
     noArtSelectedArtworksContainingSelectedAndLoadedImage.map { ($0, $1.loadingState.value!) }
+  }
+
+  private var noArtSelectedArtworksWithImageNotProcessed: [(MissingArtwork, PlatformImage)] {
+    noArtSelectedArtworksWithImage.filter {
+      processingStates[$0.0] == nil || processingStates[$0.0]! == .none
+    }
   }
 
   private func clearSelectionIfNotDisplayable() {
@@ -106,8 +116,8 @@ struct DescriptionList: View {
           Text(suggestion.description).searchCompletion(suggestion.description)
         }
       }
-      .focusedSceneValue(\.partialArtworks, .constant(partialSelectedArtworks))
-      .focusedSceneValue(\.noArtworks, .constant(noArtSelectedArtworksWithImage))
+      .focusedSceneValue(\.partialArtworks, .constant(partialSelectedArtworksNotProcessed))
+      .focusedSceneValue(\.noArtworks, .constant(noArtSelectedArtworksWithImageNotProcessed))
       Divider()
       Text(
         "\(displayableArtworks.count) / \(missingArtworksCount) Missing", bundle: .module,
