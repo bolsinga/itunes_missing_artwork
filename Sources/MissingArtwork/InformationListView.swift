@@ -12,7 +12,7 @@ struct InformationListView: View {
   let missingArtworks: [MissingArtwork]
   let missingArtworkWithImages: Set<MissingArtwork>
   let missingArtworksNoImageFound: Set<MissingArtwork>
-  let processingStates: [MissingArtwork: ProcessingState]
+  @Binding var processingStates: [MissingArtwork: ProcessingState]
 
   var body: some View {
     ScrollView {
@@ -43,6 +43,6 @@ struct InformationListView_Previews: PreviewProvider {
       missingArtworks: missingArtworks,
       missingArtworkWithImages: [missingArtworks[1]],
       missingArtworksNoImageFound: [missingArtworks[2]],
-      processingStates: [missingArtworks[1]: .processing])
+      processingStates: .constant([missingArtworks[1]: .processing]))
   }
 }
