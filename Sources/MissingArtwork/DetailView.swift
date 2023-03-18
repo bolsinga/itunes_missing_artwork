@@ -44,7 +44,8 @@ struct DetailView: View {
         SingleSelectedMissingArtworkView(
           missingArtwork: artwork,
           loadingState: $artworkLoadingStates[artwork].defaultValue(.idle),
-          selectedArtworkImage: $selectedArtworkImages[artwork])
+          selectedArtworkImage: $selectedArtworkImages[artwork],
+          processingState: $processingStates[artwork].defaultValue(.none))
       } else {
         InformationListView(
           missingArtworks: Array(selectedArtworks).sorted(by: sortOrder),
