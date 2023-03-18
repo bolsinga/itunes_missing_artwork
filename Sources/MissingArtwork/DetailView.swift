@@ -41,11 +41,10 @@ struct DetailView: View {
       }
     } else {
       if selectedArtworks.count == 1, let artwork = selectedArtworks.first {
-        MissingImageList(
+        SingleSelectedMissingArtworkView(
           missingArtwork: artwork,
           loadingState: $artworkLoadingStates[artwork].defaultValue(.idle),
-          selectedArtworkImage: $selectedArtworkImages[artwork]
-        )
+          selectedArtworkImage: $selectedArtworkImages[artwork])
       } else {
         InformationListView(
           missingArtworks: Array(selectedArtworks).sorted(by: sortOrder),
