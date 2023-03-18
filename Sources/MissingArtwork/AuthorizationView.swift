@@ -40,7 +40,6 @@ struct AuthorizationView: View {
       }
     }
     .padding()
-    .frame(width: .infinity, height: .infinity)
   }
 
   private var explanatoryText: Text {
