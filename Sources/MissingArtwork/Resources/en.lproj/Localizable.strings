@@ -66,6 +66,9 @@ Label for the context menu grouping No Artwork actions. */
 Label for the context menu grouping Partial Artwork actions. */
 "Partial Artwork" = "Partial Artwork";
 
+/* Text shown when a partial artwork is selected. */
+"Partial Artwork Is Already Ready To Repair" = "Partial Artwork Is Already Ready To Repair";
+
 /* Label in the chart for the quantity of the missing artwork. */
 "Quantity" = "Quantity";
 
