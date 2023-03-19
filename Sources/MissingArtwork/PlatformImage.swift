@@ -49,6 +49,16 @@ public struct PlatformImage: Equatable, Hashable {
     #endif
     self.image = image
   }
+
+  #if canImport(AppKit)
+    init(image: NSImage) {
+      self.image = image
+    }
+  #elseif canImport(UIKit)
+    init(image: UIImage) {
+      self.image = image
+    }
+  #endif
 }
 
 extension PlatformImage {

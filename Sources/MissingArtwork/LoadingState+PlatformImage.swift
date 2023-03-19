@@ -23,6 +23,22 @@ extension LoadingState where Value == PlatformImage {
       self = .error(error)
     }
   }
+
+  mutating func loadImage(missingArtwork: MissingArtwork) async {
+    guard case .idle = self else {
+      return
+    }
+
+    self = .loading
+
+    do {
+      let image = try await missingArtwork.matchingPartialArtworkImage()
+
+      self = .loaded(image)
+    } catch {
+      self = .error(error)
+    }
+  }
 }
 
 extension LoadingState: Equatable where Value == PlatformImage {

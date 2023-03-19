@@ -20,6 +20,9 @@ struct DescriptionList: View {
   @State private var artworkLoadingStates: [MissingArtwork: LoadingState<[ArtworkLoadingImage]>] =
     [:]
 
+  @State private var partialArtworkImageLoadingStates:
+    [MissingArtwork: LoadingState<PlatformImage>] = [:]
+
   let loadingState: LoadingState<[MissingArtwork]>
 
   @Binding var processingStates: [MissingArtwork: ProcessingState]
@@ -140,7 +143,8 @@ struct DescriptionList: View {
         selectedArtworks: selectedArtworks,
         selectedArtworkImages: $selectedArtworkImages,
         processingStates: $processingStates,
-        sortOrder: sortOrder)
+        sortOrder: sortOrder,
+        partialArtworkImageLoadingStates: $partialArtworkImageLoadingStates)
     }.onChange(of: availabilityFilter) { _ in
       clearSelectionIfNotDisplayable()
     }.onChange(of: searchString) { _ in
