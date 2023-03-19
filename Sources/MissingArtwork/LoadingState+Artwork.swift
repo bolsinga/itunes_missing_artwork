@@ -9,12 +9,12 @@ import Foundation
 import LoadingState
 import MusicKit
 
-private enum NoArtworkError: Error {
+public enum NoArtworkError: Error {
   case noneFound(MissingArtwork)
 }
 
 extension NoArtworkError: LocalizedError {
-  fileprivate var errorDescription: String? {
+  public var errorDescription: String? {
     switch self {
     case .noneFound(let missingArtwork):
       return String(

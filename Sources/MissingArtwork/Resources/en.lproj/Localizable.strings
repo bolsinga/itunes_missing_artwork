@@ -87,6 +87,9 @@ Label for the context menu grouping Partial Artwork actions. */
 /* Command Menu for repairing artwork */
 "Repair" = "Repair";
 
+/* Button title to retry loading an image. */
+"Retry Loading Image" = "Retry Loading Image";
+
 /* Shown when Missing Image List has images for a missing artwork with no artwork. */
 "Select an Image to Use for Repair" = "Select an Image to Use for Repair";
 
