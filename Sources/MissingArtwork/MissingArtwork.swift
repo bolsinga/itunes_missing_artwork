@@ -8,7 +8,7 @@
 import Foundation
 
 #if canImport(iTunesLibrary)
-  import iTunesLibrary
+  @preconcurrency import iTunesLibrary
 #endif
 
 public enum ArtworkAvailability: Hashable, Comparable, Sendable {
