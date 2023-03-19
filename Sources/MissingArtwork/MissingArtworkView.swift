@@ -37,7 +37,11 @@ public struct MissingArtworkView: View {
     .task {
       await loadingState.load()
     }
-    .musicKitAuthorizationSheet(readyToShowSheet: .constant(loadingState.hasMissingArtwork))
+    #if os(macOS)
+      .musicKitAuthorizationSheet(readyToShowSheet: .constant(loadingState.hasMissingArtwork))
+    #else
+      .musicKitAuthorizationSheet(readyToShowSheet: .constant(true))
+    #endif
   }
 }
 
