@@ -11,6 +11,10 @@ import Foundation
   @preconcurrency import iTunesLibrary
 #endif
 
+enum PartialArtworkImageError: Error {
+  case noneFound
+}
+
 public enum ArtworkAvailability: Hashable, Comparable, Sendable {
   case some  // Some of the songs for the album have artwork
   case none  // None of the songs for the album have artwork
@@ -133,4 +137,43 @@ extension MissingArtwork {
       return items
     #endif
   }
+
+  public func matchingPartialArtworkImage() async throws -> PlatformImage {
+    guard self.availability == .some else {
+      fatalError("Unable to get partial image for this MissingArtwork: \(String(describing: self))")
+    }
+
+    #if canImport(iTunesLibrary)
+      let itunes = try ITLibrary(apiVersion: "1.1")
+      async let artworkItems = itunes.allMediaItems
+        .filter { $0.mediaKind == .kindSong }
+        .filter { $0.hasArtworkAvailable }
+        .filter { $0.artwork != nil }
+        .filter { $0.artwork?.image != nil }
+
+      for artworkItem in await artworkItems {
+        if artworkItem.matches(self), let nsImage = artworkItem.artwork?.image {
+          return PlatformImage(image: nsImage)
+        }
+      }
+      throw PartialArtworkImageError.noneFound
+    #else
+      throw PartialArtworkImageError.noneFound
+    #endif
+  }
 }
+
+#if canImport(iTunesLibrary)
+  extension ITLibMediaItem {
+    func matches(_ missingArtwork: MissingArtwork) -> Bool {
+      switch missingArtwork {
+      case .ArtistAlbum(let artist, let album, _):
+        return !self.album.isCompilation
+          && (artist == self.artist?.name || artist == self.album.albumArtist)
+          && (album == self.album.title || album == self.title)
+      case .CompilationAlbum(let album, _):
+        return self.album.isCompilation && self.album.title == album
+      }
+    }
+  }
+#endif

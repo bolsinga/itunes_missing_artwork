@@ -13,16 +13,18 @@ struct SingleSelectedMissingArtworkView: View {
   @Binding var loadingState: LoadingState<[ArtworkLoadingImage]>
   @Binding var selectedArtworkImage: ArtworkLoadingImage?
   @Binding var processingState: ProcessingState
+  @Binding var partialImageLoadingState: LoadingState<PlatformImage>
 
   var body: some View {
     if processingState != .none {
       ProcessingStateView(missingArtwork: missingArtwork, processingState: processingState)
     } else {
       if missingArtwork.availability == .some {
-        Text(
-          "Partial Artwork Is Already Ready To Repair", bundle: .module,
-          comment: "Text shown when a partial artwork is selected."
-        ).font(.headline)
+        GeometryReader { proxy in
+          PartialArtworkImageView(
+            width: proxy.size.width,
+            missingArtwork: missingArtwork, loadingState: $partialImageLoadingState)
+        }
       } else {
         MissingImageList(
           missingArtwork: missingArtwork,
@@ -45,18 +47,21 @@ struct SingleSelectedMissingArtworkView_Previews: PreviewProvider {
       missingArtwork: missingArtworks[0],
       loadingState: .constant(.idle),
       selectedArtworkImage: .constant(nil),
-      processingState: .constant(.none))
+      processingState: .constant(.none),
+      partialImageLoadingState: .constant(.idle))
 
     SingleSelectedMissingArtworkView(
       missingArtwork: missingArtworks[1],
       loadingState: .constant(.idle),
       selectedArtworkImage: .constant(nil),
-      processingState: .constant(.none))
+      processingState: .constant(.none),
+      partialImageLoadingState: .constant(.idle))
 
     SingleSelectedMissingArtworkView(
       missingArtwork: missingArtworks[1],
       loadingState: .constant(.idle),
       selectedArtworkImage: .constant(nil),
-      processingState: .constant(.processing))
+      processingState: .constant(.processing),
+      partialImageLoadingState: .constant(.idle))
   }
 }

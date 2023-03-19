@@ -15,6 +15,7 @@ struct DetailView: View {
   @Binding var selectedArtworkImages: [MissingArtwork: ArtworkLoadingImage]
   @Binding var processingStates: [MissingArtwork: ProcessingState]
   let sortOrder: SortOrder
+  @Binding var partialArtworkImageLoadingStates: [MissingArtwork: LoadingState<PlatformImage>]
 
   private var missingArtworksIsEmpty: Bool {
     if let missingArtworks = loadingState.value {
@@ -45,7 +46,8 @@ struct DetailView: View {
           missingArtwork: artwork,
           loadingState: $artworkLoadingStates[artwork].defaultValue(.idle),
           selectedArtworkImage: $selectedArtworkImages[artwork],
-          processingState: $processingStates[artwork].defaultValue(.none))
+          processingState: $processingStates[artwork].defaultValue(.none),
+          partialImageLoadingState: $partialArtworkImageLoadingStates[artwork].defaultValue(.idle))
       } else {
         InformationListView(
           missingArtworks: Array(selectedArtworks).sorted(by: sortOrder),
@@ -70,7 +72,8 @@ struct DetailView_Previews: PreviewProvider {
       selectedArtworks: [],
       selectedArtworkImages: .constant([:]),
       processingStates: .constant([:]),
-      sortOrder: .ascending)
+      sortOrder: .ascending,
+      partialArtworkImageLoadingStates: .constant([:]))
 
     DetailView(
       loadingState: .loaded([missingArtwork]),
@@ -78,7 +81,8 @@ struct DetailView_Previews: PreviewProvider {
       selectedArtworks: [],
       selectedArtworkImages: .constant([:]),
       processingStates: .constant([missingArtwork: .none]),
-      sortOrder: .ascending)
+      sortOrder: .ascending,
+      partialArtworkImageLoadingStates: .constant([:]))
 
     DetailView(
       loadingState: .loaded([missingArtwork]),
@@ -86,7 +90,8 @@ struct DetailView_Previews: PreviewProvider {
       selectedArtworks: [missingArtwork],
       selectedArtworkImages: .constant([:]),
       processingStates: .constant([missingArtwork: .none]),
-      sortOrder: .ascending)
+      sortOrder: .ascending,
+      partialArtworkImageLoadingStates: .constant([:]))
 
     DetailView(
       loadingState: .loaded([missingArtwork]),
@@ -94,6 +99,7 @@ struct DetailView_Previews: PreviewProvider {
       selectedArtworks: [missingArtwork],
       selectedArtworkImages: .constant([:]),
       processingStates: .constant([missingArtwork: .none]),
-      sortOrder: .ascending)
+      sortOrder: .ascending,
+      partialArtworkImageLoadingStates: .constant([:]))
   }
 }
