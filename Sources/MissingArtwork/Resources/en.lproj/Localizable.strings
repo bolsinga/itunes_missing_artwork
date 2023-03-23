@@ -41,7 +41,7 @@
 "Image Ready" = "Image Ready";
 
 /* Error message when no Missing Artworks are found for search term. */
-"Image Search was unable to find images for \"%@\"" = "Image Search was unable to find images for \"%@\"";
+"Image Search was unable to find images for \"%@\". Unable to repair artwork without an image." = "Image Search was unable to find images for \"%@\". Unable to repair artwork without an image.";
 
 /* Error message when iTunes is unable to find missing artwork. */
 "iTunes Library unable to find missing artwork: %@" = "iTunes Library unable to find missing artwork: %@";
