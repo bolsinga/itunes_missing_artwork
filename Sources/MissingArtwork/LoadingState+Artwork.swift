@@ -26,8 +26,7 @@ extension NoArtworkError: LocalizedError {
 }
 
 extension LoadingState where Value == [ArtworkLoadingImage] {
-  private func fetchArtworks(missingArtwork: MissingArtwork, term: String) async throws -> [Artwork]
-  {
+  private func fetchArtworks(term: String) async throws -> [Artwork] {
     var searchRequest = MusicCatalogSearchRequest(term: term, types: [Album.self])
     searchRequest.limit = 2
     let searchResponse = try await searchRequest.response()
@@ -42,8 +41,7 @@ extension LoadingState where Value == [ArtworkLoadingImage] {
     self = .loading
 
     do {
-      let artworks = try await fetchArtworks(
-        missingArtwork: missingArtwork, term: missingArtwork.simpleRepresentation)
+      let artworks = try await fetchArtworks(term: missingArtwork.simpleRepresentation)
       if artworks.isEmpty {
         throw NoArtworkError.noneFound(missingArtwork)
       }
