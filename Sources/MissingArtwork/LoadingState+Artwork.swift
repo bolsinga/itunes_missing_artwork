@@ -10,17 +10,17 @@ import LoadingState
 import MusicKit
 
 public enum NoArtworkError: Error {
-  case noneFound(MissingArtwork)
+  case noneFound(String)
 }
 
 extension NoArtworkError: LocalizedError {
   public var errorDescription: String? {
     switch self {
-    case .noneFound(let missingArtwork):
+    case .noneFound(let term):
       return String(
-        localized: "Image Search was unable to find images for \(missingArtwork.description)",
+        localized: "Image Search was unable to find images for \"\(term)\"",
         bundle: .module,
-        comment: "Error message when no Missing Artworks are found.")
+        comment: "Error message when no Missing Artworks are found for search term.")
     }
   }
 }
@@ -33,7 +33,7 @@ extension LoadingState where Value == [ArtworkLoadingImage] {
     return searchResponse.albums.compactMap(\.artwork)
   }
 
-  mutating func load(missingArtwork: MissingArtwork) async {
+  mutating func search(term: String) async {
     guard case .idle = self else {
       return
     }
@@ -41,14 +41,18 @@ extension LoadingState where Value == [ArtworkLoadingImage] {
     self = .loading
 
     do {
-      let artworks = try await fetchArtworks(term: missingArtwork.simpleRepresentation)
+      let artworks = try await fetchArtworks(term: term)
       if artworks.isEmpty {
-        throw NoArtworkError.noneFound(missingArtwork)
+        throw NoArtworkError.noneFound(term)
       }
 
       self = .loaded(artworks.map { ArtworkLoadingImage(artwork: $0, loadingState: .idle) })
     } catch {
       self = .error(error)
     }
+  }
+
+  mutating func load(missingArtwork: MissingArtwork) async {
+    await search(term: missingArtwork.simpleRepresentation)
   }
 }

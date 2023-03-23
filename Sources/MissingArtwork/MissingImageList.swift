@@ -101,7 +101,8 @@ struct MissingImageList_Previews: PreviewProvider {
 
       MissingImageList(
         missingArtwork: missingArtwork,
-        loadingState: .constant(.error(NoArtworkError.noneFound(missingArtwork))),
+        loadingState: .constant(
+          .error(NoArtworkError.noneFound(missingArtwork.simpleRepresentation))),
         selectedArtworkImage: .constant(nil))
 
       MissingImageList(

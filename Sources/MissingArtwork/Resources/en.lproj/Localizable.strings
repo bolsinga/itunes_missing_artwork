@@ -40,8 +40,8 @@
 /* Help string shown when image is ready for fixing. */
 "Image Ready" = "Image Ready";
 
-/* Error message when no Missing Artworks are found. */
-"Image Search was unable to find images for %@" = "Image Search was unable to find images for %@";
+/* Error message when no Missing Artworks are found for search term. */
+"Image Search was unable to find images for \"%@\"" = "Image Search was unable to find images for \"%@\"";
 
 /* Error message when iTunes is unable to find missing artwork. */
 "iTunes Library unable to find missing artwork: %@" = "iTunes Library unable to find missing artwork: %@";
