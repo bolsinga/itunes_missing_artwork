@@ -40,6 +40,9 @@
 /* Help string shown when image is ready for fixing. */
 "Image Ready" = "Image Ready";
 
+/* Error message when no Missing Artworks are found. */
+"Image Search was unable to find images for %@" = "Image Search was unable to find images for %@";
+
 /* Error message when iTunes is unable to find missing artwork. */
 "iTunes Library unable to find missing artwork: %@" = "iTunes Library unable to find missing artwork: %@";
 
@@ -55,9 +58,6 @@ Label for the context menu grouping No Artwork actions. */
 
 /* Error message when an Image cannot be created from the data. */
 "No Image Created." = "No Image Created.";
-
-/* Error message when no Missing Artworks are found. */
-"No image for %@" = "No image for %@";
 
 /* Help string shown when no image has been selected for fixing. */
 "No Image Selected" = "No Image Selected";
