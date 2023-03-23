@@ -18,7 +18,7 @@ extension NoArtworkError: LocalizedError {
     switch self {
     case .noneFound(let missingArtwork):
       return String(
-        localized: "No image for \(missingArtwork.description)",
+        localized: "Image Search was unable to find images for \(missingArtwork.description)",
         bundle: .module,
         comment: "Error message when no Missing Artworks are found.")
     }
