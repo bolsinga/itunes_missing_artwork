@@ -6,7 +6,10 @@
 //
 
 import Foundation
-import iTunesLibrary
+
+enum PartialArtworkImageError: Error {
+  case noneFound
+}
 
 public enum ArtworkAvailability: Hashable, Comparable, Sendable {
   case some  // Some of the songs for the album have artwork
@@ -59,64 +62,5 @@ extension MissingArtwork {
 
   var fileNameRepresentation: String {
     self.simpleRepresentation.replacingOccurrences(of: " ", with: "_")
-  }
-
-  public static func gatherMissingArtwork() throws -> [MissingArtwork] {
-    let itunes = try ITLibrary(apiVersion: "1.1")
-    let missingItems = itunes.allMediaItems
-      .filter { $0.mediaKind == .kindSong }
-      .filter { !$0.hasArtworkAvailable || $0.artwork == nil }
-
-    var partial = [MissingArtwork: [Int: Int]]()  // MissingItem : [discNumber: missingArtworkCount]
-
-    for missingItem in missingItems {
-      var discNumber = missingItem.album.discNumber
-      let discCount = missingItem.album.discCount
-      if discNumber == 1, discCount == 1 {
-        discNumber = 0  // just use 0 for debugging ease.
-      }
-
-      let missingArtwork =
-        missingItem.album.isCompilation
-        ? MissingArtwork.CompilationAlbum(missingItem.album.title!, .unknown)
-        : .ArtistAlbum(
-          missingItem.artist?.name ?? missingItem.album.albumArtist!,
-          missingItem.album.title ?? missingItem.title,
-          .unknown)
-
-      if let albumInfo = partial[missingArtwork] {
-        // We have tracked this missingArtwork already
-        if let trackCount = albumInfo[discNumber] {
-          // We have tracked this missingArtwork and discNumber
-          partial[missingArtwork]?[discNumber] = trackCount - 1
-        } else {
-          // We have tracked this missingArtwork but not this discNumber
-          let albumTrackCount = missingItem.album.trackCount
-          partial[missingArtwork]?[discNumber] = albumTrackCount == 0 ? -1 : albumTrackCount - 1
-        }
-      } else {
-        // We have not tracked this missingArtwork.
-        let albumTrackCount = missingItem.album.trackCount
-        partial[missingArtwork] = [discNumber: albumTrackCount == 0 ? -1 : albumTrackCount - 1]
-      }
-    }
-
-    return partial.map { (key: MissingArtwork, albumInfo: [Int: Int]) in
-      let value = albumInfo.values.reduce(
-        0,
-        { x, y in
-          x + y
-        })
-
-      let availability: ArtworkAvailability = value < 0 ? .unknown : (value == 0 ? .none : .some)
-      var item: MissingArtwork
-      switch key {
-      case .ArtistAlbum(let artist, let album, _):
-        item = .ArtistAlbum(artist, album, availability)
-      case .CompilationAlbum(let album, _):
-        item = .CompilationAlbum(album, availability)
-      }
-      return item
-    }
   }
 }

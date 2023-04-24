@@ -24,18 +24,22 @@ struct AuthorizationView: View {
 
   var body: some View {
     VStack {
+      Spacer()
       Text(applicationName)
-        .font(.headline)
+        .font(.title)
+      Divider()
       explanatoryText
-        .font(.caption)
+        .font(.body)
       if musicAuthorizationStatus == .notDetermined {
+        Spacer()
         Button(action: handleButtonPressed) {
           buttonText
             .padding([.leading, .trailing], 10)
         }
+        Spacer()
       }
     }
-    .frame(width: 300, height: 200)
+    .padding()
   }
 
   private var explanatoryText: Text {
@@ -52,7 +56,12 @@ struct AuthorizationView: View {
     default:
       explanatoryText =
         Text(
-          "\(applicationName) uses Apple Music to find artwork images.", bundle: .module,
+          """
+          **\(applicationName)** uses Apple Music to find artwork images.
+          * Partial Artwork is when some of the tracks of an album have artwork. These can be fixed right away.
+          * No Artwork is when none of the tracks have artwork. Select some artwork for the program to use.
+          * Once artwork and its image (if necessary) are selected, use the Repair menu.
+          """, bundle: .module,
           comment:
             "Shown when application was granted access to MusicKit. Variable is the application name."
         )
@@ -117,11 +126,19 @@ struct AuthorizationView: View {
   }
 
   fileprivate struct SheetPresentationModifier: ViewModifier {
+    @Binding var readyToShowSheet: Bool
+
     @StateObject private var presentationCoordinator = PresentationCoordinator.shared
 
     func body(content: Content) -> some View {
       content
-        .sheet(isPresented: $presentationCoordinator.isAuthorizationSheetPresented) {
+        .sheet(
+          isPresented: Binding<Bool> {
+            return readyToShowSheet && presentationCoordinator.isAuthorizationSheetPresented
+          } set: {
+            presentationCoordinator.isAuthorizationSheetPresented = $0
+          }
+        ) {
           AuthorizationView(
             musicAuthorizationStatus: $presentationCoordinator.musicAuthorizationStatus
           )
@@ -132,8 +149,8 @@ struct AuthorizationView: View {
 }
 
 extension View {
-  @MainActor func musicKitAuthorizationSheet() -> some View {
-    modifier(AuthorizationView.SheetPresentationModifier())
+  @MainActor func musicKitAuthorizationSheet(readyToShowSheet: Binding<Bool>) -> some View {
+    modifier(AuthorizationView.SheetPresentationModifier(readyToShowSheet: readyToShowSheet))
   }
 }
 

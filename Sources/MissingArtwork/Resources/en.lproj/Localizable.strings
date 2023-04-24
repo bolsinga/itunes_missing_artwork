@@ -1,8 +1,20 @@
+/* Shown when application was granted access to MusicKit. Variable is the application name. */
+"**%@** uses Apple Music to find artwork images.\n* Partial Artwork is when some of the tracks of an album have artwork. These can be fixed right away.\n* No Artwork is when none of the tracks have artwork. Select some artwork for the program to use.\n* Once artwork and its image (if necessary) are selected, use the Repair menu." = "**%@** uses Apple Music to find artwork images.\n* Partial Artwork is when some of the tracks of an album have artwork. These can be fixed right away.\n* No Artwork is when none of the tracks have artwork. Select some artwork for the program to use.\n* Once artwork and its image (if necessary) are selected, use the Repair menu.";
+
 /* Shown when application was not granted access to MusicKit. Variable is the application name. */
 "%@ cannot be used because usage of Apple Music is restricted." = "%@ cannot be used because usage of Apple Music is restricted.";
 
-/* Shown when application was granted access to MusicKit. Variable is the application name. */
-"%@ uses Apple Music to find artwork images." = "%@ uses Apple Music to find artwork images.";
+/* string describing when a missing artwork has failed to be repaired. */
+"%@ has failed to be repaired." = "%@ has failed to be repaired.";
+
+/* string describing when a missing artwork has not yet been repaired. */
+"%@ has not been repaired yet." = "%@ has not been repaired yet.";
+
+/* string describing when a missing artwork has already been successfully repaired. */
+"%@ has sucessfully been repaired." = "%@ has sucessfully been repaired.";
+
+/* string describing when a missing artwork is being repaired. */
+"%@ is being repaired." = "%@ is being repaired.";
 
 /* Shown at the bottom of the Missing Artwork list to indicate how many filtered items out of the total items are shown. */
 "%lld / %lld Missing" = "%lld / %lld Missing";
@@ -10,32 +22,82 @@
 /* Shown to allow user to filter by artwork availability. */
 "Artwork Availability" = "Artwork Availability";
 
-/* Shown to allow user to filter by category of MissingArtwork (album or compilation). */
-"Category" = "Category";
+/* Label in the chart for the Artwork Type of the missing artwork. */
+"Artwork Type" = "Artwork Type";
 
 /* Button Text in alert shown when MusicKit authorization status cannot be determined. */
 "Continue" = "Continue";
 
-/* Text shown to copy an album artwork image. */
-"Copy" = "Copy";
-
 /* Title of the ToolbarItem that shows a popup of filters to apply to the displayed Missing Artwork. */
 "Filters" = "Filters";
 
-/* Title of the ToolbarItem that shows a popup of actions to apply to multiple items. */
-"Multiple" = "Multiple";
+/* Help string shown when album artwork has been fixed. */
+"Fixed Album" = "Fixed Album";
+
+/* Help string shown when album artwork is in the process of being fixed. */
+"Fixing Album" = "Fixing Album";
+
+/* Help string shown when image is ready for fixing. */
+"Image Ready" = "Image Ready";
+
+/* Error message when no Missing Artworks are found for search term. */
+"Image Search was unable to find images for \"%@\". Unable to repair artwork without an image." = "Image Search was unable to find images for \"%@\". Unable to repair artwork without an image.";
+
+/* Error message when iTunes is unable to find missing artwork. */
+"iTunes Library unable to find missing artwork: %@" = "iTunes Library unable to find missing artwork: %@";
+
+/* Recovery message when iTunes is unable to find missing artwork. */
+"iTunes was unable to find any missing artwork to fix." = "iTunes was unable to find any missing artwork to fix.";
+
+/* Help string shown when album artwork does not exist and must be searched for.
+Label for the context menu grouping No Artwork actions. */
+"No Artwork" = "No Artwork";
+
+/* Help string shown when no image is available for fixing. */
+"No Image Available" = "No Image Available";
+
+/* Error message when an Image cannot be created from the data. */
+"No Image Created." = "No Image Created.";
+
+/* Help string shown when no image has been selected for fixing. */
+"No Image Selected" = "No Image Selected";
+
+/* Error message when MusicKit Artwork does not have an URL. */
+"No Image URL Available: %@." = "No Image URL Available: %@.";
+
+/* Shown when context menu is being shown for No Artwork images and no artwork image has been selected. */
+"No Images Selected" = "No Images Selected";
 
 /* Shown when there is no missing artwork in iTunes */
 "No Missing Artwork" = "No Missing Artwork";
 
 /* Button shown when an unrecoverable error occurs. */
-"Quit" = "Quit";
+"OK" = "OK";
 
-/* Text shown to tell user to select a missing artwork. */
-"Select an Item" = "Select an Item";
+/* Help string shown when album artwork is partially set.
+Label for the context menu grouping Partial Artwork actions. */
+"Partial Artwork" = "Partial Artwork";
+
+/* Text shown when a partial artwork is selected. */
+"Partial Artwork Is Already Ready To Repair" = "Partial Artwork Is Already Ready To Repair";
+
+/* Label in the chart for the quantity of the missing artwork. */
+"Quantity" = "Quantity";
+
+/* Command Menu for repairing artwork */
+"Repair" = "Repair";
+
+/* Button title to retry loading an image. */
+"Retry Loading Image" = "Retry Loading Image";
+
+/* Shown when Missing Image List has images for a missing artwork with no artwork. */
+"Select an Image to Use for Repair" = "Select an Image to Use for Repair";
 
 /* Shown to change the sort order of the Missing Artwork. */
 "Sort Order" = "Sort Order";
+
+/* Help string shown when album artwork failed to be fixed. */
+"Unable to Fix Album" = "Unable to Fix Album";
 
 /* Message when an image URL cannot be loaded. */
 "Unable to load image: %@" = "Unable to load image: %@";

@@ -1,12 +1,12 @@
 //
-//  LoadingState+NSImage+Artwork.swift
+//  LoadingState+PlatformImage+Artwork.swift
 //
 //
 //  Created by Greg Bolsinga on 1/21/23.
 //
 
-import AppKit
 import Foundation
+import LoadingState
 import MusicKit
 
 private enum ArtworkImageError: Error {
@@ -17,12 +17,15 @@ extension ArtworkImageError: LocalizedError {
   fileprivate var errorDescription: String? {
     switch self {
     case .noURL(let artwork):
-      return "No Image URL Available: \(artwork.description)."
+      return String(
+        localized: "No Image URL Available: \(artwork.description).",
+        bundle: .module,
+        comment: "Error message when MusicKit Artwork does not have an URL.")
     }
   }
 }
 
-extension LoadingState where Value == NSImage {
+extension LoadingState where Value == PlatformImage {
   mutating func load(artwork: Artwork) async {
     do {
       guard let url = artwork.url(width: artwork.maximumWidth, height: artwork.maximumHeight)

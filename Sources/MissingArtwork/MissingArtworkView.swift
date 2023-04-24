@@ -5,40 +5,29 @@
 //  Created by Greg Bolsinga on 5/28/22.
 //
 
-import MusicKit
+import LoadingState
 import SwiftUI
 
-public struct MissingArtworkView<Content: View>: View {
+public struct MissingArtworkView: View {
   @State private var loadingState: LoadingState<[MissingArtwork]> = .idle
 
-  @Binding var processingStates: [MissingArtwork: Description.ProcessingState]
+  @Binding var processingStates: [MissingArtwork: ProcessingState]
 
-  public typealias ImageContextMenuBuilder = ([(missingArtwork: MissingArtwork, image: NSImage?)])
-    -> Content
-
-  @ViewBuilder let imageContextMenuBuilder: ImageContextMenuBuilder
-
-  public init(
-    @ViewBuilder imageContextMenuBuilder: @escaping ImageContextMenuBuilder,
-    processingStates: Binding<[MissingArtwork: Description.ProcessingState]>
-  ) {
-    self.imageContextMenuBuilder = imageContextMenuBuilder
-    self._processingStates = processingStates  // Note this for assigning a Binding<T> to a wrapped property.
+  public init(processingStates: Binding<[MissingArtwork: ProcessingState]>) {
+    self._processingStates = processingStates
   }
 
   public var body: some View {
     DescriptionList(
-      imageContextMenuBuilder: imageContextMenuBuilder,
-      loadingState: $loadingState,
+      loadingState: loadingState,
       processingStates: $processingStates
     )
     .alert(
       isPresented: .constant(loadingState.isError), error: loadingState.currentError,
       actions: { error in
-        Button(role: .destructive) {
-          NSApplication.shared.terminate(nil)
+        Button {
         } label: {
-          Text("Quit", bundle: .module, comment: "Button shown when an unrecoverable error occurs.")
+          Text("OK", bundle: .module, comment: "Button shown when an unrecoverable error occurs.")
         }
       },
       message: { error in
@@ -48,15 +37,16 @@ public struct MissingArtworkView<Content: View>: View {
     .task {
       await loadingState.load()
     }
-    .musicKitAuthorizationSheet()
+    #if os(macOS)
+      .musicKitAuthorizationSheet(readyToShowSheet: .constant(loadingState.hasMissingArtwork))
+    #else
+      .musicKitAuthorizationSheet(readyToShowSheet: .constant(true))
+    #endif
   }
 }
 
 struct MissingArtworkView_Previews: PreviewProvider {
   static var previews: some View {
-    MissingArtworkView(
-      imageContextMenuBuilder: { items in
-        EmptyView()
-      }, processingStates: .constant([:]))
+    MissingArtworkView(processingStates: .constant([:]))
   }
 }

@@ -8,13 +8,6 @@
 import SwiftUI
 
 public struct Description: View {
-  public enum ProcessingState {
-    case none  // no action has been taken
-    case processing  // the action is processing
-    case success  // the action has succeeded
-    case failure  // the action has failed.
-  }
-
   let missingArtwork: MissingArtwork
 
   @Binding var processingState: ProcessingState
@@ -34,36 +27,17 @@ public struct Description: View {
         Text(album)
           .font(.headline)
         Image(systemName: "square.stack")
+          .imageScale(.large)
       }
-    }
-  }
-
-  @ViewBuilder private var processedStateView: some View {
-    if case .processing = processingState {
-      Image(systemName: "gearshape.circle")
-    } else if case .success = processingState {
-      Image(systemName: "checkmark.circle")
-        .foregroundColor(.green)
-    } else if case .failure = processingState {
-      Image(systemName: "circle.slash")
-        .foregroundColor(.red)
-    }
-  }
-
-  @ViewBuilder private var availabilityImage: some View {
-    if case .some = missingArtwork.availability {
-      Image(systemName: "questionmark.square.dashed")
-    } else if case .unknown = missingArtwork.availability {
-      Image(systemName: "questionmark.square.dashed").foregroundColor(.red)
     }
   }
 
   public var body: some View {
     HStack {
       nameView
-      processedStateView
+      processingState.representingView
       Spacer()
-      availabilityImage
+      missingArtwork.availability.representingView
     }
     .padding(.vertical, 4)
   }
@@ -74,18 +48,18 @@ struct Description_Previews: PreviewProvider {
     Group {
       Description(
         missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none),
-        processingState: .constant(Description.ProcessingState.none))
+        processingState: .constant(ProcessingState.none))
       Description(
         missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .some),
-        processingState: .constant(Description.ProcessingState.processing))
+        processingState: .constant(ProcessingState.processing))
       Description(
         missingArtwork: MissingArtwork.CompilationAlbum(
           "Beleza Tropical: Brazil Classics 1", .none),
-        processingState: .constant(Description.ProcessingState.success))
+        processingState: .constant(ProcessingState.success))
       Description(
         missingArtwork: MissingArtwork.CompilationAlbum(
           "Beleza Tropical: Brazil Classics 1", .some),
-        processingState: .constant(Description.ProcessingState.failure))
+        processingState: .constant(ProcessingState.failure))
     }
   }
 }

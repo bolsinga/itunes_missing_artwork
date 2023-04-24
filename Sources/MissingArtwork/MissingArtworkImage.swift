@@ -5,6 +5,7 @@
 //  Created by Greg Bolsinga on 11/8/22.
 //
 
+import LoadingState
 import MusicKit
 import SwiftUI
 
@@ -12,7 +13,7 @@ struct MissingArtworkImage: View {
   let width: CGFloat
 
   let artwork: Artwork
-  @Binding var loadingState: LoadingState<NSImage>
+  @Binding var loadingState: LoadingState<PlatformImage>
 
   var body: some View {
     Group {
@@ -28,18 +29,9 @@ struct MissingArtworkImage: View {
         Text(
           "Unable to load image: \(error.localizedDescription)", bundle: .module,
           comment: "Message when an image URL cannot be loaded.")
-      case .loaded(let nsImage):
-        Image(nsImage: nsImage)
+      case .loaded(let platformImage):
+        platformImage.representingImage
           .resizable().aspectRatio(contentMode: .fit)
-          .contextMenu {
-            Button {
-              let pasteboard = NSPasteboard.general
-              pasteboard.clearContents()
-              pasteboard.writeObjects([nsImage])
-            } label: {
-              Text("Copy", bundle: .module, comment: "Text shown to copy an album artwork image.")
-            }
-          }
       }
     }
     .frame(width: width)

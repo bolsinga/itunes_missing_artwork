@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import LoadingState
 
 private enum ITunesError: Error {
   case cannotFetchMissingArtwork(Error)
@@ -15,20 +16,21 @@ extension ITunesError: LocalizedError {
   fileprivate var errorDescription: String? {
     switch self {
     case .cannotFetchMissingArtwork(let error):
-      return "iTunes Library unable to find missing artwork: \(error.localizedDescription)"
+      return String(
+        localized: "iTunes Library unable to find missing artwork: \(error.localizedDescription)",
+        bundle: .module,
+        comment: "Error message when iTunes is unable to find missing artwork.")
     }
   }
   fileprivate var recoverySuggestion: String? {
-    "iTunes was unable to find any missing artwork to fix."
+    String(
+      localized: "iTunes was unable to find any missing artwork to fix.",
+      bundle: .module,
+      comment: "Recovery message when iTunes is unable to find missing artwork.")
   }
 }
 
 extension LoadingState where Value == [MissingArtwork] {
-  private func fetchMissingArtworks() async throws -> [MissingArtwork] {
-    async let missingArtworks = try MissingArtwork.gatherMissingArtwork()
-    return try await missingArtworks
-  }
-
   mutating func load() async {
     guard case .idle = self else {
       return
@@ -37,7 +39,7 @@ extension LoadingState where Value == [MissingArtwork] {
     self = .loading
 
     do {
-      let missingArtworks = try await fetchMissingArtworks()
+      let missingArtworks = try await MissingArtwork.gatherMissingArtwork()
 
       self = .loaded(missingArtworks)
     } catch {
@@ -45,5 +47,12 @@ extension LoadingState where Value == [MissingArtwork] {
       self = .error(missingError)
       debugPrint("Unable to fetch missing artworks: \(missingError.localizedDescription)")
     }
+  }
+
+  public var hasMissingArtwork: Bool {
+    if let missingArtworks = self.value, !missingArtworks.isEmpty {
+      return true
+    }
+    return false
   }
 }
