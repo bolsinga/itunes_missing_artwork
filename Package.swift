@@ -6,7 +6,7 @@ let package = Package(
   name: "itunes_missing_artwork",
   defaultLocalization: "en",
   platforms: [
-    .macOS(.v13),
+    .macOS(.v14),
     .iOS(.v16),
   ],
   products: [
