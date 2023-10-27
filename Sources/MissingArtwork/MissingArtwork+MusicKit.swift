@@ -5,7 +5,6 @@
 //  Created by Greg Bolsinga on 3/19/23.
 //
 
-#if !canImport(iTunesLibrary) && canImport(MusicKit)
   import MusicKit
   import LoadingState
 
@@ -108,4 +107,3 @@
       throw PartialArtworkImageError.noneFound
     }
   }
-#endif

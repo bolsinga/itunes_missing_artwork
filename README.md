@@ -1,7 +1,7 @@
 # iTunes Missing Artwork
 <img src="https://raw.github.com/bolsinga/MissingArt/main/MissingArt/Assets.xcassets/AppIcon.appiconset/Icon.png" width="100">
 
-This is a SwiftUI framework. On macOS, it uses the [iTunesLibrary framework](https://developer.apple.com/documentation/ituneslibrary) to learn what music media in Music.app do not have artwork. Elsewhere it uses [MusicKit](https://developer.apple.com/documentation/MusicKit/) to find missing artwork. It then uses MusicKit to search for the artwork on Apple's Catalog.
+This is a SwiftUI framework. It uses [MusicKit](https://developer.apple.com/documentation/MusicKit/) to learn what music media in Music.app do not have artwork. It then uses MusicKit to search for the artwork on Apple's Catalog.
 
 It will display everything that is missing, but leave it to the hosting application what to do about it. This is because the best way I found to fix the artwork in Music.app was to run AppleScripts that would repair it. I was reluctant to have an AppleScript dependency in this SwiftUI framework. I also wanted to write a modern library that was published using the Swift Package Manager. It also allows the library to be used on platforms other than macOS.
 
