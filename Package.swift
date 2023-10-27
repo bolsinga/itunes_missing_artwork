@@ -7,7 +7,7 @@ let package = Package(
   defaultLocalization: "en",
   platforms: [
     .macOS(.v14),
-    .iOS(.v16),
+    .iOS(.v17),
   ],
   products: [
     .library(name: "MissingArtwork", targets: ["MissingArtwork"])
