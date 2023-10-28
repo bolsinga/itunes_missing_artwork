@@ -145,9 +145,9 @@ struct DescriptionList: View {
         processingStates: $processingStates,
         sortOrder: sortOrder,
         partialArtworkImageLoadingStates: $partialArtworkImageLoadingStates)
-    }.onChange(of: availabilityFilter) { _ in
+    }.onChange(of: availabilityFilter) { _, _ in
       clearSelectionIfNotDisplayable()
-    }.onChange(of: searchString) { _ in
+    }.onChange(of: searchString) { _, _ in
       clearSelectionIfNotDisplayable()
     }
   }
