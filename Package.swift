@@ -20,6 +20,8 @@ let package = Package(
       name: "MissingArtwork",
       dependencies: [
         .product(name: "LoadingState", package: "LoadingState")
-      ])
+      ],
+      resources: [.process("Resources/Localizable.xcstrings")]
+    )
   ]
 )
