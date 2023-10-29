@@ -5,7 +5,6 @@
 //  Created by Greg Bolsinga on 1/27/23.
 //
 
-import LoadingState
 import SwiftUI
 
 struct DetailView: View {
