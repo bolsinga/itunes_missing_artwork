@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import LoadingState
 import MusicKit
 
 struct ArtworkLoadingImage: Equatable, Hashable {

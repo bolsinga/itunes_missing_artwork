@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import LoadingState
 
 extension LoadingState where Value == PlatformImage {
   mutating func load(url: URL) async {
