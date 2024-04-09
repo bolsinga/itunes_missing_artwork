@@ -82,7 +82,7 @@
       "comment" : "Recovery message when iTunes is unable to find missing artwork."
     },
     "No Artwork" : {
-      "comment" : "Label for the context menu grouping No Artwork actions.\nHelp string shown when album artwork does not exist and must be searched for."
+      "comment" : "Help string shown when album artwork does not exist and must be searched for.\nLabel for the context menu grouping No Artwork actions."
     },
     "No Image Available" : {
       "comment" : "Help string shown when no image is available for fixing."
@@ -106,7 +106,7 @@
       "comment" : "Button shown when an unrecoverable error occurs."
     },
     "Partial Artwork" : {
-      "comment" : "Label for the context menu grouping Partial Artwork actions.\nHelp string shown when album artwork is partially set."
+      "comment" : "Help string shown when album artwork is partially set.\nLabel for the context menu grouping Partial Artwork actions."
     },
     "Partial Artwork Is Already Ready To Repair" : {
       "comment" : "Text shown when a partial artwork is selected."
