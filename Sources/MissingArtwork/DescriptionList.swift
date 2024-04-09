@@ -102,6 +102,7 @@ struct DescriptionList: View {
     }
   }
 
+  @MainActor
   @ViewBuilder private var sidebarView: some View {
     VStack {
       List(displayableArtworks, selection: $selectedArtworks) { missingArtwork in
