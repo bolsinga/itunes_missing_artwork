@@ -26,25 +26,20 @@ struct DescriptionList: View {
 
   @Binding var processingStates: [MissingArtwork: ProcessingState]
 
+  var missingArtworks: [MissingArtwork] {
+    loadingState.value ?? []
+  }
+
   var missingArtworksIsEmpty: Bool {
-    if let missingArtworks = loadingState.value {
-      return missingArtworks.isEmpty
-    }
-    return true
+    missingArtworks.isEmpty
   }
 
   var missingArtworksCount: Int {
-    if let missingArtworks = loadingState.value {
-      return missingArtworks.count
-    }
-    return 0
+    missingArtworks.count
   }
 
   var displayableArtworks: [MissingArtwork] {
-    guard let missingArtworks = loadingState.value else {
-      return []
-    }
-    return missingArtworks.filterForDisplay(
+    missingArtworks.filterForDisplay(
       availabilityFilter: availabilityFilter, searchString: searchString, sortOrder: sortOrder)
   }
 
@@ -138,7 +133,7 @@ struct DescriptionList: View {
         .filtersToolbar(availabilityFilter: $availabilityFilter, sortOrder: $sortOrder)
     } detail: {
       DetailView(
-        loadingState: loadingState,
+        missingArtworks: missingArtworks,
         artworkLoadingStates: $artworkLoadingStates,
         selectedArtworks: selectedArtworks,
         selectedArtworkImages: $selectedArtworkImages,

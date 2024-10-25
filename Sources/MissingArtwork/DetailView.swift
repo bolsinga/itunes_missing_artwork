@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct DetailView: View {
-  let loadingState: LoadingState<[MissingArtwork]>
+  let missingArtworks: [MissingArtwork]
   @Binding var artworkLoadingStates: [MissingArtwork: LoadingState<[ArtworkLoadingImage]>]
   let selectedArtworks: Set<MissingArtwork>
   @Binding var selectedArtworkImages: [MissingArtwork: ArtworkLoadingImage]
@@ -17,21 +17,11 @@ struct DetailView: View {
   @Binding var partialArtworkImageLoadingStates: [MissingArtwork: LoadingState<PlatformImage>]
 
   private var missingArtworksIsEmpty: Bool {
-    if let missingArtworks = loadingState.value {
-      return missingArtworks.isEmpty
-    }
-    return true
+    missingArtworks.isEmpty
   }
 
   private var missingArtworkIsSelectable: Bool {
-    !loadingState.isIdleOrLoading && !missingArtworksIsEmpty
-  }
-
-  private var missingArtworks: [MissingArtwork] {
-    if let missingArtworks = loadingState.value {
-      return missingArtworks
-    }
-    return []
+    !missingArtworksIsEmpty
   }
 
   var body: some View {
@@ -66,7 +56,7 @@ struct DetailView_Previews: PreviewProvider {
     let missingArtwork = MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none)
 
     DetailView(
-      loadingState: .loading,
+      missingArtworks: [],
       artworkLoadingStates: .constant([:]),
       selectedArtworks: [],
       selectedArtworkImages: .constant([:]),
@@ -75,7 +65,7 @@ struct DetailView_Previews: PreviewProvider {
       partialArtworkImageLoadingStates: .constant([:]))
 
     DetailView(
-      loadingState: .loaded([missingArtwork]),
+      missingArtworks: [missingArtwork],
       artworkLoadingStates: .constant([missingArtwork: .loading]),
       selectedArtworks: [],
       selectedArtworkImages: .constant([:]),
@@ -84,7 +74,7 @@ struct DetailView_Previews: PreviewProvider {
       partialArtworkImageLoadingStates: .constant([:]))
 
     DetailView(
-      loadingState: .loaded([missingArtwork]),
+      missingArtworks: [missingArtwork],
       artworkLoadingStates: .constant([missingArtwork: .loading]),
       selectedArtworks: [missingArtwork],
       selectedArtworkImages: .constant([:]),
@@ -93,7 +83,7 @@ struct DetailView_Previews: PreviewProvider {
       partialArtworkImageLoadingStates: .constant([:]))
 
     DetailView(
-      loadingState: .loaded([missingArtwork]),
+      missingArtworks: [missingArtwork],
       artworkLoadingStates: .constant([missingArtwork: .loaded([])]),
       selectedArtworks: [missingArtwork],
       selectedArtworkImages: .constant([:]),
