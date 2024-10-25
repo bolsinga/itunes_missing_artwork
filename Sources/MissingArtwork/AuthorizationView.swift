@@ -75,7 +75,7 @@ struct AuthorizationView: View {
     case .notDetermined:
       Task {
         let musicAuthorizationStatus = await MusicAuthorization.request()
-        await update(with: musicAuthorizationStatus)
+        update(with: musicAuthorizationStatus)
       }
     default:
       fatalError(
