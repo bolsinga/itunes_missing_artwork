@@ -73,7 +73,7 @@ struct AuthorizationView: View {
   private func handleButtonPressed() {
     switch musicAuthorizationStatus {
     case .notDetermined:
-      Task {
+      Task { @MainActor in
         let musicAuthorizationStatus = await MusicAuthorization.request()
         update(with: musicAuthorizationStatus)
       }
