@@ -7,24 +7,6 @@
 
 import Foundation
 
-extension LoadingState where Value == PlatformImage {
-  mutating func loadImage(missingArtwork: MissingArtwork) async {
-    guard case .idle = self else {
-      return
-    }
-
-    self = .loading
-
-    do {
-      let image = try await missingArtwork.matchingPartialArtworkImage()
-
-      self = .loaded(image)
-    } catch {
-      self = .error(error)
-    }
-  }
-}
-
 extension LoadingState: Equatable where Value == PlatformImage {
   public static func == (lhs: LoadingState<Value>, rhs: LoadingState<Value>) -> Bool {
     switch (lhs, rhs) {
