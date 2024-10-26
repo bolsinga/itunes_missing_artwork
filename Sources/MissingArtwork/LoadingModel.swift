@@ -7,21 +7,21 @@
 
 import Foundation
 
-@Observable final class LoadingModel<T> {
-  typealias Loader = () async -> (T?, Error?)
+@Observable final class LoadingModel<T, C> {
+  typealias Loader = (C?) async -> (T?, Error?)
   var value: T?
   var error: Error?
   let loader: Loader
 
-  public init(item: T? = nil, error: Error? = nil, loader: @escaping Loader = { (nil, nil) }) {
+  public init(item: T? = nil, error: Error? = nil, loader: @escaping Loader = { _ in (nil, nil) }) {
     self.value = item
     self.error = error
     self.loader = loader
   }
 
   @MainActor
-  public func load() async {
-    let (value, error) = await loader()
+  public func load(_ context: C? = nil) async {
+    let (value, error) = await loader(context)
     if let value {
       self.value = value
     } else {

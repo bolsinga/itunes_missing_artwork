@@ -22,7 +22,7 @@ struct DescriptionList: View {
   @State private var partialArtworkImageLoadingStates:
     [MissingArtwork: LoadingState<PlatformImage>] = [:]
 
-  var loadingState: LoadingModel<[MissingArtwork]>
+  var loadingState: LoadingModel<[MissingArtwork], Void>
 
   @Binding var processingStates: [MissingArtwork: ProcessingState]
 
