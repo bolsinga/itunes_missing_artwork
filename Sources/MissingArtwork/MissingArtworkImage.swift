@@ -12,30 +12,29 @@ struct MissingArtworkImage: View {
   let width: CGFloat
 
   let artwork: Artwork
-  @Binding var loadingState: LoadingState<PlatformImage>
+  var loadingState: ArtworkPlatformImageModel
 
   var body: some View {
     Group {
-      switch loadingState {
-      case .idle, .loading:
+      if loadingState.isIdleOrLoading {
         if let backgroundColor = artwork.backgroundColor {
           Color(cgColor: backgroundColor)
             .frame(width: width, height: CGFloat(artwork.maximumHeight))
         } else {
           ProgressView()
         }
-      case .error(let error):
+      } else if let error = loadingState.error {
         Text(
           "Unable to load image: \(error.localizedDescription)", bundle: .module,
           comment: "Message when an image URL cannot be loaded.")
-      case .loaded(let platformImage):
+      } else if let platformImage = loadingState.value {
         platformImage.representingImage
           .resizable().aspectRatio(contentMode: .fit)
       }
     }
     .frame(width: width)
     .task {
-      await loadingState.load(artwork: artwork)
+      await loadingState.load(artwork)
     }
   }
 }

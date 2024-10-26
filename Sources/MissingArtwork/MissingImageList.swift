@@ -62,7 +62,7 @@ struct MissingImageList: View {
           $artworkImage in
           MissingArtworkImage(
             width: proxy.size.width, artwork: artworkImage.artwork,
-            loadingState: $artworkImage.loadingState
+            loadingState: artworkImage.loadingState
           )
           .tag(artworkImage)
         }
