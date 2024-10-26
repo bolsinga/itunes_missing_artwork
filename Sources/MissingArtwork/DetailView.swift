@@ -13,8 +13,8 @@ struct DetailView: View {
   @Binding var selectedArtworkImages: [MissingArtwork: ArtworkLoadingImage]
   @Binding var processingStates: [MissingArtwork: ProcessingState]
   let sortOrder: SortOrder
-  @State private var partialArtworkImageLoadingStates:
-    [MissingArtwork: LoadingState<PlatformImage>] = [:]
+  @State private var partialArtworkImageLoadingStates: [MissingArtwork: MissingPlatformImageModel] =
+    [:]
   @State private var artworkLoadingStates: [MissingArtwork: LoadingState<[ArtworkLoadingImage]>] =
     [:]
 
@@ -38,7 +38,10 @@ struct DetailView: View {
           loadingState: $artworkLoadingStates[artwork].defaultValue(.idle),
           selectedArtworkImage: $selectedArtworkImages[artwork],
           processingState: $processingStates[artwork].defaultValue(.none),
-          partialImageLoadingState: $partialArtworkImageLoadingStates[artwork].defaultValue(.idle))
+          partialImageLoadingState: $partialArtworkImageLoadingStates[artwork].defaultValue(
+            MissingArtwork.createPlatformImageModel()
+          )
+        )
       } else {
         InformationListView(
           missingArtworks: Array(selectedArtworks).sorted(by: sortOrder),

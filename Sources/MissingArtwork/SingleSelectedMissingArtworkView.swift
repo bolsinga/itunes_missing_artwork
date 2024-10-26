@@ -12,7 +12,7 @@ struct SingleSelectedMissingArtworkView: View {
   @Binding var loadingState: LoadingState<[ArtworkLoadingImage]>
   @Binding var selectedArtworkImage: ArtworkLoadingImage?
   @Binding var processingState: ProcessingState
-  @Binding var partialImageLoadingState: LoadingState<PlatformImage>
+  @Binding var partialImageLoadingState: MissingPlatformImageModel
 
   var body: some View {
     if processingState != .none {
@@ -22,7 +22,7 @@ struct SingleSelectedMissingArtworkView: View {
         GeometryReader { proxy in
           PartialArtworkImageView(
             width: proxy.size.width,
-            missingArtwork: missingArtwork, loadingState: $partialImageLoadingState)
+            missingArtwork: missingArtwork, loadingState: partialImageLoadingState)
         }
       } else {
         MissingImageList(
@@ -47,20 +47,20 @@ struct SingleSelectedMissingArtworkView_Previews: PreviewProvider {
       loadingState: .constant(.idle),
       selectedArtworkImage: .constant(nil),
       processingState: .constant(.none),
-      partialImageLoadingState: .constant(.idle))
+      partialImageLoadingState: .constant(MissingArtwork.createPlatformImageModel()))
 
     SingleSelectedMissingArtworkView(
       missingArtwork: missingArtworks[1],
       loadingState: .constant(.idle),
       selectedArtworkImage: .constant(nil),
       processingState: .constant(.none),
-      partialImageLoadingState: .constant(.idle))
+      partialImageLoadingState: .constant(MissingArtwork.createPlatformImageModel()))
 
     SingleSelectedMissingArtworkView(
       missingArtwork: missingArtworks[1],
       loadingState: .constant(.idle),
       selectedArtworkImage: .constant(nil),
       processingState: .constant(.processing),
-      partialImageLoadingState: .constant(.idle))
+      partialImageLoadingState: .constant(MissingArtwork.createPlatformImageModel()))
   }
 }
