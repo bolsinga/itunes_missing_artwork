@@ -1,5 +1,5 @@
 //
-//  LoadingState+Artwork.swift
+//  ArtworkLoadingImage+Load.swift
 //
 //
 //  Created by Greg Bolsinga on 1/22/23.
