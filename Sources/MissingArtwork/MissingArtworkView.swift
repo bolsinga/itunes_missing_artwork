@@ -8,7 +8,7 @@
 import SwiftUI
 
 public struct MissingArtworkView: View {
-  @State private var loadingState: LoadingState<[MissingArtwork]> = .idle
+  @State private var loadingState = MissingArtwork.createModel()
 
   @Binding var processingStates: [MissingArtwork: ProcessingState]
 
