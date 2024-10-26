@@ -8,21 +8,6 @@
 import Foundation
 
 extension LoadingState where Value == PlatformImage {
-  mutating func load(url: URL) async {
-    guard case .idle = self else {
-      return
-    }
-
-    self = .loading
-
-    do {
-      let (data, _) = try await URLSession.shared.data(from: url)
-      self = .loaded(try PlatformImage(data: data))
-    } catch {
-      self = .error(error)
-    }
-  }
-
   mutating func loadImage(missingArtwork: MissingArtwork) async {
     guard case .idle = self else {
       return

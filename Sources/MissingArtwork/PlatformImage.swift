@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import MusicKit
 import SwiftUI
 
 #if canImport(AppKit)
@@ -68,5 +69,20 @@ extension PlatformImage {
     #elseif canImport(UIKit)
       Image(uiImage: image)
     #endif
+  }
+}
+
+extension PlatformImage {
+  static func load(artwork: Artwork) async throws -> PlatformImage {
+    guard let url = artwork.url(width: artwork.maximumWidth, height: artwork.maximumHeight)
+    else { throw ArtworkImageError.noURL(artwork) }
+    return try await PlatformImage.load(url: url)
+  }
+}
+
+extension PlatformImage {
+  static func load(url: URL) async throws -> PlatformImage {
+    let (data, _) = try await URLSession.shared.data(from: url)
+    return try PlatformImage(data: data)
   }
 }

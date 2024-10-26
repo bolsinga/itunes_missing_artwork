@@ -8,12 +8,12 @@
 import Foundation
 import MusicKit
 
-private enum ArtworkImageError: Error {
+enum ArtworkImageError: Error {
   case noURL(Artwork)
 }
 
 extension ArtworkImageError: LocalizedError {
-  fileprivate var errorDescription: String? {
+  var errorDescription: String? {
     switch self {
     case .noURL(let artwork):
       return String(
@@ -27,10 +27,7 @@ extension ArtworkImageError: LocalizedError {
 extension LoadingState where Value == PlatformImage {
   mutating func load(artwork: Artwork) async {
     do {
-      guard let url = artwork.url(width: artwork.maximumWidth, height: artwork.maximumHeight)
-      else { throw ArtworkImageError.noURL(artwork) }
-
-      await self.load(url: url)
+      self = .loaded(try await PlatformImage.load(artwork: artwork))
     } catch {
       self = .error(error)
     }

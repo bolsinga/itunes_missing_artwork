@@ -94,11 +94,7 @@ extension MissingArtwork {
       if let artwork = artworkSong.artwork {
         let refinedSong = try await artworkSong.with([.albums], preferredSource: .library)
         if refinedSong.matches(self) {
-          var loadingState: LoadingState<PlatformImage> = .idle
-          await loadingState.load(artwork: artwork)
-          if let platformImage = loadingState.value {
-            return platformImage
-          }
+          return try await PlatformImage.load(artwork: artwork)
         }
       }
     }
