@@ -16,11 +16,6 @@ struct DescriptionList: View {
   @State private var searchString: String = ""
 
   @State private var selectedArtworkImages: [MissingArtwork: ArtworkLoadingImage] = [:]
-  @State private var artworkLoadingStates: [MissingArtwork: LoadingState<[ArtworkLoadingImage]>] =
-    [:]
-
-  @State private var partialArtworkImageLoadingStates:
-    [MissingArtwork: LoadingState<PlatformImage>] = [:]
 
   var loadingState: LoadingModel<[MissingArtwork], Void>
 
@@ -134,12 +129,10 @@ struct DescriptionList: View {
     } detail: {
       DetailView(
         missingArtworks: missingArtworks,
-        artworkLoadingStates: $artworkLoadingStates,
         selectedArtworks: selectedArtworks,
         selectedArtworkImages: $selectedArtworkImages,
         processingStates: $processingStates,
-        sortOrder: sortOrder,
-        partialArtworkImageLoadingStates: $partialArtworkImageLoadingStates)
+        sortOrder: sortOrder)
     }.onChange(of: availabilityFilter) { _, _ in
       clearSelectionIfNotDisplayable()
     }.onChange(of: searchString) { _, _ in

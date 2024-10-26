@@ -9,12 +9,14 @@ import SwiftUI
 
 struct DetailView: View {
   let missingArtworks: [MissingArtwork]
-  @Binding var artworkLoadingStates: [MissingArtwork: LoadingState<[ArtworkLoadingImage]>]
   let selectedArtworks: Set<MissingArtwork>
   @Binding var selectedArtworkImages: [MissingArtwork: ArtworkLoadingImage]
   @Binding var processingStates: [MissingArtwork: ProcessingState]
   let sortOrder: SortOrder
-  @Binding var partialArtworkImageLoadingStates: [MissingArtwork: LoadingState<PlatformImage>]
+  @State private var partialArtworkImageLoadingStates:
+    [MissingArtwork: LoadingState<PlatformImage>] = [:]
+  @State private var artworkLoadingStates: [MissingArtwork: LoadingState<[ArtworkLoadingImage]>] =
+    [:]
 
   private var missingArtworksIsEmpty: Bool {
     missingArtworks.isEmpty
@@ -57,38 +59,30 @@ struct DetailView_Previews: PreviewProvider {
 
     DetailView(
       missingArtworks: [],
-      artworkLoadingStates: .constant([:]),
       selectedArtworks: [],
       selectedArtworkImages: .constant([:]),
       processingStates: .constant([:]),
-      sortOrder: .ascending,
-      partialArtworkImageLoadingStates: .constant([:]))
+      sortOrder: .ascending)
 
     DetailView(
       missingArtworks: [missingArtwork],
-      artworkLoadingStates: .constant([missingArtwork: .loading]),
       selectedArtworks: [],
       selectedArtworkImages: .constant([:]),
       processingStates: .constant([missingArtwork: .none]),
-      sortOrder: .ascending,
-      partialArtworkImageLoadingStates: .constant([:]))
+      sortOrder: .ascending)
 
     DetailView(
       missingArtworks: [missingArtwork],
-      artworkLoadingStates: .constant([missingArtwork: .loading]),
       selectedArtworks: [missingArtwork],
       selectedArtworkImages: .constant([:]),
       processingStates: .constant([missingArtwork: .none]),
-      sortOrder: .ascending,
-      partialArtworkImageLoadingStates: .constant([:]))
+      sortOrder: .ascending)
 
     DetailView(
       missingArtworks: [missingArtwork],
-      artworkLoadingStates: .constant([missingArtwork: .loaded([])]),
       selectedArtworks: [missingArtwork],
       selectedArtworkImages: .constant([:]),
       processingStates: .constant([missingArtwork: .none]),
-      sortOrder: .ascending,
-      partialArtworkImageLoadingStates: .constant([:]))
+      sortOrder: .ascending)
   }
 }
