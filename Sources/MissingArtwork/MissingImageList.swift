@@ -10,21 +10,20 @@ import SwiftUI
 
 struct MissingImageList: View {
   let missingArtwork: MissingArtwork
-  @Binding var loadingState: LoadingState<[ArtworkLoadingImage]>
+  var loadingState: MissingArtworkLoadingImageModel
 
   @Binding var selectedArtworkImage: ArtworkLoadingImage?
 
   @ViewBuilder private var artworkLoadingStatusOverlay: some View {
     if loadingState.isIdleOrLoading {
       ProgressView()
-    } else if case .error(let error) = loadingState {
+    } else if let error = loadingState.error {
       VStack(alignment: .center) {
         Text(error.localizedDescription)
         if error as? NoArtworkError == nil {
           Button {
             Task {
-              loadingState = .idle
-              await loadingState.load(missingArtwork: missingArtwork)
+              await loadingState.load(missingArtwork)
             }
           } label: {
             Text(
@@ -36,20 +35,9 @@ struct MissingImageList: View {
     }
   }
 
-  private var missingArtworkImages: Binding<[ArtworkLoadingImage]> {
-    Binding<[ArtworkLoadingImage]> {
-      if let value = loadingState.value {
-        return value
-      }
-      return []
-    } set: {
-      loadingState = .loaded($0)
-    }
-  }
-
   var body: some View {
     VStack {
-      if missingArtwork.availability == .none, !missingArtworkImages.isEmpty {
+      if missingArtwork.availability == .none, loadingState.value != nil {
         Text(
           "Select an Image to Use for Repair", bundle: .module,
           comment: "Shown when Missing Image List has images for a missing artwork with no artwork."
@@ -57,20 +45,22 @@ struct MissingImageList: View {
         .font(.headline)
         .padding(EdgeInsets(top: 10, leading: 0, bottom: 0, trailing: 0))
       }
-      GeometryReader { proxy in
-        List(missingArtworkImages, id: \.artwork, selection: $selectedArtworkImage) {
-          $artworkImage in
-          MissingArtworkImage(
-            width: proxy.size.width, artwork: artworkImage.artwork,
-            loadingState: artworkImage.loadingState
-          )
-          .tag(artworkImage)
+      if let values = loadingState.value {
+        GeometryReader { proxy in
+          List(values, id: \.artwork, selection: $selectedArtworkImage) {
+            artworkImage in
+            MissingArtworkImage(
+              width: proxy.size.width, artwork: artworkImage.artwork,
+              loadingState: artworkImage.loadingState
+            )
+            .tag(artworkImage)
+          }
         }
       }
     }
     .overlay(artworkLoadingStatusOverlay)
     .task(id: missingArtwork) {
-      await loadingState.load(missingArtwork: missingArtwork)
+      await loadingState.load(missingArtwork)
     }
   }
 }
@@ -85,28 +75,28 @@ struct MissingImageList_Previews: PreviewProvider {
       let missingArtwork = MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none)
       MissingImageList(
         missingArtwork: missingArtwork,
-        loadingState: .constant(.idle),
+        loadingState: MissingArtworkLoadingImageModel(),
         selectedArtworkImage: .constant(nil))
 
       MissingImageList(
         missingArtwork: missingArtwork,
-        loadingState: .constant(.loading),
+        loadingState: MissingArtworkLoadingImageModel(),
         selectedArtworkImage: .constant(nil))
 
       MissingImageList(
         missingArtwork: missingArtwork,
-        loadingState: .constant(.loaded([])),
+        loadingState: MissingArtworkLoadingImageModel(item: []),
         selectedArtworkImage: .constant(nil))
 
       MissingImageList(
         missingArtwork: missingArtwork,
-        loadingState: .constant(
-          .error(NoArtworkError.noneFound(missingArtwork.simpleRepresentation))),
+        loadingState: MissingArtworkLoadingImageModel(
+          error: NoArtworkError.noneFound(missingArtwork.simpleRepresentation)),
         selectedArtworkImage: .constant(nil))
 
       MissingImageList(
         missingArtwork: missingArtwork,
-        loadingState: .constant(.error(MyError.retriableError)),
+        loadingState: MissingArtworkLoadingImageModel(error: MyError.retriableError),
         selectedArtworkImage: .constant(nil))
     }
   }

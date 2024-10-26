@@ -15,7 +15,7 @@ struct DetailView: View {
   let sortOrder: SortOrder
   @State private var partialArtworkImageLoadingStates: [MissingArtwork: MissingPlatformImageModel] =
     [:]
-  @State private var artworkLoadingStates: [MissingArtwork: LoadingState<[ArtworkLoadingImage]>] =
+  @State private var artworkLoadingStates: [MissingArtwork: MissingArtworkLoadingImageModel] =
     [:]
 
   private var missingArtworksIsEmpty: Bool {
@@ -35,7 +35,8 @@ struct DetailView: View {
       if selectedArtworks.count == 1, let artwork = selectedArtworks.first {
         SingleSelectedMissingArtworkView(
           missingArtwork: artwork,
-          loadingState: $artworkLoadingStates[artwork].defaultValue(.idle),
+          loadingState: $artworkLoadingStates[artwork].defaultValue(
+            MissingArtwork.createArtworkLoadingImageModel()),
           selectedArtworkImage: $selectedArtworkImages[artwork],
           processingState: $processingStates[artwork].defaultValue(.none),
           partialImageLoadingState: $partialArtworkImageLoadingStates[artwork].defaultValue(
