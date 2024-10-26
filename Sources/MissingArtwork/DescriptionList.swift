@@ -22,7 +22,7 @@ struct DescriptionList: View {
   @State private var partialArtworkImageLoadingStates:
     [MissingArtwork: LoadingState<PlatformImage>] = [:]
 
-  let loadingState: LoadingState<[MissingArtwork]>
+  var loadingState: LoadingModel<[MissingArtwork]>
 
   @Binding var processingStates: [MissingArtwork: ProcessingState]
 
@@ -162,7 +162,7 @@ struct DescriptionList_Previews: PreviewProvider {
       MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1", .some),
     ]
     DescriptionList(
-      loadingState: .loaded(missingArtworks),
+      loadingState: LoadingModel(item: missingArtworks),
       processingStates: .constant(
         missingArtworks.reduce(into: [MissingArtwork: ProcessingState]()) {
           $0[$1] = .processing
@@ -170,10 +170,8 @@ struct DescriptionList_Previews: PreviewProvider {
       )
     )
 
-    DescriptionList(loadingState: .loaded([]), processingStates: .constant([:]))
+    DescriptionList(loadingState: LoadingModel(item: []), processingStates: .constant([:]))
 
-    DescriptionList(loadingState: .loading, processingStates: .constant([:]))
-
-    DescriptionList(loadingState: .idle, processingStates: .constant([:]))
+    DescriptionList(loadingState: LoadingModel(), processingStates: .constant([:]))
   }
 }

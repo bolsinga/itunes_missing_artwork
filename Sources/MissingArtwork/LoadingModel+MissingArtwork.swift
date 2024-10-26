@@ -1,5 +1,5 @@
 //
-//  LoadingState+MissingArtwork.swift
+//  LoadingModel+MissingArtwork.swift
 //
 //
 //  Created by Greg Bolsinga on 1/20/23.
@@ -29,22 +29,16 @@ extension ITunesError: LocalizedError {
   }
 }
 
-extension LoadingState where Value == [MissingArtwork] {
-  mutating func load() async {
-    guard case .idle = self else {
-      return
-    }
-
-    self = .loading
-
-    do {
-      let missingArtworks = try await MissingArtwork.gatherMissingArtwork()
-
-      self = .loaded(missingArtworks)
-    } catch {
-      let missingError = ITunesError.cannotFetchMissingArtwork(error)
-      self = .error(missingError)
-      debugPrint("Unable to fetch missing artworks: \(missingError.localizedDescription)")
+extension MissingArtwork {
+  static func createModel() -> LoadingModel<[MissingArtwork]> {
+    LoadingModel<[MissingArtwork]> {
+      do {
+        return (try await MissingArtwork.gatherMissingArtwork(), nil)
+      } catch {
+        let missingError = ITunesError.cannotFetchMissingArtwork(error)
+        debugPrint("Unable to fetch missing artworks: \(missingError.localizedDescription)")
+        return (nil, missingError)
+      }
     }
   }
 }
