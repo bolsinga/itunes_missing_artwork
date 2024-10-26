@@ -17,7 +17,7 @@ struct DescriptionList: View {
 
   @State private var selectedArtworkImages: [MissingArtwork: ArtworkLoadingImage] = [:]
 
-  var loadingState: LoadingModel<[MissingArtwork], Void>
+  var loadingState: MissingArtworkModel
 
   @Binding var processingStates: [MissingArtwork: ProcessingState]
 
