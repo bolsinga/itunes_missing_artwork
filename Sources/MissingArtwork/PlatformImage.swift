@@ -31,6 +31,22 @@ extension PlatformImageError: LocalizedError {
   }
 }
 
+private enum ArtworkImageError: Error {
+  case noURL(Artwork)
+}
+
+extension ArtworkImageError: LocalizedError {
+  fileprivate var errorDescription: String? {
+    switch self {
+    case .noURL(let artwork):
+      return String(
+        localized: "No Image URL Available: \(artwork.description).",
+        bundle: .module,
+        comment: "Error message when MusicKit Artwork does not have an URL.")
+    }
+  }
+}
+
 public struct PlatformImage: Equatable, Hashable {
   #if canImport(AppKit)
     public let image: NSImage
