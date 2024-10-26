@@ -10,5 +10,5 @@ import MusicKit
 
 struct ArtworkLoadingImage: Equatable, Hashable {
   let artwork: Artwork
-  var loadingState: LoadingState<PlatformImage>
+  var loadingState: ArtworkPlatformImageModel
 }

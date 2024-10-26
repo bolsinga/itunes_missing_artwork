@@ -46,7 +46,11 @@ extension LoadingState where Value == [ArtworkLoadingImage] {
         throw NoArtworkError.noneFound(term)
       }
 
-      self = .loaded(artworks.map { ArtworkLoadingImage(artwork: $0, loadingState: .idle) })
+      self = .loaded(
+        artworks.map {
+          ArtworkLoadingImage(artwork: $0, loadingState: PlatformImage.createArtworkModel())
+        }
+      )
     } catch {
       self = .error(error)
     }

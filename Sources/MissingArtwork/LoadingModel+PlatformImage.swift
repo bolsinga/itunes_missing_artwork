@@ -30,3 +30,19 @@ extension LoadingModel: Hashable where T == PlatformImage {
     }
   }
 }
+
+typealias ArtworkPlatformImageModel = LoadingModel<PlatformImage, Artwork>
+extension PlatformImage {
+  static func createArtworkModel() -> ArtworkPlatformImageModel {
+    ArtworkPlatformImageModel { artwork in
+      guard let artwork else {
+        fatalError("Artwork cannot be nil")
+      }
+      do {
+        return (try await PlatformImage.load(artwork: artwork), nil)
+      } catch {
+        return (nil, error)
+      }
+    }
+  }
+}
