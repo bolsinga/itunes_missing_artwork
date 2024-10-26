@@ -29,9 +29,10 @@ extension ITunesError: LocalizedError {
   }
 }
 
+typealias MissingArtworkModel = LoadingModel<[MissingArtwork], Void>
 extension MissingArtwork {
-  static func createModel() -> LoadingModel<[MissingArtwork], Void> {
-    LoadingModel<[MissingArtwork], Void> { _ in
+  static func createModel() -> MissingArtworkModel {
+    MissingArtworkModel { _ in
       do {
         return (try await MissingArtwork.gatherMissingArtwork(), nil)
       } catch {
