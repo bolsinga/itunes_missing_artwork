@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SingleSelectedMissingArtworkView: View {
   let missingArtwork: MissingArtwork
-  @Binding var loadingState: LoadingState<[ArtworkLoadingImage]>
+  @Binding var loadingState: MissingArtworkLoadingImageModel
   @Binding var selectedArtworkImage: ArtworkLoadingImage?
   @Binding var processingState: ProcessingState
   @Binding var partialImageLoadingState: MissingPlatformImageModel
@@ -27,7 +27,7 @@ struct SingleSelectedMissingArtworkView: View {
       } else {
         MissingImageList(
           missingArtwork: missingArtwork,
-          loadingState: $loadingState,
+          loadingState: loadingState,
           selectedArtworkImage: $selectedArtworkImage
         )
       }
@@ -44,21 +44,21 @@ struct SingleSelectedMissingArtworkView_Previews: PreviewProvider {
 
     SingleSelectedMissingArtworkView(
       missingArtwork: missingArtworks[0],
-      loadingState: .constant(.idle),
+      loadingState: .constant(MissingArtwork.createArtworkLoadingImageModel()),
       selectedArtworkImage: .constant(nil),
       processingState: .constant(.none),
       partialImageLoadingState: .constant(MissingArtwork.createPlatformImageModel()))
 
     SingleSelectedMissingArtworkView(
       missingArtwork: missingArtworks[1],
-      loadingState: .constant(.idle),
+      loadingState: .constant(MissingArtwork.createArtworkLoadingImageModel()),
       selectedArtworkImage: .constant(nil),
       processingState: .constant(.none),
       partialImageLoadingState: .constant(MissingArtwork.createPlatformImageModel()))
 
     SingleSelectedMissingArtworkView(
       missingArtwork: missingArtworks[1],
-      loadingState: .constant(.idle),
+      loadingState: .constant(MissingArtwork.createArtworkLoadingImageModel()),
       selectedArtworkImage: .constant(nil),
       processingState: .constant(.processing),
       partialImageLoadingState: .constant(MissingArtwork.createPlatformImageModel()))

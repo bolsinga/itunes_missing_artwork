@@ -25,38 +25,25 @@ extension NoArtworkError: LocalizedError {
   }
 }
 
-extension LoadingState where Value == [ArtworkLoadingImage] {
-  private func fetchArtworks(term: String) async throws -> [Artwork] {
+extension ArtworkLoadingImage {
+  private static func fetchArtworks(term: String) async throws -> [Artwork] {
     var searchRequest = MusicCatalogSearchRequest(term: term, types: [Album.self])
     searchRequest.limit = 2
     let searchResponse = try await searchRequest.response()
     return searchResponse.albums.compactMap(\.artwork)
   }
 
-  mutating func search(term: String) async {
-    guard case .idle = self else {
-      return
+  private static func search(term: String) async throws -> [ArtworkLoadingImage] {
+    let artworks = try await fetchArtworks(term: term)
+    if artworks.isEmpty {
+      throw NoArtworkError.noneFound(term)
     }
-
-    self = .loading
-
-    do {
-      let artworks = try await fetchArtworks(term: term)
-      if artworks.isEmpty {
-        throw NoArtworkError.noneFound(term)
-      }
-
-      self = .loaded(
-        artworks.map {
-          ArtworkLoadingImage(artwork: $0, loadingState: PlatformImage.createArtworkModel())
-        }
-      )
-    } catch {
-      self = .error(error)
+    return artworks.map {
+      ArtworkLoadingImage(artwork: $0, loadingState: PlatformImage.createArtworkModel())
     }
   }
 
-  mutating func load(missingArtwork: MissingArtwork) async {
-    await search(term: missingArtwork.simpleRepresentation)
+  static func load(_ missingArtwork: MissingArtwork) async throws -> [ArtworkLoadingImage] {
+    try await search(term: missingArtwork.simpleRepresentation)
   }
 }
