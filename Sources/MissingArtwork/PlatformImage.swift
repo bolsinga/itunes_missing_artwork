@@ -8,12 +8,18 @@
 import Foundation
 import MusicKit
 import SwiftUI
+import os
 
 #if canImport(AppKit)
   import AppKit
 #elseif canImport(UIKit)
   import UIKit
 #endif
+
+extension Logger {
+  fileprivate static let platformImage = Logger(
+    subsystem: Bundle.main.bundleIdentifier ?? "unknown", category: "platformImage")
+}
 
 private enum PlatformImageError: Error {
   case noImage
@@ -90,6 +96,7 @@ extension PlatformImage {
 
 extension PlatformImage {
   static func load(artwork: Artwork) async throws -> PlatformImage {
+    Logger.platformImage.log("Loading artwork")
     guard let url = artwork.url(width: artwork.maximumWidth, height: artwork.maximumHeight)
     else { throw ArtworkImageError.noURL(artwork) }
     return try await PlatformImage.load(url: url)
@@ -98,6 +105,7 @@ extension PlatformImage {
 
 extension PlatformImage {
   static func load(url: URL) async throws -> PlatformImage {
+    Logger.platformImage.log("Load url: \(url.absoluteString, privacy: .public)")
     let (data, _) = try await URLSession.shared.data(from: url)
     return try PlatformImage(data: data)
   }
