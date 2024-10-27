@@ -6,6 +6,12 @@
 //
 
 import Foundation
+import os
+
+extension Logger {
+  fileprivate static let loadingModel = Logger(
+    subsystem: Bundle.main.bundleIdentifier ?? "unknown", category: "loadingModel")
+}
 
 @Observable final class LoadingModel<T, C> {
   typealias Loader = (C?) async -> (T?, Error?)
@@ -22,6 +28,7 @@ import Foundation
   @MainActor
   public func load(_ context: C? = nil) async {
     let (value, error) = await loader(context)
+    Logger.loadingModel.log("Loaded: \(String(describing: value), privacy: .public)")
     if let value {
       self.value = value
     } else {

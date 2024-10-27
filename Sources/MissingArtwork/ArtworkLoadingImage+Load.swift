@@ -7,6 +7,12 @@
 
 import Foundation
 import MusicKit
+import os
+
+extension Logger {
+  fileprivate static let artworkLoadingImage = Logger(
+    subsystem: Bundle.main.bundleIdentifier ?? "unknown", category: "artworkLoadingImage")
+}
 
 public enum NoArtworkError: Error {
   case noneFound(String)
@@ -27,6 +33,7 @@ extension NoArtworkError: LocalizedError {
 
 extension ArtworkLoadingImage {
   private static func fetchArtworks(term: String) async throws -> [Artwork] {
+    Logger.artworkLoadingImage.log("fetch: \(term, privacy: .public)")
     var searchRequest = MusicCatalogSearchRequest(term: term, types: [Album.self])
     searchRequest.limit = 2
     let searchResponse = try await searchRequest.response()
@@ -34,6 +41,7 @@ extension ArtworkLoadingImage {
   }
 
   private static func search(term: String) async throws -> [ArtworkLoadingImage] {
+    Logger.artworkLoadingImage.log("search: \(term, privacy: .public)")
     let artworks = try await fetchArtworks(term: term)
     if artworks.isEmpty {
       throw NoArtworkError.noneFound(term)
@@ -44,6 +52,7 @@ extension ArtworkLoadingImage {
   }
 
   static func load(_ missingArtwork: MissingArtwork) async throws -> [ArtworkLoadingImage] {
-    try await search(term: missingArtwork.simpleRepresentation)
+    Logger.artworkLoadingImage.log("load artwork: \(missingArtwork, privacy: .public)")
+    return try await search(term: missingArtwork.simpleRepresentation)
   }
 }
