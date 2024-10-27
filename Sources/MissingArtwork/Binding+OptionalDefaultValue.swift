@@ -8,7 +8,7 @@
 import SwiftUI
 
 extension Binding {
-  public func defaultValue<T>(_ value: T) -> Binding<T> where Value == T? {
+  public func defaultValue<T: Sendable>(_ value: T) -> Binding<T> where Value == T? {
     Binding<T> {
       wrappedValue ?? value
     } set: {
