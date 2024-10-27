@@ -13,7 +13,7 @@ extension Logger {
     subsystem: Bundle.main.bundleIdentifier ?? "unknown", category: "loadingModel")
 }
 
-@Observable final class LoadingModel<T: Sendable, C> {
+@Observable final class LoadingModel<T: Sendable, C: Sendable> {
   typealias Loader = (C?) async -> (T?, Error?)
   var value: T?
   var error: Error?
