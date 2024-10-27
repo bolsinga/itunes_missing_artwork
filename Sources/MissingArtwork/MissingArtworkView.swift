@@ -12,6 +12,8 @@ public struct MissingArtworkView: View {
 
   @Binding var processingStates: [MissingArtwork: ProcessingState]
 
+  @State var isMusicKitAuthorized: Bool = false
+
   public init(processingStates: Binding<[MissingArtwork: ProcessingState]>) {
     self._processingStates = processingStates
   }
@@ -33,10 +35,12 @@ public struct MissingArtworkView: View {
         Text(error.recoverySuggestion ?? "")
       }
     )
-    .task {
-      await loadingState.load()
+    .task(id: isMusicKitAuthorized) {
+      if isMusicKitAuthorized {
+        await loadingState.load()
+      }
     }
-    .musicKitAuthorizationSheet()
+    .musicKitAuthorizationSheet(isAuthorized: $isMusicKitAuthorized)
   }
 }
 

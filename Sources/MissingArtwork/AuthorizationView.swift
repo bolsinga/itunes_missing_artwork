@@ -107,26 +107,25 @@ struct AuthorizationView: View {
     }
   }
 
-  class PresentationCoordinator: ObservableObject {
-    static let shared = PresentationCoordinator()
-
-    private init() {
+  @Observable final class PresentationCoordinator {
+    init() {
       let authorizationStatus = MusicAuthorization.currentStatus
       musicAuthorizationStatus = authorizationStatus
       isAuthorizationSheetPresented = (authorizationStatus != .authorized)
     }
 
-    @Published var musicAuthorizationStatus: MusicAuthorization.Status {
+    var musicAuthorizationStatus: MusicAuthorization.Status {
       didSet {
         isAuthorizationSheetPresented = (musicAuthorizationStatus != .authorized)
       }
     }
 
-    @Published var isAuthorizationSheetPresented: Bool
+    var isAuthorizationSheetPresented: Bool
   }
 
   fileprivate struct SheetPresentationModifier: ViewModifier {
-    @StateObject private var presentationCoordinator = PresentationCoordinator.shared
+    @State private var presentationCoordinator = PresentationCoordinator()
+    @Binding var isAuthorized: Bool
 
     func body(content: Content) -> some View {
       content
@@ -136,13 +135,16 @@ struct AuthorizationView: View {
           )
           .interactiveDismissDisabled()
         }
+        .onChange(of: presentationCoordinator.musicAuthorizationStatus) { _, newValue in
+          isAuthorized = (newValue == .authorized)
+        }
     }
   }
 }
 
 extension View {
-  @MainActor func musicKitAuthorizationSheet() -> some View {
-    modifier(AuthorizationView.SheetPresentationModifier())
+  @MainActor func musicKitAuthorizationSheet(isAuthorized: Binding<Bool>) -> some View {
+    modifier(AuthorizationView.SheetPresentationModifier(isAuthorized: isAuthorized))
   }
 }
 
