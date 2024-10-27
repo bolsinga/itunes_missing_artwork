@@ -28,7 +28,7 @@ extension Logger {
   @MainActor
   public func load(_ context: C? = nil) async {
     let (value, error) = await loader(context)
-    Logger.loadingModel.log("Loaded: \(String(describing: value), privacy: .public)")
+    Logger.loadingModel.log("Value: \(String(describing: value), privacy: .public) Error: \(String(describing: error), privacy: .public)")
     if let value {
       self.value = value
     } else {
