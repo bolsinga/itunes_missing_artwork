@@ -151,11 +151,15 @@ extension View {
   }
 }
 
-struct AuthorizationView_Previews: PreviewProvider {
-  static var previews: some View {
-    AuthorizationView(musicAuthorizationStatus: .constant(.authorized))
-    AuthorizationView(musicAuthorizationStatus: .constant(.denied))
-    AuthorizationView(musicAuthorizationStatus: .constant(.notDetermined))
-    AuthorizationView(musicAuthorizationStatus: .constant(.restricted))
-  }
+#Preview {
+  AuthorizationView(musicAuthorizationStatus: .constant(.authorized))
+}
+#Preview {
+  AuthorizationView(musicAuthorizationStatus: .constant(.denied))
+}
+#Preview {
+  AuthorizationView(musicAuthorizationStatus: .constant(.notDetermined))
+}
+#Preview {
+  AuthorizationView(musicAuthorizationStatus: .constant(.restricted))
 }

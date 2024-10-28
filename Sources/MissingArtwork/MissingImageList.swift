@@ -65,39 +65,39 @@ struct MissingImageList: View {
   }
 }
 
-struct MissingImageList_Previews: PreviewProvider {
-  enum MyError: Error {
-    case retriableError
-  }
+#Preview {
+  MissingImageList(
+    missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none),
+    loadingState: MissingArtworkLoadingImageModel(),
+    selectedArtworkImage: .constant(nil))
+}
 
-  static var previews: some View {
-    Group {
-      let missingArtwork = MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none)
-      MissingImageList(
-        missingArtwork: missingArtwork,
-        loadingState: MissingArtworkLoadingImageModel(),
-        selectedArtworkImage: .constant(nil))
+#Preview {
+  MissingImageList(
+    missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none),
+    loadingState: MissingArtworkLoadingImageModel(),
+    selectedArtworkImage: .constant(nil))
+}
 
-      MissingImageList(
-        missingArtwork: missingArtwork,
-        loadingState: MissingArtworkLoadingImageModel(),
-        selectedArtworkImage: .constant(nil))
+#Preview {
+  MissingImageList(
+    missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none),
+    loadingState: MissingArtworkLoadingImageModel(item: []),
+    selectedArtworkImage: .constant(nil))
+}
 
-      MissingImageList(
-        missingArtwork: missingArtwork,
-        loadingState: MissingArtworkLoadingImageModel(item: []),
-        selectedArtworkImage: .constant(nil))
+#Preview {
+  let missingArtwork = MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none)
+  MissingImageList(
+    missingArtwork: missingArtwork,
+    loadingState: MissingArtworkLoadingImageModel(
+      error: NoArtworkError.noneFound(missingArtwork.simpleRepresentation)),
+    selectedArtworkImage: .constant(nil))
+}
 
-      MissingImageList(
-        missingArtwork: missingArtwork,
-        loadingState: MissingArtworkLoadingImageModel(
-          error: NoArtworkError.noneFound(missingArtwork.simpleRepresentation)),
-        selectedArtworkImage: .constant(nil))
-
-      MissingImageList(
-        missingArtwork: missingArtwork,
-        loadingState: MissingArtworkLoadingImageModel(error: MyError.retriableError),
-        selectedArtworkImage: .constant(nil))
-    }
-  }
+#Preview {
+  MissingImageList(
+    missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none),
+    loadingState: MissingArtworkLoadingImageModel(error: CancellationError()),
+    selectedArtworkImage: .constant(nil))
 }

@@ -44,16 +44,23 @@ struct ProcessingStateView: View {
   }
 }
 
-struct ProcessingStateView_Previews: PreviewProvider {
-  static var previews: some View {
-    let missingArtwork = MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .some)
-
-    ProcessingStateView(missingArtwork: missingArtwork, processingState: .none)
-
-    ProcessingStateView(missingArtwork: missingArtwork, processingState: .processing)
-
-    ProcessingStateView(missingArtwork: missingArtwork, processingState: .failure)
-
-    ProcessingStateView(missingArtwork: missingArtwork, processingState: .success)
-  }
+#Preview {
+  ProcessingStateView(
+    missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .some),
+    processingState: .none)
+}
+#Preview {
+  ProcessingStateView(
+    missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .some),
+    processingState: .processing)
+}
+#Preview {
+  ProcessingStateView(
+    missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .some),
+    processingState: .failure)
+}
+#Preview {
+  ProcessingStateView(
+    missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .some),
+    processingState: .success)
 }

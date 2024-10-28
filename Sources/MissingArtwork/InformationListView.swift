@@ -31,18 +31,16 @@ struct InformationListView: View {
   }
 }
 
-struct InformationListView_Previews: PreviewProvider {
-  static var previews: some View {
-    let missingArtworks = [
-      MissingArtwork.ArtistAlbum("Sonic Youth", "Evol", .none),
-      MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none),
-      MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1", .some),
-    ]
+#Preview {
+  let missingArtworks = [
+    MissingArtwork.ArtistAlbum("Sonic Youth", "Evol", .none),
+    MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none),
+    MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1", .some),
+  ]
 
-    InformationListView(
-      missingArtworks: missingArtworks,
-      missingArtworkWithImages: [missingArtworks[1]],
-      missingArtworksNoImageFound: [missingArtworks[2]],
-      processingStates: .constant([missingArtworks[1]: .processing]))
-  }
+  InformationListView(
+    missingArtworks: missingArtworks,
+    missingArtworkWithImages: [missingArtworks[1]],
+    missingArtworksNoImageFound: [missingArtworks[2]],
+    processingStates: .constant([missingArtworks[1]: .processing]))
 }

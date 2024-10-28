@@ -148,23 +148,23 @@ struct DescriptionList: View {
   }
 }
 
-struct DescriptionList_Previews: PreviewProvider {
-  static var previews: some View {
-    let missingArtworks = [
-      MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none),
-      MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1", .some),
-    ]
-    DescriptionList(
-      loadingState: LoadingModel(item: missingArtworks),
-      processingStates: .constant(
-        missingArtworks.reduce(into: [MissingArtwork: ProcessingState]()) {
-          $0[$1] = .processing
-        }
-      )
+#Preview {
+  let missingArtworks = [
+    MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none),
+    MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1", .some),
+  ]
+  return DescriptionList(
+    loadingState: LoadingModel(item: missingArtworks),
+    processingStates: .constant(
+      missingArtworks.reduce(into: [MissingArtwork: ProcessingState]()) {
+        $0[$1] = .processing
+      }
     )
-
-    DescriptionList(loadingState: LoadingModel(item: []), processingStates: .constant([:]))
-
-    DescriptionList(loadingState: LoadingModel(), processingStates: .constant([:]))
-  }
+  )
+}
+#Preview {
+  DescriptionList(loadingState: LoadingModel(item: []), processingStates: .constant([:]))
+}
+#Preview {
+  DescriptionList(loadingState: LoadingModel(), processingStates: .constant([:]))
 }

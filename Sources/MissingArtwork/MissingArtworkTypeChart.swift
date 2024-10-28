@@ -54,15 +54,16 @@ struct MissingArtworkTypeChart: View {
   }
 }
 
-struct MissingArtworkTypeChart_Previews: PreviewProvider {
-  static var previews: some View {
-    let missingArtworks = [
-      MissingArtwork.ArtistAlbum("Sonic Youth", "Evol", .none),
-      MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none),
-      MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1", .some),
-    ]
-    MissingArtworkTypeChart(missingArtworks: missingArtworks)
-
-    MissingArtworkTypeChart(missingArtworks: [missingArtworks.first!])
-  }
+#Preview {
+  let missingArtworks = [
+    MissingArtwork.ArtistAlbum("Sonic Youth", "Evol", .none),
+    MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none),
+    MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1", .some),
+  ]
+  MissingArtworkTypeChart(missingArtworks: missingArtworks)
+}
+#Preview {
+  MissingArtworkTypeChart(missingArtworks: [
+    MissingArtwork.ArtistAlbum("Sonic Youth", "Evol", .none)
+  ])
 }

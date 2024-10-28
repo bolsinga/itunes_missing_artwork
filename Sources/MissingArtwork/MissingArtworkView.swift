@@ -44,8 +44,6 @@ public struct MissingArtworkView: View {
   }
 }
 
-struct MissingArtworkView_Previews: PreviewProvider {
-  static var previews: some View {
-    MissingArtworkView(processingStates: .constant([:]))
-  }
+#Preview {
+  MissingArtworkView(processingStates: .constant([:]))
 }
