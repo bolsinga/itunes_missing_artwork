@@ -26,35 +26,37 @@ extension MissingArtwork {
   public static func gatherMissingArtwork() async throws -> [MissingArtwork] {
     var partial = [MissingArtwork: [Int: Int]]()  // MissingItem : [discNumber: missingArtworkCount]
 
-    let request = MusicLibraryRequest<Song>()
+    let request = MusicLibrarySectionedRequest<Album, Song>()
     let response = try await request.response()
-    let missingArtworkSongs = response.items.filter { $0.artwork == nil }
+    let missingArtworkSections = response.sections.filter {
+      $0.items.count { $0.artwork == nil } > 0
+    }
 
-    for song in missingArtworkSongs {
-      let refinedSong = try await song.with([.albums], preferredSource: .library)
-      if let album = refinedSong.albums?.first {
+    partial = missingArtworkSections.reduce(into: partial) { partialResult, section in
+      let album = section
+      section.items.forEach { song in
         let missingArtwork =
           (album.isCompilation ?? false)
           ? MissingArtwork.CompilationAlbum(album.title, .unknown)
-          : MissingArtwork.ArtistAlbum(refinedSong.artistName, album.title, .unknown)
+          : MissingArtwork.ArtistAlbum(song.artistName, album.title, .unknown)
 
-        let discNumber = refinedSong.discNumber ?? 0
+        let discNumber = song.discNumber ?? 0
 
-        if let albumInfo = partial[missingArtwork] {
+        if let albumInfo = partialResult[missingArtwork] {
           // We have tracked this missingArtwork already
           if let trackCount = albumInfo[discNumber] {
             // We have tracked this missingArtwork and discNumber
-            partial[missingArtwork]?[discNumber] = trackCount - 1
+            partialResult[missingArtwork]?[discNumber] = trackCount - 1
           } else {
             // We have tracked this missingArtwork but not this discNumber
             let albumTrackCount = album.trackCount
-            partial[missingArtwork]?[discNumber] =
+            partialResult[missingArtwork]?[discNumber] =
               albumTrackCount == 0 ? -1 : albumTrackCount - 1
           }
         } else {
           // We have not tracked this missingArtwork.
           let albumTrackCount = album.trackCount
-          partial[missingArtwork] = [
+          partialResult[missingArtwork] = [
             discNumber: albumTrackCount == 0 ? -1 : albumTrackCount - 1
           ]
         }
