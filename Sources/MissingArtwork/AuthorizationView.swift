@@ -135,6 +135,9 @@ struct AuthorizationView: View {
           )
           .interactiveDismissDisabled()
         }
+        .onAppear {
+          isAuthorized = presentationCoordinator.musicAuthorizationStatus == .authorized
+        }
         .onChange(of: presentationCoordinator.musicAuthorizationStatus) { _, newValue in
           isAuthorized = (newValue == .authorized)
         }
