@@ -57,36 +57,40 @@ struct DetailView: View {
   }
 }
 
-struct DetailView_Previews: PreviewProvider {
-  static var previews: some View {
-    let missingArtwork = MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none)
+#Preview {
+  let missingArtwork = MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none)
 
-    DetailView(
-      missingArtworks: [],
-      selectedArtworks: [],
-      selectedArtworkImages: .constant([:]),
-      processingStates: .constant([:]),
-      sortOrder: .ascending)
-
-    DetailView(
-      missingArtworks: [missingArtwork],
-      selectedArtworks: [],
-      selectedArtworkImages: .constant([:]),
-      processingStates: .constant([missingArtwork: .none]),
-      sortOrder: .ascending)
-
-    DetailView(
-      missingArtworks: [missingArtwork],
-      selectedArtworks: [missingArtwork],
-      selectedArtworkImages: .constant([:]),
-      processingStates: .constant([missingArtwork: .none]),
-      sortOrder: .ascending)
-
-    DetailView(
-      missingArtworks: [missingArtwork],
-      selectedArtworks: [missingArtwork],
-      selectedArtworkImages: .constant([:]),
-      processingStates: .constant([missingArtwork: .none]),
-      sortOrder: .ascending)
-  }
+  DetailView(
+    missingArtworks: [],
+    selectedArtworks: [],
+    selectedArtworkImages: .constant([:]),
+    processingStates: .constant([:]),
+    sortOrder: .ascending)
+}
+#Preview {
+  let missingArtwork = MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none)
+  DetailView(
+    missingArtworks: [missingArtwork],
+    selectedArtworks: [],
+    selectedArtworkImages: .constant([:]),
+    processingStates: .constant([missingArtwork: .none]),
+    sortOrder: .ascending)
+}
+#Preview {
+  let missingArtwork = MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none)
+  DetailView(
+    missingArtworks: [missingArtwork],
+    selectedArtworks: [missingArtwork],
+    selectedArtworkImages: .constant([:]),
+    processingStates: .constant([missingArtwork: .none]),
+    sortOrder: .ascending)
+}
+#Preview {
+  let missingArtwork = MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none)
+  DetailView(
+    missingArtworks: [missingArtwork],
+    selectedArtworks: [missingArtwork],
+    selectedArtworkImages: .constant([:]),
+    processingStates: .constant([missingArtwork: .none]),
+    sortOrder: .ascending)
 }

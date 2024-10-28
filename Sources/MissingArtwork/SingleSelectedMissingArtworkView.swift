@@ -35,32 +35,27 @@ struct SingleSelectedMissingArtworkView: View {
   }
 }
 
-struct SingleSelectedMissingArtworkView_Previews: PreviewProvider {
-  static var previews: some View {
-    let missingArtworks = [
-      MissingArtwork.ArtistAlbum("Sonic Youth", "Evol", .none),
-      MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .some),
-    ]
-
-    SingleSelectedMissingArtworkView(
-      missingArtwork: missingArtworks[0],
-      loadingState: .constant(MissingArtwork.createArtworkLoadingImageModel()),
-      selectedArtworkImage: .constant(nil),
-      processingState: .constant(.none),
-      partialImageLoadingState: .constant(MissingArtwork.createPlatformImageModel()))
-
-    SingleSelectedMissingArtworkView(
-      missingArtwork: missingArtworks[1],
-      loadingState: .constant(MissingArtwork.createArtworkLoadingImageModel()),
-      selectedArtworkImage: .constant(nil),
-      processingState: .constant(.none),
-      partialImageLoadingState: .constant(MissingArtwork.createPlatformImageModel()))
-
-    SingleSelectedMissingArtworkView(
-      missingArtwork: missingArtworks[1],
-      loadingState: .constant(MissingArtwork.createArtworkLoadingImageModel()),
-      selectedArtworkImage: .constant(nil),
-      processingState: .constant(.processing),
-      partialImageLoadingState: .constant(MissingArtwork.createPlatformImageModel()))
-  }
+#Preview {
+  SingleSelectedMissingArtworkView(
+    missingArtwork: MissingArtwork.ArtistAlbum("Sonic Youth", "Evol", .none),
+    loadingState: .constant(MissingArtwork.createArtworkLoadingImageModel()),
+    selectedArtworkImage: .constant(nil),
+    processingState: .constant(.none),
+    partialImageLoadingState: .constant(MissingArtwork.createPlatformImageModel()))
+}
+#Preview {
+  SingleSelectedMissingArtworkView(
+    missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .some),
+    loadingState: .constant(MissingArtwork.createArtworkLoadingImageModel()),
+    selectedArtworkImage: .constant(nil),
+    processingState: .constant(.none),
+    partialImageLoadingState: .constant(MissingArtwork.createPlatformImageModel()))
+}
+#Preview {
+  SingleSelectedMissingArtworkView(
+    missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .some),
+    loadingState: .constant(MissingArtwork.createArtworkLoadingImageModel()),
+    selectedArtworkImage: .constant(nil),
+    processingState: .constant(.processing),
+    partialImageLoadingState: .constant(MissingArtwork.createPlatformImageModel()))
 }

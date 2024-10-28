@@ -43,23 +43,25 @@ public struct Description: View {
   }
 }
 
-struct Description_Previews: PreviewProvider {
-  static var previews: some View {
-    Group {
-      Description(
-        missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none),
-        processingState: .constant(ProcessingState.none))
-      Description(
-        missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .some),
-        processingState: .constant(ProcessingState.processing))
-      Description(
-        missingArtwork: MissingArtwork.CompilationAlbum(
-          "Beleza Tropical: Brazil Classics 1", .none),
-        processingState: .constant(ProcessingState.success))
-      Description(
-        missingArtwork: MissingArtwork.CompilationAlbum(
-          "Beleza Tropical: Brazil Classics 1", .some),
-        processingState: .constant(ProcessingState.failure))
-    }
-  }
+#Preview {
+  Description(
+    missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none),
+    processingState: .constant(ProcessingState.none))
+}
+#Preview {
+  Description(
+    missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .some),
+    processingState: .constant(ProcessingState.processing))
+}
+#Preview {
+  Description(
+    missingArtwork: MissingArtwork.CompilationAlbum(
+      "Beleza Tropical: Brazil Classics 1", .none),
+    processingState: .constant(ProcessingState.success))
+}
+#Preview {
+  Description(
+    missingArtwork: MissingArtwork.CompilationAlbum(
+      "Beleza Tropical: Brazil Classics 1", .some),
+    processingState: .constant(ProcessingState.failure))
 }

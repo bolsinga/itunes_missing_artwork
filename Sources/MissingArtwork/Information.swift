@@ -64,15 +64,19 @@ struct Information: View {
   }
 }
 
-struct Information_Previews: PreviewProvider {
-  static var previews: some View {
-    let album = MissingArtwork.ArtistAlbum("Sonic Youth", "Evol", .none)
-    let compilation = MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1", .some)
-
-    Information(missingArtwork: album, imageRepair: .notAvailable, processingState: .none)
-    Information(
-      missingArtwork: compilation, imageRepair: .notSelected, processingState: .processing)
-    Information(missingArtwork: album, imageRepair: .ready, processingState: .success)
-    Information(missingArtwork: compilation, imageRepair: .ready, processingState: .failure)
-  }
+#Preview {
+  let album = MissingArtwork.ArtistAlbum("Sonic Youth", "Evol", .none)
+  Information(missingArtwork: album, imageRepair: .notAvailable, processingState: .none)
+}
+#Preview {
+  let compilation = MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1", .some)
+  Information(missingArtwork: compilation, imageRepair: .notSelected, processingState: .processing)
+}
+#Preview {
+  let album = MissingArtwork.ArtistAlbum("Sonic Youth", "Evol", .none)
+  Information(missingArtwork: album, imageRepair: .ready, processingState: .success)
+}
+#Preview {
+  let compilation = MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1", .some)
+  Information(missingArtwork: compilation, imageRepair: .ready, processingState: .failure)
 }
