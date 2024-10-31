@@ -38,24 +38,24 @@ struct SingleSelectedMissingArtworkView: View {
 #Preview {
   SingleSelectedMissingArtworkView(
     missingArtwork: MissingArtwork.ArtistAlbum("Sonic Youth", "Evol", .none),
-    loadingState: .constant(MissingArtwork.createArtworkLoadingImageModel()),
+    loadingState: .constant(LoadingModel()),
     selectedArtworkImage: .constant(nil),
     processingState: .constant(.none),
-    partialImageLoadingState: .constant(MissingArtwork.createPlatformImageModel()))
+    partialImageLoadingState: .constant(LoadingModel()))
 }
 #Preview {
   SingleSelectedMissingArtworkView(
     missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .some),
-    loadingState: .constant(MissingArtwork.createArtworkLoadingImageModel()),
+    loadingState: .constant(LoadingModel()),
     selectedArtworkImage: .constant(nil),
     processingState: .constant(.none),
-    partialImageLoadingState: .constant(MissingArtwork.createPlatformImageModel()))
+    partialImageLoadingState: .constant(LoadingModel()))
 }
 #Preview {
   SingleSelectedMissingArtworkView(
     missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .some),
-    loadingState: .constant(MissingArtwork.createArtworkLoadingImageModel()),
+    loadingState: .constant(LoadingModel()),
     selectedArtworkImage: .constant(nil),
     processingState: .constant(.processing),
-    partialImageLoadingState: .constant(MissingArtwork.createPlatformImageModel()))
+    partialImageLoadingState: .constant(LoadingModel()))
 }
