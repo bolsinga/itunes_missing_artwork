@@ -109,8 +109,8 @@ struct DescriptionList: View {
           Text(suggestion.description).searchCompletion(suggestion.description)
         }
       }
-      .focusedSceneValue(\.partialArtworks, .constant(partialSelectedArtworksNotProcessed))
-      .focusedSceneValue(\.noArtworks, .constant(noArtSelectedArtworksWithImageNotProcessed))
+      .focusedSceneValue(\.partialArtworks, partialSelectedArtworksNotProcessed)
+      .focusedSceneValue(\.noArtworks, noArtSelectedArtworksWithImageNotProcessed)
       Divider()
       Text(
         "\(displayableArtworks.count) / \(missingArtworksCount) Missing", bundle: .module,
