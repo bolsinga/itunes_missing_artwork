@@ -11,8 +11,8 @@ public struct MissingArtworkCommands<
   NoArtworkContextMenuContent: View, PartialArtworkContextMenuContent: View
 >: Commands {
 
-  @FocusedBinding(\.partialArtworks) var partialArtworks
-  @FocusedBinding(\.noArtworks) var noArtworks
+  @FocusedValue(\.partialArtworks) var partialArtworks
+  @FocusedValue(\.noArtworks) var noArtworks
 
   public typealias NoArtworkContextMenuBuilder = (
     [(missingArtwork: MissingArtwork, image: PlatformImage)]
@@ -61,20 +61,20 @@ public struct MissingArtworkCommands<
 }
 
 private struct PartialArtworksKey: FocusedValueKey {
-  typealias Value = Binding<[MissingArtwork]>
+  typealias Value = [MissingArtwork]
 }
 
 private struct NoArtworksKey: FocusedValueKey {
-  typealias Value = Binding<[(MissingArtwork, PlatformImage)]>
+  typealias Value = [(MissingArtwork, PlatformImage)]
 }
 
 extension FocusedValues {
-  var partialArtworks: Binding<[MissingArtwork]>? {
+  var partialArtworks: [MissingArtwork]? {
     get { self[PartialArtworksKey.self] }
     set { self[PartialArtworksKey.self] = newValue }
   }
 
-  var noArtworks: Binding<[(MissingArtwork, PlatformImage)]>? {
+  var noArtworks: [(MissingArtwork, PlatformImage)]? {
     get { self[NoArtworksKey.self] }
     set { self[NoArtworksKey.self] = newValue }
   }
