@@ -43,23 +43,3 @@ extension MissingArtwork {
     }
   }
 }
-
-typealias MissingArtworkLoadingImageModel = LoadingModel<[ArtworkLoadingImage], MissingArtwork>
-extension MissingArtwork {
-  static func createArtworkLoadingImageModel() -> MissingArtworkLoadingImageModel {
-    MissingArtworkLoadingImageModel { missingArtwork in
-      guard let missingArtwork else {
-        fatalError("Missing artwork cannot be nil")
-      }
-      do {
-        return (
-          try await missingArtwork.fetchCatalogArtworks().map {
-            ArtworkLoadingImage(artwork: $0, loadingState: PlatformImage.createArtworkModel())
-          }, nil
-        )
-      } catch {
-        return (nil, error)
-      }
-    }
-  }
-}

@@ -9,7 +9,7 @@ import CoreGraphics
 import MusicKit
 
 // Created so Previews may use fake Artwork.
-protocol ArtworkProtocol: Hashable, Sendable {
+protocol ArtworkProtocol: CustomStringConvertible, Hashable, Sendable {
   var backgroundColor: CGColor? { get }
   var maximumHeight: Int { get }
 }

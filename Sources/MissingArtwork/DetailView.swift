@@ -7,15 +7,13 @@
 
 import SwiftUI
 
-struct DetailView: View {
+struct DetailView<C: ArtworkProtocol>: View {
   let missingArtworks: [MissingArtwork]
-  var model: ArtworksModel
+  var model: MissingArtworksModel<C>
   let selectedArtworks: Set<MissingArtwork>
-  @Binding var selectedArtworkImages: [MissingArtwork: ArtworkLoadingImage]
+  @Binding var selectedArtwork: C?
   @Binding var processingStates: [MissingArtwork: ProcessingState]
   let sortOrder: SortOrder
-  @State private var artworkLoadingStates: [MissingArtwork: MissingArtworkLoadingImageModel] =
-    [:]
 
   private var missingArtworksIsEmpty: Bool {
     missingArtworks.isEmpty
@@ -23,6 +21,15 @@ struct DetailView: View {
 
   private var missingArtworkIsSelectable: Bool {
     !missingArtworksIsEmpty
+  }
+
+  private var selectedArtworksWithImages: Set<MissingArtwork> {
+    Set(selectedArtworks.filter { $0.availability == .some }).intersection(
+      model.missingArtworksWithPlatformImages)
+  }
+
+  private var selectedArtworksWithErrors: Set<MissingArtwork> {
+    Set(selectedArtworks).intersection(model.missingArtworksWithErrors)
   }
 
   var body: some View {
@@ -38,18 +45,13 @@ struct DetailView: View {
       if selectedArtworks.count == 1, let artwork = selectedArtworks.first {
         SingleSelectedMissingArtworkView(
           missingArtwork: artwork, model: model,
-          loadingState: $artworkLoadingStates[artwork].defaultValue(
-            MissingArtwork.createArtworkLoadingImageModel()),
-          selectedArtworkImage: $selectedArtworkImages[artwork],
+          selectedArtwork: $selectedArtwork,
           processingState: $processingStates[artwork].defaultValue(.none))
       } else {
         InformationListView(
           missingArtworks: Array(selectedArtworks).sorted(by: sortOrder),
-          missingArtworkWithImages: Set(
-            selectedArtworks.filter { selectedArtworkImages[$0] != nil }.map { $0 }
-          ).union(missingArtworks.filter { $0.availability == .some }),
-          missingArtworksNoImageFound: Set(
-            selectedArtworks.filter { artworkLoadingStates[$0]?.isError ?? false }),
+          missingArtworkWithImages: selectedArtworksWithImages,
+          missingArtworksNoImageFound: selectedArtworksWithErrors,
           processingStates: $processingStates)
       }
     }
@@ -59,9 +61,9 @@ struct DetailView: View {
 #Preview("No Missing Artworks") {
   DetailView(
     missingArtworks: [],
-    model: ArtworksModel(),
+    model: MissingArtworksModel<PreviewArtwork>(),
     selectedArtworks: [],
-    selectedArtworkImages: .constant([:]),
+    selectedArtwork: .constant(nil),
     processingStates: .constant([:]),
     sortOrder: .ascending
   )
@@ -72,9 +74,9 @@ struct DetailView: View {
   let missingArtwork = MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none)
   DetailView(
     missingArtworks: [missingArtwork],
-    model: ArtworksModel(),
+    model: MissingArtworksModel<PreviewArtwork>(),
     selectedArtworks: [],
-    selectedArtworkImages: .constant([:]),
+    selectedArtwork: .constant(nil),
     processingStates: .constant([:]),
     sortOrder: .ascending
   )
@@ -85,9 +87,9 @@ struct DetailView: View {
   let missingArtwork = MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none)
   DetailView(
     missingArtworks: [missingArtwork],
-    model: ArtworksModel(),
+    model: MissingArtworksModel<PreviewArtwork>(),
     selectedArtworks: [missingArtwork],
-    selectedArtworkImages: .constant([:]),
+    selectedArtwork: .constant(nil),
     processingStates: .constant([:]),
     sortOrder: .ascending
   )
@@ -101,9 +103,9 @@ struct DetailView: View {
   ]
   DetailView(
     missingArtworks: missingArtworks,
-    model: ArtworksModel(),
+    model: MissingArtworksModel<PreviewArtwork>(),
     selectedArtworks: Set(missingArtworks),
-    selectedArtworkImages: .constant([:]),
+    selectedArtwork: .constant(nil),
     processingStates: .constant([:]),
     sortOrder: .ascending
   )
