@@ -9,10 +9,10 @@ import SwiftUI
 
 struct SingleSelectedMissingArtworkView: View {
   let missingArtwork: MissingArtwork
+  var model: ArtworksModel
   @Binding var loadingState: MissingArtworkLoadingImageModel
   @Binding var selectedArtworkImage: ArtworkLoadingImage?
   @Binding var processingState: ProcessingState
-  @Binding var partialImageLoadingState: MissingPlatformImageModel
 
   var body: some View {
     if processingState != .none {
@@ -21,8 +21,7 @@ struct SingleSelectedMissingArtworkView: View {
       if missingArtwork.availability == .some {
         GeometryReader { proxy in
           PartialArtworkImageView(
-            width: proxy.size.width,
-            missingArtwork: missingArtwork, loadingState: partialImageLoadingState)
+            width: proxy.size.width, missingArtwork: missingArtwork, model: model)
         }
       } else {
         MissingImageList(
@@ -38,24 +37,24 @@ struct SingleSelectedMissingArtworkView: View {
 #Preview {
   SingleSelectedMissingArtworkView(
     missingArtwork: MissingArtwork.ArtistAlbum("Sonic Youth", "Evol", .none),
+    model: ArtworksModel(),
     loadingState: .constant(LoadingModel()),
     selectedArtworkImage: .constant(nil),
-    processingState: .constant(.none),
-    partialImageLoadingState: .constant(LoadingModel()))
+    processingState: .constant(.none))
 }
 #Preview {
   SingleSelectedMissingArtworkView(
     missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .some),
+    model: ArtworksModel(),
     loadingState: .constant(LoadingModel()),
     selectedArtworkImage: .constant(nil),
-    processingState: .constant(.none),
-    partialImageLoadingState: .constant(LoadingModel()))
+    processingState: .constant(.none))
 }
 #Preview {
   SingleSelectedMissingArtworkView(
     missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .some),
+    model: ArtworksModel(),
     loadingState: .constant(LoadingModel()),
     selectedArtworkImage: .constant(nil),
-    processingState: .constant(.processing),
-    partialImageLoadingState: .constant(LoadingModel()))
+    processingState: .constant(.processing))
 }
