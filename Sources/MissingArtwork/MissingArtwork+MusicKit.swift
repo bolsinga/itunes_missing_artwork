@@ -5,7 +5,31 @@
 //  Created by Greg Bolsinga on 3/19/23.
 //
 
+import Foundation
 import MusicKit
+import os
+
+extension Logger {
+  fileprivate static let artworkLoadingImage = Logger(
+    subsystem: Bundle.main.bundleIdentifier ?? "unknown", category: "artworkLoadingImage")
+}
+
+enum NoArtworkError: Error {
+  case noneFound(String)
+}
+
+extension NoArtworkError: LocalizedError {
+  var errorDescription: String? {
+    switch self {
+    case .noneFound(let term):
+      return String(
+        localized:
+          "Image Search was unable to find images for \"\(term)\". Unable to repair artwork without an image.",
+        bundle: .module,
+        comment: "Error message when no Missing Artworks are found for search term.")
+    }
+  }
+}
 
 extension Song {
   func matches(_ missingArtwork: MissingArtwork) -> Bool {
@@ -102,5 +126,17 @@ extension MissingArtwork {
     }
 
     throw PartialArtworkImageError.noneFound
+  }
+
+  public func fetchCatalogImages() async throws -> [Artwork] {
+    let term = self.simpleRepresentation
+    Logger.artworkLoadingImage.log("search: \(term, privacy: .public)")
+
+    var searchRequest = MusicCatalogSearchRequest(term: term, types: [Album.self])
+    searchRequest.limit = 2
+    let artworks = try await searchRequest.response().albums.compactMap(\.artwork)
+    if artworks.isEmpty { throw NoArtworkError.noneFound(term) }
+
+    return artworks
   }
 }

@@ -68,7 +68,11 @@ extension MissingArtwork {
         fatalError("Missing artwork cannot be nil")
       }
       do {
-        return (try await ArtworkLoadingImage.load(missingArtwork), nil)
+        return (
+          try await missingArtwork.fetchCatalogImages().map {
+            ArtworkLoadingImage(artwork: $0, loadingState: PlatformImage.createArtworkModel())
+          }, nil
+        )
       } catch {
         return (nil, error)
       }
