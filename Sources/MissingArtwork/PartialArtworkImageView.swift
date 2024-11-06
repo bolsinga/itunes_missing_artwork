@@ -18,8 +18,8 @@ struct PartialArtworkImageView: View {
         "Partial Artwork Is Already Ready To Repair", bundle: .module,
         comment: "Text shown when a partial artwork is selected."
       ).font(.headline)
-      if let catalogImage = model.catalogImages[missingArtwork] {
-        switch catalogImage {
+      if let partialLibraryImage = model.partialLibraryImages[missingArtwork] {
+        switch partialLibraryImage {
         case .loading:
           ProgressView()
         case .error(_):
