@@ -9,12 +9,11 @@ import SwiftUI
 
 struct DetailView: View {
   let missingArtworks: [MissingArtwork]
+  var model: ArtworksModel
   let selectedArtworks: Set<MissingArtwork>
   @Binding var selectedArtworkImages: [MissingArtwork: ArtworkLoadingImage]
   @Binding var processingStates: [MissingArtwork: ProcessingState]
   let sortOrder: SortOrder
-  @State private var partialArtworkImageLoadingStates: [MissingArtwork: MissingPlatformImageModel] =
-    [:]
   @State private var artworkLoadingStates: [MissingArtwork: MissingArtworkLoadingImageModel] =
     [:]
 
@@ -34,15 +33,11 @@ struct DetailView: View {
     } else {
       if selectedArtworks.count == 1, let artwork = selectedArtworks.first {
         SingleSelectedMissingArtworkView(
-          missingArtwork: artwork,
+          missingArtwork: artwork, model: model,
           loadingState: $artworkLoadingStates[artwork].defaultValue(
             MissingArtwork.createArtworkLoadingImageModel()),
           selectedArtworkImage: $selectedArtworkImages[artwork],
-          processingState: $processingStates[artwork].defaultValue(.none),
-          partialImageLoadingState: $partialArtworkImageLoadingStates[artwork].defaultValue(
-            MissingArtwork.createPlatformImageModel()
-          )
-        )
+          processingState: $processingStates[artwork].defaultValue(.none))
       } else {
         InformationListView(
           missingArtworks: Array(selectedArtworks).sorted(by: sortOrder),
@@ -62,6 +57,7 @@ struct DetailView: View {
 
   DetailView(
     missingArtworks: [],
+    model: ArtworksModel(),
     selectedArtworks: [],
     selectedArtworkImages: .constant([:]),
     processingStates: .constant([:]),
@@ -71,6 +67,7 @@ struct DetailView: View {
   let missingArtwork = MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none)
   DetailView(
     missingArtworks: [missingArtwork],
+    model: ArtworksModel(),
     selectedArtworks: [],
     selectedArtworkImages: .constant([:]),
     processingStates: .constant([missingArtwork: .none]),
@@ -80,6 +77,7 @@ struct DetailView: View {
   let missingArtwork = MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none)
   DetailView(
     missingArtworks: [missingArtwork],
+    model: ArtworksModel(),
     selectedArtworks: [missingArtwork],
     selectedArtworkImages: .constant([:]),
     processingStates: .constant([missingArtwork: .none]),
@@ -89,6 +87,7 @@ struct DetailView: View {
   let missingArtwork = MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none)
   DetailView(
     missingArtworks: [missingArtwork],
+    model: ArtworksModel(),
     selectedArtworks: [missingArtwork],
     selectedArtworkImages: .constant([:]),
     processingStates: .constant([missingArtwork: .none]),

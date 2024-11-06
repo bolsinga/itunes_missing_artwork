@@ -21,6 +21,8 @@ struct DescriptionList: View {
 
   @Binding var processingStates: [MissingArtwork: ProcessingState]
 
+  @State private var model = ArtworksModel()
+
   var missingArtworks: [MissingArtwork] {
     loadingState.value ?? []
   }
@@ -129,6 +131,7 @@ struct DescriptionList: View {
     } detail: {
       DetailView(
         missingArtworks: missingArtworks,
+        model: model,
         selectedArtworks: selectedArtworks,
         selectedArtworkImages: $selectedArtworkImages,
         processingStates: $processingStates,

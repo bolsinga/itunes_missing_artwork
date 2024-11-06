@@ -44,22 +44,6 @@ extension MissingArtwork {
   }
 }
 
-typealias MissingPlatformImageModel = LoadingModel<PlatformImage, MissingArtwork>
-extension MissingArtwork {
-  static func createPlatformImageModel() -> MissingPlatformImageModel {
-    MissingPlatformImageModel { missingArtwork in
-      guard let missingArtwork else {
-        fatalError("Missing artwork cannot be nil")
-      }
-      do {
-        return (try await missingArtwork.matchingPartialArtworkImage(), nil)
-      } catch {
-        return (nil, error)
-      }
-    }
-  }
-}
-
 typealias MissingArtworkLoadingImageModel = LoadingModel<[ArtworkLoadingImage], MissingArtwork>
 extension MissingArtwork {
   static func createArtworkLoadingImageModel() -> MissingArtworkLoadingImageModel {
