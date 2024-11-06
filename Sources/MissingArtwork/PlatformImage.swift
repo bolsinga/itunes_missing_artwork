@@ -96,7 +96,7 @@ extension PlatformImage {
 
 extension PlatformImage {
   static func load(artwork: Artwork) async throws -> PlatformImage {
-    Logger.platformImage.log("Loading artwork")
+    Logger.platformImage.log("Loading artwork: \(artwork, privacy: .public)")
     guard let url = artwork.url(width: artwork.maximumWidth, height: artwork.maximumHeight)
     else { throw ArtworkImageError.noURL(artwork) }
     return try await PlatformImage.load(url: url)
