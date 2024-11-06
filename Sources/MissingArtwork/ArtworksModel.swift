@@ -26,19 +26,19 @@ extension Logger {
   @MainActor
   func load(image missingArtwork: MissingArtwork) async {
     guard partialLibraryImages[missingArtwork] == nil else {
-      Logger.artworksModel.log("Already loaded catalog image: \(missingArtwork, privacy: .public)")
+      Logger.artworksModel.log("Already loaded partial library image: \(missingArtwork, privacy: .public)")
       return
     }
 
-    Logger.artworksModel.log("Loading catalog image: \(missingArtwork, privacy: .public)")
+    Logger.artworksModel.log("Loading partial library image: \(missingArtwork, privacy: .public)")
     partialLibraryImages[missingArtwork] = .loading
     do {
       partialLibraryImages[missingArtwork] = .image(
         try await missingArtwork.matchingPartialArtworkImage())
-      Logger.artworksModel.log("Loaded catalog image: \(missingArtwork, privacy: .public)")
+      Logger.artworksModel.log("Loaded partial library image: \(missingArtwork, privacy: .public)")
     } catch {
       Logger.artworksModel.log(
-        "Error loading catalog image: \(missingArtwork, privacy: .public) \(error, privacy: .public)"
+        "Error loading partial library image: \(missingArtwork, privacy: .public) \(error, privacy: .public)"
       )
       partialLibraryImages[missingArtwork] = .error(error)
     }
