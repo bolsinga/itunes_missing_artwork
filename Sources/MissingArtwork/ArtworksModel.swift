@@ -26,7 +26,8 @@ extension Logger {
   @MainActor
   func load(image missingArtwork: MissingArtwork) async {
     guard partialLibraryImages[missingArtwork] == nil else {
-      Logger.artworksModel.log("Already loaded partial library image: \(missingArtwork, privacy: .public)")
+      Logger.artworksModel.log(
+        "Already loaded partial library image: \(missingArtwork, privacy: .public)")
       return
     }
 
