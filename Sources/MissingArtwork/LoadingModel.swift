@@ -27,6 +27,11 @@ extension Logger {
 
   @MainActor
   public func load(_ context: C? = nil) async {
+    guard value == nil, error == nil else {
+      Logger.loadingModel.log("Already Loaded!")
+      return
+    }
+
     let (value, error) = await loader(context)
     Logger.loadingModel.log(
       "Value: \(String(describing: value), privacy: .public) Error: \(String(describing: error), privacy: .public)"
@@ -36,6 +41,13 @@ extension Logger {
     } else {
       self.error = error
     }
+  }
+
+  @MainActor
+  public func reload(_ context: C? = nil) async {
+    value = nil
+    error = nil
+    await load(context)
   }
 
   var isError: Bool { error != nil }

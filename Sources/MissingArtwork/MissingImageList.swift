@@ -23,7 +23,7 @@ struct MissingImageList: View {
         if error as? NoArtworkError == nil {
           Button {
             Task {
-              await loadingState.load(missingArtwork)
+              await loadingState.reload(missingArtwork)
             }
           } label: {
             Text(
