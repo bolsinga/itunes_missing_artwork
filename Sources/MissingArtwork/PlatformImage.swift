@@ -38,15 +38,15 @@ extension PlatformImageError: LocalizedError {
 }
 
 private enum ArtworkImageError: Error {
-  case noURL(Artwork)
+  case noURL(any CustomStringConvertible)
 }
 
 extension ArtworkImageError: LocalizedError {
   fileprivate var errorDescription: String? {
     switch self {
-    case .noURL(let artwork):
+    case .noURL(let information):
       return String(
-        localized: "No Image URL Available: \(artwork.description).",
+        localized: "No Image URL Available: \(information.description).",
         bundle: .module,
         comment: "Error message when MusicKit Artwork does not have an URL.")
     }
@@ -94,11 +94,18 @@ extension PlatformImage {
   }
 }
 
+protocol PlatformImageLoadable : CustomStringConvertible {
+  var url : URL? { get }
+}
+
+extension Artwork : PlatformImageLoadable {
+  var url: URL? { url(width: maximumWidth, height: maximumHeight) }
+}
+
 extension PlatformImage {
-  static func load(artwork: Artwork) async throws -> PlatformImage {
+  static func load<L: PlatformImageLoadable>(artwork: L) async throws -> PlatformImage {
     Logger.platformImage.log("Loading artwork: \(artwork, privacy: .public)")
-    guard let url = artwork.url(width: artwork.maximumWidth, height: artwork.maximumHeight)
-    else { throw ArtworkImageError.noURL(artwork) }
+    guard let url = artwork.url else { throw ArtworkImageError.noURL(artwork) }
     return try await PlatformImage.load(url: url)
   }
 }
