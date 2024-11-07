@@ -94,11 +94,11 @@ extension PlatformImage {
   }
 }
 
-protocol PlatformImageLoadable : CustomStringConvertible {
-  var url : URL? { get }
+protocol PlatformImageLoadable: CustomStringConvertible {
+  var url: URL? { get }
 }
 
-extension Artwork : PlatformImageLoadable {
+extension Artwork: PlatformImageLoadable {
   var url: URL? { url(width: maximumWidth, height: maximumHeight) }
 }
 
