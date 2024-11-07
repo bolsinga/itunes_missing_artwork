@@ -53,7 +53,7 @@ extension MissingArtwork {
       }
       do {
         return (
-          try await missingArtwork.fetchCatalogImages().map {
+          try await missingArtwork.fetchCatalogArtwork().map {
             ArtworkLoadingImage(artwork: $0, loadingState: PlatformImage.createArtworkModel())
           }, nil
         )
