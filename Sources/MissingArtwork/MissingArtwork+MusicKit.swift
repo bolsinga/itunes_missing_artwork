@@ -128,7 +128,7 @@ extension MissingArtwork {
     throw PartialArtworkImageError.noneFound
   }
 
-  public func fetchCatalogImages() async throws -> [Artwork] {
+  public func fetchCatalogArtworks() async throws -> [Artwork] {
     let term = self.simpleRepresentation
     Logger.artworkLoadingImage.log("search: \(term, privacy: .public)")
 
