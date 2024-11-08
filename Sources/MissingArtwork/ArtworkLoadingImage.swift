@@ -8,7 +8,9 @@
 import Foundation
 import MusicKit
 
-struct ArtworkLoadingImage: Equatable, Hashable, Sendable {
-  let artwork: Artwork
-  var loadingState: ArtworkPlatformImageModel
+struct LoadingImage<A: MissingArtworkProtocol>: Equatable, Hashable, Sendable {
+  let artwork: A
+  var loadingState: LoadingModel<PlatformImage, A>
 }
+
+typealias ArtworkLoadingImage = LoadingImage<Artwork>

@@ -96,6 +96,9 @@
     "No Image URL Available: %@." : {
       "comment" : "Error message when MusicKit Artwork does not have an URL."
     },
+    "No Images Available" : {
+      "comment" : "Shown when no images are loaded for repair."
+    },
     "No Images Selected" : {
       "comment" : "Shown when context menu is being shown for No Artwork images and no artwork image has been selected."
     },

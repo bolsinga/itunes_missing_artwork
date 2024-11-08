@@ -9,7 +9,7 @@ import MusicKit
 import SwiftUI
 
 // Created so Previews may use fake Artwork.
-protocol MissingArtworkProtocol: Sendable {
+protocol MissingArtworkProtocol: Hashable, Sendable {
   var backgroundColor: CGColor? { get }
   var maximumHeight: Int { get }
 }
