@@ -151,7 +151,7 @@ struct DescriptionList: View {
   }
 }
 
-#Preview {
+#Preview("Loaded Two Missing Artworks - no selection") {
   let missingArtworks = [
     MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none),
     MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1", .some),
@@ -165,9 +165,9 @@ struct DescriptionList: View {
     )
   )
 }
-#Preview {
+#Preview("Loaded - No Missing Artworks") {
   DescriptionList(loadingState: LoadingModel(item: []), processingStates: .constant([:]))
 }
-#Preview {
+#Preview("Loading") {
   DescriptionList(loadingState: LoadingModel(), processingStates: .constant([:]))
 }
