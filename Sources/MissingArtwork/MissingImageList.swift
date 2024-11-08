@@ -63,21 +63,6 @@ struct MissingImageList<C: MissingArtworkProtocol>: View {
   }
 }
 
-private struct PreviewArtwork: MissingArtworkProtocol {
-  var backgroundColor: CGColor?
-  var maximumHeight: Int { 300 }
-
-  internal init(backgroundColor: CGColor? = CGColor(red: 0.5, green: 0.5, blue: 1.0, alpha: 1.0)) {
-    self.backgroundColor = backgroundColor
-  }
-}
-
-#if canImport(UIKit)
-  private let image = UIImage(systemName: "pencil.circle")
-#else
-  private let image = NSImage(systemSymbolName: "pencil.circle", accessibilityDescription: nil)
-#endif
-
 #Preview("Loading") {
   MissingImageList<Artwork>(
     missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none),
@@ -101,7 +86,7 @@ private struct PreviewArtwork: MissingArtworkProtocol {
     missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none),
     loadingState: LoadingModel(item: [
       LoadingImage(
-        artwork: PreviewArtwork(), loadingState: LoadingModel(item: PlatformImage(image: image!)))
+        artwork: PreviewArtwork(), loadingState: LoadingModel(item: previewImage))
     ]),
     selectedArtworkImage: .constant(nil)
   )
@@ -113,7 +98,7 @@ private struct PreviewArtwork: MissingArtworkProtocol {
     missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .some),
     loadingState: LoadingModel(item: [
       LoadingImage(
-        artwork: PreviewArtwork(), loadingState: LoadingModel(item: PlatformImage(image: image!)))
+        artwork: PreviewArtwork(), loadingState: LoadingModel(item: previewImage))
     ]),
     selectedArtworkImage: .constant(nil)
   )
