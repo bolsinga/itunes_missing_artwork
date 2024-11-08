@@ -105,6 +105,9 @@
     "No Missing Artwork" : {
       "comment" : "Shown when there is no missing artwork in iTunes"
     },
+    "No missing artworks to display." : {
+      "comment" : "Displayed when DetailView has no missing artworks to display."
+    },
     "OK" : {
       "comment" : "Button shown when an unrecoverable error occurs."
     },

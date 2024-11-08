@@ -29,6 +29,10 @@ struct DetailView: View {
     if selectedArtworks.isEmpty {
       if missingArtworkIsSelectable {
         MissingArtworkTypeChart(missingArtworks: missingArtworks)
+      } else {
+        Text(
+          "No Missing Artwork To Display.", bundle: .module,
+          comment: "Displayed when DetailView has no missing artworks to display.")
       }
     } else {
       if selectedArtworks.count == 1, let artwork = selectedArtworks.first {
@@ -52,44 +56,56 @@ struct DetailView: View {
   }
 }
 
-#Preview {
-  let missingArtwork = MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none)
-
+#Preview("No Missing Artworks") {
   DetailView(
     missingArtworks: [],
     model: ArtworksModel(),
     selectedArtworks: [],
     selectedArtworkImages: .constant([:]),
     processingStates: .constant([:]),
-    sortOrder: .ascending)
+    sortOrder: .ascending
+  )
+  .frame(width: 300, height: 300)
 }
-#Preview {
+
+#Preview("Missing Artwork - No Selection") {
   let missingArtwork = MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none)
   DetailView(
     missingArtworks: [missingArtwork],
     model: ArtworksModel(),
     selectedArtworks: [],
     selectedArtworkImages: .constant([:]),
-    processingStates: .constant([missingArtwork: .none]),
-    sortOrder: .ascending)
+    processingStates: .constant([:]),
+    sortOrder: .ascending
+  )
+  .frame(width: 300, height: 300)
 }
-#Preview {
+
+#Preview("Missing Artwork - Selected") {
   let missingArtwork = MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none)
   DetailView(
     missingArtworks: [missingArtwork],
     model: ArtworksModel(),
     selectedArtworks: [missingArtwork],
     selectedArtworkImages: .constant([:]),
-    processingStates: .constant([missingArtwork: .none]),
-    sortOrder: .ascending)
+    processingStates: .constant([:]),
+    sortOrder: .ascending
+  )
+  .frame(width: 300, height: 300)
 }
-#Preview {
-  let missingArtwork = MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none)
+
+#Preview("Two Missing Artwork - Both Selected") {
+  let missingArtworks = [
+    MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none),
+    MissingArtwork.ArtistAlbum("Sonic Youth", "Evol", .none),
+  ]
   DetailView(
-    missingArtworks: [missingArtwork],
+    missingArtworks: missingArtworks,
     model: ArtworksModel(),
-    selectedArtworks: [missingArtwork],
+    selectedArtworks: Set(missingArtworks),
     selectedArtworkImages: .constant([:]),
-    processingStates: .constant([missingArtwork: .none]),
-    sortOrder: .ascending)
+    processingStates: .constant([:]),
+    sortOrder: .ascending
+  )
+  .frame(width: 300, height: 300)
 }

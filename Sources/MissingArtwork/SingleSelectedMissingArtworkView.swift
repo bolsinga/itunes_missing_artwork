@@ -34,27 +34,35 @@ struct SingleSelectedMissingArtworkView: View {
   }
 }
 
-#Preview {
+#Preview("No Artwork - Loading - Not Processed") {
   SingleSelectedMissingArtworkView(
     missingArtwork: MissingArtwork.ArtistAlbum("Sonic Youth", "Evol", .none),
     model: ArtworksModel(),
     loadingState: .constant(LoadingModel()),
     selectedArtworkImage: .constant(nil),
-    processingState: .constant(.none))
+    processingState: .constant(.none)
+  )
+  .frame(width: 300, height: 300)
 }
-#Preview {
+
+#Preview("Some Artwork - Loading - Not Processed") {
   SingleSelectedMissingArtworkView(
     missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .some),
     model: ArtworksModel(),
     loadingState: .constant(LoadingModel()),
     selectedArtworkImage: .constant(nil),
-    processingState: .constant(.none))
+    processingState: .constant(.none)
+  )
+  .frame(width: 300, height: 300)
 }
-#Preview {
+
+#Preview("Some Artwork - Loading - Processing") {
   SingleSelectedMissingArtworkView(
     missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .some),
     model: ArtworksModel(),
     loadingState: .constant(LoadingModel()),
     selectedArtworkImage: .constant(nil),
-    processingState: .constant(.processing))
+    processingState: .constant(.processing)
+  )
+  .frame(width: 300, height: 300)
 }
