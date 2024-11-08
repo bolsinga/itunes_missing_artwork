@@ -46,15 +46,6 @@ struct MissingArtworkImage<C: MissingArtworkProtocol>: View {
   }
 }
 
-private struct PreviewArtwork: MissingArtworkProtocol {
-  var backgroundColor: CGColor?
-  var maximumHeight: Int { 300 }
-
-  internal init(backgroundColor: CGColor? = CGColor(red: 0.5, green: 0.5, blue: 1.0, alpha: 1.0)) {
-    self.backgroundColor = backgroundColor
-  }
-}
-
 #Preview("Loading - No Background Color") {
   MissingArtworkImage(
     width: 300, artwork: PreviewArtwork(backgroundColor: nil), loadingState: LoadingModel()
@@ -74,16 +65,10 @@ private struct PreviewArtwork: MissingArtworkProtocol {
   .frame(width: 300, height: 300)
 }
 
-#if canImport(UIKit)
-  private let image = UIImage(systemName: "pencil.circle")
-#else
-  private let image = NSImage(systemSymbolName: "pencil.circle", accessibilityDescription: nil)
-#endif
-
 #Preview("Image") {
   MissingArtworkImage(
     width: 300, artwork: PreviewArtwork(),
-    loadingState: LoadingModel(item: PlatformImage(image: image!))
+    loadingState: LoadingModel(item: previewImage)
   )
   .frame(width: 300, height: 300)
 }
