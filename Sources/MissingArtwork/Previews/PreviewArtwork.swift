@@ -7,7 +7,7 @@
 
 import CoreGraphics
 
-struct PreviewArtwork: MissingArtworkProtocol {
+struct PreviewArtwork: ArtworkProtocol {
   var backgroundColor: CGColor?
   var maximumHeight: Int { 300 }
 
