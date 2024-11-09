@@ -106,6 +106,7 @@ extension MissingArtwork {
     }
   }
 
+  @MainActor
   public func matchingPartialArtworkImage() async throws -> PlatformImage {
     guard self.availability == .some else {
       fatalError(

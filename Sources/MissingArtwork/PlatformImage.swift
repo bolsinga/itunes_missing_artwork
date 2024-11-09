@@ -103,6 +103,7 @@ extension Artwork: PlatformImageLoadable {
 }
 
 extension PlatformImage {
+  @MainActor
   static func load<L: PlatformImageLoadable>(artwork: L) async throws -> PlatformImage {
     Logger.platformImage.log("Loading artwork: \(artwork, privacy: .public)")
     guard let url = artwork.url else { throw ArtworkImageError.noURL(artwork.description) }
@@ -111,6 +112,7 @@ extension PlatformImage {
 }
 
 extension PlatformImage {
+  @MainActor
   static func load(url: URL) async throws -> PlatformImage {
     Logger.platformImage.log("Load url: \(url.absoluteString, privacy: .public)")
     let (data, _) = try await URLSession.shared.data(from: url)
