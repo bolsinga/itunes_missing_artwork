@@ -13,4 +13,4 @@ import SwiftUI
   private let image = NSImage(systemSymbolName: "pencil.circle", accessibilityDescription: nil)
 #endif
 
-let previewImage = PlatformImage(image: image!)
+@MainActor let previewImage = PlatformImage(image: image!)
