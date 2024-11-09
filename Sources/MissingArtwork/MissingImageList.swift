@@ -8,7 +8,7 @@
 import MusicKit
 import SwiftUI
 
-struct MissingImageList<C: MissingArtworkProtocol>: View {
+struct MissingImageList<C: ArtworkProtocol>: View {
   let missingArtwork: MissingArtwork
   var loadingState: LoadingModel<[LoadingImage<C>], MissingArtwork>
 

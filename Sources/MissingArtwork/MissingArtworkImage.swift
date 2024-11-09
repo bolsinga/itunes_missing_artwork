@@ -5,18 +5,9 @@
 //  Created by Greg Bolsinga on 11/8/22.
 //
 
-import MusicKit
 import SwiftUI
 
-// Created so Previews may use fake Artwork.
-protocol MissingArtworkProtocol: Hashable, Sendable {
-  var backgroundColor: CGColor? { get }
-  var maximumHeight: Int { get }
-}
-
-extension Artwork: MissingArtworkProtocol {}
-
-struct MissingArtworkImage<C: MissingArtworkProtocol>: View {
+struct MissingArtworkImage<C: ArtworkProtocol>: View {
   let width: CGFloat
 
   let artwork: C
