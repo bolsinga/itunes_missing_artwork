@@ -10,29 +10,15 @@ import SwiftUI
 
 struct MissingImageList<C: ArtworkProtocol>: View {
   let missingArtwork: MissingArtwork
-  var loadingState: LoadingModel<[LoadingImage<C>], MissingArtwork>
+  var model: MissingArtworksModel<C>
+  @State private var error: Error?
 
-  @Binding var selectedArtworkImage: LoadingImage<C>?
+  @Binding var selectedArtwork: C?
 
   var body: some View {
     VStack {
-      if loadingState.isIdleOrLoading {
-        ProgressView()
-      } else if let error = loadingState.error {
-        VStack(alignment: .center) {
-          Text(error.localizedDescription)
-          if error as? NoArtworkError == nil {
-            Button {
-              Task { await loadingState.reload(missingArtwork) }
-            } label: {
-              Text(
-                "Retry Loading Image", bundle: .module,
-                comment: "Button title to retry loading an image.")
-            }
-          }
-        }
-      } else if let values = loadingState.value {
-        if values.isEmpty {
+      if let catalogArtworks = model.catalogArtworks[missingArtwork] {
+        if catalogArtworks.isEmpty {
           Text(
             "No Images Available", bundle: .module,
             comment: "Shown when no images are loaded for repair.")
@@ -47,80 +33,103 @@ struct MissingImageList<C: ArtworkProtocol>: View {
             .padding(EdgeInsets(top: 10, leading: 0, bottom: 0, trailing: 0))
           }
           GeometryReader { proxy in
-            List(values, id: \.artwork, selection: $selectedArtworkImage) {
-              artworkImage in
-              MissingArtworkImage(
-                width: proxy.size.width, artwork: artworkImage.artwork,
-                loadingState: artworkImage.loadingState
-              )
-              .tag(artworkImage)
+            List(catalogArtworks, id: \.self, selection: $selectedArtwork) { artwork in
+              MissingArtworkImage(width: proxy.size.width, artwork: artwork, model: model)
+                .tag(artwork)
             }
           }
         }
+      } else if let error {
+        VStack(alignment: .center) {
+          Text(error.localizedDescription)
+          if error as? NoArtworkError == nil {
+            Button {
+              Task {
+                self.error = nil
+                do {
+                  try await model.reload(artwork: missingArtwork)
+                } catch {
+                  self.error = error
+                }
+              }
+            } label: {
+              Text(
+                "Retry Loading Image", bundle: .module,
+                comment: "Button title to retry loading an image.")
+            }
+          }
+        }
+      } else {
+        ProgressView()
       }
     }
-    .task(id: missingArtwork) { await loadingState.load(missingArtwork) }
+    .task(id: missingArtwork) {
+      do {
+        try await model.load(artwork: missingArtwork)
+      } catch {
+        self.error = error
+      }
+    }
   }
 }
 
 #Preview("Loading") {
-  MissingImageList<Artwork>(
-    missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none),
-    loadingState: LoadingModel(),
-    selectedArtworkImage: .constant(nil)
+  let missingArtwork = MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none)
+  MissingImageList(
+    missingArtwork: missingArtwork,
+    model: MissingArtworksModel<PreviewArtwork>(),
+    selectedArtwork: .constant(nil)
   )
   .frame(width: 300, height: 300)
 }
 
 #Preview("Loaded Empty") {
-  MissingImageList<Artwork>(
-    missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none),
-    loadingState: LoadingModel(item: []),
-    selectedArtworkImage: .constant(nil)
+  let missingArtwork = MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none)
+  MissingImageList(
+    missingArtwork: missingArtwork,
+    model: MissingArtworksModel<PreviewArtwork>(catalogLoaderResult: .result([])),
+    selectedArtwork: .constant(nil)
   )
   .frame(width: 300, height: 300)
 }
 
 #Preview("Loaded Values - Availability None") {
+  let missingArtwork = MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none)
   MissingImageList(
-    missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none),
-    loadingState: LoadingModel(item: [
-      LoadingImage(
-        artwork: PreviewArtwork(), loadingState: LoadingModel(item: previewImage))
-    ]),
-    selectedArtworkImage: .constant(nil)
+    missingArtwork: missingArtwork,
+    model: MissingArtworksModel(catalogArtworks: [missingArtwork: [PreviewArtwork()]]),
+    selectedArtwork: .constant(nil)
   )
   .frame(width: 300, height: 300)
 }
 
 #Preview("Loaded Values - Availability Some") {
+  let missingArtwork = MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .some)
   MissingImageList(
-    missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .some),
-    loadingState: LoadingModel(item: [
-      LoadingImage(
-        artwork: PreviewArtwork(), loadingState: LoadingModel(item: previewImage))
-    ]),
-    selectedArtworkImage: .constant(nil)
+    missingArtwork: missingArtwork,
+    model: MissingArtworksModel(catalogArtworks: [missingArtwork: [PreviewArtwork()]]),
+    selectedArtwork: .constant(nil)
   )
   .frame(width: 300, height: 300)
 }
 
 #Preview("Error - NoArtworkError") {
   let missingArtwork = MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none)
-  MissingImageList<Artwork>(
+  MissingImageList(
     missingArtwork: missingArtwork,
-    loadingState: LoadingModel(
-      error: NoArtworkError.noneFound(missingArtwork.simpleRepresentation)),
-    selectedArtworkImage: .constant(nil)
+    model: MissingArtworksModel<PreviewArtwork>(
+      catalogLoaderResult: .error(NoArtworkError.noneFound(missingArtwork.simpleRepresentation))),
+    selectedArtwork: .constant(nil)
   )
   .frame(width: 300, height: 300)
 }
 
 #Preview("Error") {
-  MissingImageList<Artwork>(
-    missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none),
-    loadingState: LoadingModel(error: CancellationError()),
-    selectedArtworkImage: .constant(nil)
+  let missingArtwork = MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .none)
+  MissingImageList(
+    missingArtwork: missingArtwork,
+    model: MissingArtworksModel<PreviewArtwork>(catalogLoaderResult: .error(CancellationError())),
+    selectedArtwork: .constant(nil)
   )
   .frame(width: 300, height: 300)
 }

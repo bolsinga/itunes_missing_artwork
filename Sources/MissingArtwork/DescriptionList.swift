@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct DescriptionList: View {
+struct DescriptionList<C: ArtworkProtocol>: View {
   @State private var sortOrder = SortOrder.ascending
   @State private var availabilityFilter = AvailabilityCategory.all
 
@@ -15,13 +15,13 @@ struct DescriptionList: View {
 
   @State private var searchString: String = ""
 
-  @State private var selectedArtworkImages: [MissingArtwork: ArtworkLoadingImage] = [:]
+  @State private var selectedArtwork: C?
 
   var loadingState: MissingArtworkModel
 
   @Binding var processingStates: [MissingArtwork: ProcessingState]
 
-  @State private var model = ArtworksModel()
+  var model: MissingArtworksModel<C>
 
   var missingArtworks: [MissingArtwork] {
     loadingState.value ?? []
@@ -52,26 +52,20 @@ struct DescriptionList: View {
     selectedArtworks.filter { $0.availability == .none }
   }
 
-  private var noArtSelectedArtworksContainingSelectedImage: [MissingArtwork] {
-    noArtSelectedArtworks.filter { selectedArtworkImages[$0] != nil }
-  }
-
-  private var noArtSelectedArtworksContainingSelectedArtworkLoadingImage:
-    [(MissingArtwork, ArtworkLoadingImage)]
-  {
-    noArtSelectedArtworksContainingSelectedImage.map { ($0, selectedArtworkImages[$0]!) }
-  }
-
-  private var noArtSelectedArtworksContainingSelectedAndLoadedImage:
-    [(MissingArtwork, ArtworkLoadingImage)]
-  {
-    noArtSelectedArtworksContainingSelectedArtworkLoadingImage.filter {
-      $1.loadingState.value != nil
-    }
+  private var noArtSelectedArtworksCatalogArtworks: [MissingArtwork: [PlatformImage]] {
+    noArtSelectedArtworks.reduce(
+      into: [MissingArtwork: [PlatformImage]](),
+      { partialResult, missingArtwork in
+        partialResult[missingArtwork] = model.catalogArtworks[missingArtwork]?.filter {
+          $0 == selectedArtwork
+        }.compactMap { model.artworkImages[$0] }
+      })
   }
 
   private var noArtSelectedArtworksWithImage: [(MissingArtwork, PlatformImage)] {
-    noArtSelectedArtworksContainingSelectedAndLoadedImage.map { ($0, $1.loadingState.value!) }
+    noArtSelectedArtworksCatalogArtworks.flatMap { missingArtwork, images in
+      images.map { (missingArtwork, $0) }
+    }
   }
 
   private var noArtSelectedArtworksWithImageNotProcessed: [(MissingArtwork, PlatformImage)] {
@@ -133,7 +127,7 @@ struct DescriptionList: View {
         missingArtworks: missingArtworks,
         model: model,
         selectedArtworks: selectedArtworks,
-        selectedArtworkImages: $selectedArtworkImages,
+        selectedArtwork: $selectedArtwork,
         processingStates: $processingStates,
         sortOrder: sortOrder)
     }.onChange(of: availabilityFilter) { _, _ in
@@ -162,12 +156,16 @@ struct DescriptionList: View {
       missingArtworks.reduce(into: [MissingArtwork: ProcessingState]()) {
         $0[$1] = .processing
       }
-    )
+    ), model: MissingArtworksModel<PreviewArtwork>()
   )
 }
 #Preview("Loaded - No Missing Artworks") {
-  DescriptionList(loadingState: LoadingModel(item: []), processingStates: .constant([:]))
+  DescriptionList(
+    loadingState: LoadingModel(item: []), processingStates: .constant([:]),
+    model: MissingArtworksModel<PreviewArtwork>())
 }
 #Preview("Loading") {
-  DescriptionList(loadingState: LoadingModel(), processingStates: .constant([:]))
+  DescriptionList(
+    loadingState: LoadingModel(), processingStates: .constant([:]),
+    model: MissingArtworksModel<PreviewArtwork>())
 }

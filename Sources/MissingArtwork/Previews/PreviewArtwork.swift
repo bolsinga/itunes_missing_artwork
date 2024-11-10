@@ -8,6 +8,8 @@
 import CoreGraphics
 
 struct PreviewArtwork: ArtworkProtocol {
+  var description: String { "Preview Artwork" }
+
   var backgroundColor: CGColor?
   var maximumHeight: Int { 300 }
 

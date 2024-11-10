@@ -7,11 +7,10 @@
 
 import SwiftUI
 
-struct SingleSelectedMissingArtworkView: View {
+struct SingleSelectedMissingArtworkView<C: ArtworkProtocol>: View {
   let missingArtwork: MissingArtwork
-  var model: ArtworksModel
-  @Binding var loadingState: MissingArtworkLoadingImageModel
-  @Binding var selectedArtworkImage: ArtworkLoadingImage?
+  var model: MissingArtworksModel<C>
+  @Binding var selectedArtwork: C?
   @Binding var processingState: ProcessingState
 
   var body: some View {
@@ -25,10 +24,7 @@ struct SingleSelectedMissingArtworkView: View {
         }
       } else {
         MissingImageList(
-          missingArtwork: missingArtwork,
-          loadingState: loadingState,
-          selectedArtworkImage: $selectedArtworkImage
-        )
+          missingArtwork: missingArtwork, model: model, selectedArtwork: $selectedArtwork)
       }
     }
   }
@@ -37,9 +33,8 @@ struct SingleSelectedMissingArtworkView: View {
 #Preview("No Artwork - Loading - Not Processed") {
   SingleSelectedMissingArtworkView(
     missingArtwork: MissingArtwork.ArtistAlbum("Sonic Youth", "Evol", .none),
-    model: ArtworksModel(),
-    loadingState: .constant(LoadingModel()),
-    selectedArtworkImage: .constant(nil),
+    model: MissingArtworksModel<PreviewArtwork>(),
+    selectedArtwork: .constant(nil),
     processingState: .constant(.none)
   )
   .frame(width: 300, height: 300)
@@ -48,9 +43,8 @@ struct SingleSelectedMissingArtworkView: View {
 #Preview("Some Artwork - Loading - Not Processed") {
   SingleSelectedMissingArtworkView(
     missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .some),
-    model: ArtworksModel(),
-    loadingState: .constant(LoadingModel()),
-    selectedArtworkImage: .constant(nil),
+    model: MissingArtworksModel<PreviewArtwork>(),
+    selectedArtwork: .constant(nil),
     processingState: .constant(.none)
   )
   .frame(width: 300, height: 300)
@@ -59,9 +53,8 @@ struct SingleSelectedMissingArtworkView: View {
 #Preview("Some Artwork - Loading - Processing") {
   SingleSelectedMissingArtworkView(
     missingArtwork: MissingArtwork.ArtistAlbum("The Stooges", "Fun House", .some),
-    model: ArtworksModel(),
-    loadingState: .constant(LoadingModel()),
-    selectedArtworkImage: .constant(nil),
+    model: MissingArtworksModel<PreviewArtwork>(),
+    selectedArtwork: .constant(nil),
     processingState: .constant(.processing)
   )
   .frame(width: 300, height: 300)

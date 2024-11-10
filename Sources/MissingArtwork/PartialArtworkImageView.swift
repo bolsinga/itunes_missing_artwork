@@ -7,10 +7,11 @@
 
 import SwiftUI
 
-struct PartialArtworkImageView: View {
+struct PartialArtworkImageView<C: ArtworkProtocol>: View {
   let width: CGFloat
   let missingArtwork: MissingArtwork
-  var model: ArtworksModel
+  var model: MissingArtworksModel<C>
+  @State private var error: Error?
 
   var body: some View {
     VStack(alignment: .center) {
@@ -18,23 +19,24 @@ struct PartialArtworkImageView: View {
         "Partial Artwork Is Already Ready To Repair", bundle: .module,
         comment: "Text shown when a partial artwork is selected."
       ).font(.headline)
-      if let partialLibraryImage = model.partialLibraryImages[missingArtwork] {
-        switch partialLibraryImage {
-        case .loading:
-          ProgressView()
-        case .error(_):
-          EmptyView()
-        case .image(let platformImage):
-          platformImage.representingImage
-            .resizable().aspectRatio(contentMode: .fit)
-        }
+      if let platformImage = model.partialLibraryImages[missingArtwork] {
+        platformImage.representingImage
+          .resizable().aspectRatio(contentMode: .fit)
+      } else if let error {
+        Text(
+          "Error loading partial artwork Image: \(error.localizedDescription)", bundle: .module,
+          comment: "Message shown when an error occurs loading a partial artwork image.")
       } else {
         ProgressView()
       }
     }
     .frame(width: width)
     .task(id: missingArtwork) {
-      await model.load(image: missingArtwork)
+      do {
+        try await model.load(image: missingArtwork)
+      } catch {
+        self.error = error
+      }
     }
   }
 }
