@@ -60,6 +60,9 @@
     "Continue" : {
       "comment" : "Button Text in alert shown when MusicKit authorization status cannot be determined."
     },
+    "Error loading partial artwork Image: %@" : {
+      "comment" : "Message shown when an error occurs loading a partial artwork image."
+    },
     "Filters" : {
       "comment" : "Title of the ToolbarItem that shows a popup of filters to apply to the displayed Missing Artwork."
     },

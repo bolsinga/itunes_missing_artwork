@@ -14,16 +14,14 @@ extension Logger {
 }
 
 @Observable final class ArtworksModel {
-  enum ImageState {
-    case loading
-    case error(Error)
-    case image(PlatformImage)
+  var partialLibraryImages: [MissingArtwork: PlatformImage]
+
+  init(partialLibraryImages: [MissingArtwork: PlatformImage]) {
+    self.partialLibraryImages = partialLibraryImages
   }
 
-  var partialLibraryImages: [MissingArtwork: ImageState] = [:]
-
   @MainActor
-  func load(image missingArtwork: MissingArtwork) async {
+  func load(image missingArtwork: MissingArtwork) async throws {
     guard partialLibraryImages[missingArtwork] == nil else {
       Logger.artworksModel.log(
         "Already loaded partial library image: \(missingArtwork, privacy: .public)")
@@ -31,16 +29,21 @@ extension Logger {
     }
 
     Logger.artworksModel.log("Loading partial library image: \(missingArtwork, privacy: .public)")
-    partialLibraryImages[missingArtwork] = .loading
     do {
-      partialLibraryImages[missingArtwork] = .image(
-        try await missingArtwork.matchingPartialArtworkImage())
+      partialLibraryImages[missingArtwork] =
+        try await missingArtwork.matchingPartialArtworkImage()
       Logger.artworksModel.log("Loaded partial library image: \(missingArtwork, privacy: .public)")
     } catch {
       Logger.artworksModel.log(
         "Error loading partial library image: \(missingArtwork, privacy: .public) \(error, privacy: .public)"
       )
-      partialLibraryImages[missingArtwork] = .error(error)
+      throw error
     }
+  }
+}
+
+extension ArtworksModel {
+  convenience init() {
+    self.init(partialLibraryImages: [:])
   }
 }
