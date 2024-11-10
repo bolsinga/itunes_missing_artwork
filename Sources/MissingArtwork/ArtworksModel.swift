@@ -154,7 +154,7 @@ extension ITunesError: LocalizedError {
     Logger.artworksModel.log("Loading missing artworks")
     do {
       missingArtworks = try await MissingArtwork.gatherMissingArtwork()
-      Logger.artworksModel.log("Loaded missing artworks")
+      Logger.artworksModel.log("Loaded (\(self.missingArtworks.count)) missing artworks")
     } catch {
       Logger.artworksModel.log(
         "Error loading missing artworks: \(error, privacy: .public)"
