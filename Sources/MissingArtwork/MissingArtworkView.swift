@@ -42,7 +42,7 @@ public struct MissingArtworkView: View {
         Text(error.recoverySuggestion ?? "")
       }
     )
-    .task(id: isMusicKitAuthorized) {
+    .task {
       if isMusicKitAuthorized {
         do {
           try await model.loadMissingArtwork()
