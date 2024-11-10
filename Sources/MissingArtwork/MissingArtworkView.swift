@@ -8,24 +8,30 @@
 import SwiftUI
 
 public struct MissingArtworkView: View {
-  @State private var loadingState = MissingArtwork.createModel()
   @State private var model = ArtworksModel()
 
   @Binding var processingStates: [MissingArtwork: ProcessingState]
 
-  @State var isMusicKitAuthorized: Bool = false
+  @State private var isMusicKitAuthorized: Bool = false
+  @State private var error: Error?
+  @State private var missingArtworksLoading: Bool = true
 
   public init(processingStates: Binding<[MissingArtwork: ProcessingState]>) {
     self._processingStates = processingStates
   }
 
+  private var currentError: WrappedLocalizedError? {
+    guard let error else { return nil }
+    return WrappedLocalizedError.wrapError(error: error)
+  }
+
   public var body: some View {
     DescriptionList(
-      loadingState: loadingState,
+      missingArtworksLoading: missingArtworksLoading,
       processingStates: $processingStates, model: model
     )
     .alert(
-      isPresented: .constant(loadingState.isError), error: loadingState.currentError,
+      isPresented: .constant(error != nil), error: currentError,
       actions: { error in
         Button {
         } label: {
@@ -38,7 +44,12 @@ public struct MissingArtworkView: View {
     )
     .task(id: isMusicKitAuthorized) {
       if isMusicKitAuthorized {
-        await loadingState.load()
+        do {
+          try await model.loadMissingArtwork()
+          missingArtworksLoading = false
+        } catch {
+          self.error = error
+        }
       }
     }
     .musicKitAuthorizationSheet(isAuthorized: $isMusicKitAuthorized)

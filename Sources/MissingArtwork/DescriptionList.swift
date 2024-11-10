@@ -17,14 +17,14 @@ struct DescriptionList<C: ArtworkProtocol>: View {
 
   @State private var selectedArtwork: C?
 
-  var loadingState: MissingArtworkModel
+  let missingArtworksLoading: Bool
 
   @Binding var processingStates: [MissingArtwork: ProcessingState]
 
   var model: MissingArtworksModel<C>
 
   var missingArtworks: [MissingArtwork] {
-    loadingState.value ?? []
+    model.missingArtworks
   }
 
   var missingArtworksIsEmpty: Bool {
@@ -79,7 +79,7 @@ struct DescriptionList<C: ArtworkProtocol>: View {
   }
 
   @ViewBuilder private var listStateOverlay: some View {
-    if loadingState.isIdleOrLoading {
+    if missingArtworksLoading {
       ProgressView()
     } else if missingArtworksIsEmpty {
       Text(
@@ -151,21 +151,21 @@ struct DescriptionList<C: ArtworkProtocol>: View {
     MissingArtwork.CompilationAlbum("Beleza Tropical: Brazil Classics 1", .some),
   ]
   return DescriptionList(
-    loadingState: LoadingModel(item: missingArtworks),
+    missingArtworksLoading: false,
     processingStates: .constant(
       missingArtworks.reduce(into: [MissingArtwork: ProcessingState]()) {
         $0[$1] = .processing
       }
-    ), model: MissingArtworksModel<PreviewArtwork>()
+    ), model: MissingArtworksModel<PreviewArtwork>(missingArtworks: missingArtworks)
   )
 }
 #Preview("Loaded - No Missing Artworks") {
   DescriptionList(
-    loadingState: LoadingModel(item: []), processingStates: .constant([:]),
+    missingArtworksLoading: false, processingStates: .constant([:]),
     model: MissingArtworksModel<PreviewArtwork>())
 }
 #Preview("Loading") {
   DescriptionList(
-    loadingState: LoadingModel(), processingStates: .constant([:]),
+    missingArtworksLoading: true, processingStates: .constant([:]),
     model: MissingArtworksModel<PreviewArtwork>())
 }
