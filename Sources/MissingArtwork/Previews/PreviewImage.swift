@@ -10,7 +10,8 @@ import SwiftUI
 #if canImport(UIKit)
   private let image = UIImage(systemName: "pencil.circle")
 #else
-  private let image = NSImage(systemSymbolName: "pencil.circle", accessibilityDescription: nil)
+  @MainActor private let image = NSImage(
+    systemSymbolName: "pencil.circle", accessibilityDescription: nil)
 #endif
 
 @MainActor let previewImage = PlatformImage(image: image!)
