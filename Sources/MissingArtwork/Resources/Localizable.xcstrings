@@ -60,6 +60,9 @@
     "Continue" : {
       "comment" : "Button Text in alert shown when MusicKit authorization status cannot be determined."
     },
+    "Data Source" : {
+      "comment" : "Shown to change the data source for the Missing Artwork."
+    },
     "Error loading partial artwork Image: %@" : {
       "comment" : "Message shown when an error occurs loading a partial artwork image."
     },

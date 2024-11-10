@@ -118,10 +118,13 @@ struct DescriptionList<C: ArtworkProtocol>: View {
   }
 
   var body: some View {
+    @Bindable var bindableModel = model
     NavigationSplitView {
       sidebarView
         .frame(minWidth: 325)
-        .filtersToolbar(availabilityFilter: $availabilityFilter, sortOrder: $sortOrder)
+        .filtersToolbar(
+          availabilityFilter: $availabilityFilter, sortOrder: $sortOrder,
+          dataSource: $bindableModel.dataSource)
     } detail: {
       DetailView(
         missingArtworks: missingArtworks,
