@@ -14,6 +14,7 @@ extension MissingArtworksModel {
 
   @MainActor
   convenience init(
+    missingArtworks: [MissingArtwork] = [],
     catalogArtworks: [MissingArtwork: [C]] = [:],
     artworkImages: [C: PlatformImage] = [:],
     partialLibraryImages: [MissingArtwork: PlatformImage] = [:],
@@ -21,7 +22,8 @@ extension MissingArtworksModel {
     artworkLoaderResult: LoaderResult<PlatformImage> = .result(previewImage)
   ) {
     self.init(
-      catalogArtworks: catalogArtworks, artworkImages: artworkImages, artworkErrors: [],
+      missingArtworks: missingArtworks, catalogArtworks: catalogArtworks,
+      artworkImages: artworkImages, artworkErrors: [],
       partialLibraryImages: partialLibraryImages,
       catalogLoader: { _ in
         switch catalogLoaderResult {

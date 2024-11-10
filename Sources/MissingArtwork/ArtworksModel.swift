@@ -14,7 +14,30 @@ extension Logger {
     subsystem: Bundle.main.bundleIdentifier ?? "unknown", category: "artworksModel")
 }
 
+private enum ITunesError: Error {
+  case cannotFetchMissingArtwork(Error)
+}
+
+extension ITunesError: LocalizedError {
+  fileprivate var errorDescription: String? {
+    switch self {
+    case .cannotFetchMissingArtwork(let error):
+      return String(
+        localized: "iTunes Library unable to find missing artwork: \(error.localizedDescription)",
+        bundle: .module,
+        comment: "Error message when iTunes is unable to find missing artwork.")
+    }
+  }
+  fileprivate var recoverySuggestion: String? {
+    String(
+      localized: "iTunes was unable to find any missing artwork to fix.",
+      bundle: .module,
+      comment: "Recovery message when iTunes is unable to find missing artwork.")
+  }
+}
+
 @Observable final class MissingArtworksModel<C: ArtworkProtocol> {
+  var missingArtworks: [MissingArtwork]
   var catalogArtworks: [MissingArtwork: [C]]
   var artworkImages: [C: PlatformImage]
   var artworkErrors: Set<C>
@@ -26,6 +49,7 @@ extension Logger {
   private let artworkLoader: @MainActor (C) async throws -> PlatformImage?
 
   init(
+    missingArtworks: [MissingArtwork],
     catalogArtworks: [MissingArtwork: [C]],
     artworkImages: [C: PlatformImage],
     artworkErrors: Set<C>,
@@ -33,6 +57,7 @@ extension Logger {
     catalogLoader: @escaping (MissingArtwork) async throws -> [C]?,
     artworkLoader: @escaping @MainActor (C) async throws -> PlatformImage?
   ) {
+    self.missingArtworks = missingArtworks
     self.catalogArtworks = catalogArtworks
     self.artworkImages = artworkImages
     self.artworkErrors = artworkErrors
@@ -118,6 +143,25 @@ extension Logger {
       throw error
     }
   }
+
+  @MainActor
+  func loadMissingArtwork() async throws {
+    guard missingArtworks.isEmpty else {
+      Logger.artworksModel.log("Already loaded missing artworks.")
+      return
+    }
+
+    Logger.artworksModel.log("Loading missing artworks")
+    do {
+      missingArtworks = try await MissingArtwork.gatherMissingArtwork()
+      Logger.artworksModel.log("Loaded missing artworks")
+    } catch {
+      Logger.artworksModel.log(
+        "Error loading missing artworks: \(error, privacy: .public)"
+      )
+      throw ITunesError.cannotFetchMissingArtwork(error)
+    }
+  }
 }
 
 typealias ArtworksModel = MissingArtworksModel<Artwork>
@@ -125,7 +169,8 @@ typealias ArtworksModel = MissingArtworksModel<Artwork>
 extension ArtworksModel {
   convenience init() {
     self.init(
-      catalogArtworks: [:], artworkImages: [:], artworkErrors: [], partialLibraryImages: [:]
+      missingArtworks: [], catalogArtworks: [:], artworkImages: [:], artworkErrors: [],
+      partialLibraryImages: [:]
     ) {
       try await $0.fetchCatalogArtworks()
     } artworkLoader: {
