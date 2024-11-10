@@ -15,7 +15,7 @@ jobs:
     - name: Switch to Xcode 16.0
       run: sudo xcode-select -s "/Applications/Xcode_16.0.app"
     - name: Build
-      run: xcodebuild -scheme itunes_missing_artwork -destination "platform=macOS" -destination "platform=iOS Simulator,name=iPhone 14"
+      run: xcodebuild -scheme itunes_missing_artwork -destination "generic/platform=macOS" -destination "generic/platform=iOS Simulator"
 
 #    - name: Show Destinations
 #      run: xcodebuild -scheme itunes_missing_artwork -showdestinations
