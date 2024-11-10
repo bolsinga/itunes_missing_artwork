@@ -9,6 +9,7 @@ import SwiftUI
 
 public struct MissingArtworkView: View {
   @State private var loadingState = MissingArtwork.createModel()
+  @State private var model = ArtworksModel()
 
   @Binding var processingStates: [MissingArtwork: ProcessingState]
 
@@ -21,7 +22,7 @@ public struct MissingArtworkView: View {
   public var body: some View {
     DescriptionList(
       loadingState: loadingState,
-      processingStates: $processingStates
+      processingStates: $processingStates, model: model
     )
     .alert(
       isPresented: .constant(loadingState.isError), error: loadingState.currentError,

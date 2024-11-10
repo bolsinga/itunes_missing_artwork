@@ -7,10 +7,10 @@
 
 import SwiftUI
 
-struct PartialArtworkImageView: View {
+struct PartialArtworkImageView<C: ArtworkProtocol>: View {
   let width: CGFloat
   let missingArtwork: MissingArtwork
-  var model: ArtworksModel
+  var model: MissingArtworksModel<C>
   @State private var error: Error?
 
   var body: some View {
