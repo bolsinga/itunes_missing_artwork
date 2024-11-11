@@ -6,8 +6,8 @@ let package = Package(
   name: "itunes_missing_artwork",
   defaultLocalization: "en",
   platforms: [
-    .macOS(.v14),
-    .iOS(.v17),
+    .macOS(.v15),
+    .iOS(.v18),
   ],
   products: [
     .library(name: "MissingArtwork", targets: ["MissingArtwork"])
