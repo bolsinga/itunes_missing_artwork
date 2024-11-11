@@ -10,6 +10,7 @@ import SwiftUI
 struct DescriptionListFiltersToolbarModifier: ViewModifier {
   @Binding var availabilityFilter: AvailabilityCategory
   @Binding var sortOrder: SortOrder
+  @Binding var dataSource: DataSource
 
   func body(content: Content) -> some View {
     content
@@ -34,6 +35,17 @@ struct DescriptionListFiltersToolbarModifier: ViewModifier {
                 "Sort Order", bundle: .module,
                 comment: "Shown to change the sort order of the Missing Artwork.")
             }
+            #if canImport(iTunesLibrary)
+              Picker(selection: $dataSource) {
+                ForEach(DataSource.allCases) {
+                  Text($0.rawValue).tag($0)
+                }
+              } label: {
+                Text(
+                  "Data Source", bundle: .module,
+                  comment: "Shown to change the data source for the Missing Artwork.")
+              }
+            #endif
           } label: {
             Label {
               Text(
@@ -52,10 +64,11 @@ struct DescriptionListFiltersToolbarModifier: ViewModifier {
 
 extension View {
   func filtersToolbar(
-    availabilityFilter: Binding<AvailabilityCategory>, sortOrder: Binding<SortOrder>
+    availabilityFilter: Binding<AvailabilityCategory>, sortOrder: Binding<SortOrder>,
+    dataSource: Binding<DataSource>
   ) -> some View {
     modifier(
       DescriptionListFiltersToolbarModifier(
-        availabilityFilter: availabilityFilter, sortOrder: sortOrder))
+        availabilityFilter: availabilityFilter, sortOrder: sortOrder, dataSource: dataSource))
   }
 }

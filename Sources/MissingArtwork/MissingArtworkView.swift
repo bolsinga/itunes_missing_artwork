@@ -42,8 +42,9 @@ public struct MissingArtworkView: View {
         Text(error.recoverySuggestion ?? "")
       }
     )
-    .task {
+    .task(id: model.dataSource) {
       if isMusicKitAuthorized {
+        missingArtworksLoading = true
         do {
           try await model.loadMissingArtwork()
         } catch {
@@ -51,6 +52,9 @@ public struct MissingArtworkView: View {
         }
         missingArtworksLoading = false
       }
+    }
+    .onChange(of: model.dataSource) { _, _ in
+      model.missingArtworks.removeAll()
     }
     .musicKitAuthorizationSheet(isAuthorized: $isMusicKitAuthorized)
   }

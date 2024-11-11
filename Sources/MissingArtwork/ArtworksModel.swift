@@ -42,6 +42,7 @@ extension ITunesError: LocalizedError {
   var artworkImages: [C: PlatformImage]
   var artworkErrors: Set<C>
   var partialLibraryImages: [MissingArtwork: PlatformImage]
+  var dataSource: DataSource = .musicKit
 
   @ObservationIgnored
   private let catalogLoader: (MissingArtwork) async throws -> [C]?
@@ -133,8 +134,8 @@ extension ITunesError: LocalizedError {
 
     Logger.artworksModel.log("Loading partial library image: \(missingArtwork, privacy: .public)")
     do {
-      partialLibraryImages[missingArtwork] =
-        try await missingArtwork.matchingPartialArtworkImage()
+      partialLibraryImages[missingArtwork] = try await dataSource.matchingPartialArtworkImage(
+        missingArtwork)
       Logger.artworksModel.log("Loaded partial library image: \(missingArtwork, privacy: .public)")
     } catch {
       Logger.artworksModel.log(
@@ -151,9 +152,10 @@ extension ITunesError: LocalizedError {
       return
     }
 
-    Logger.artworksModel.log("Loading missing artworks")
+    Logger.artworksModel.log(
+      "Loading missing artworks: \(self.dataSource.rawValue, privacy: .public)")
     do {
-      missingArtworks = try await MissingArtwork.gatherMissingArtwork()
+      missingArtworks = try await dataSource.gatherMissingArtwork()
       Logger.artworksModel.log("Loaded (\(self.missingArtworks.count)) missing artworks")
     } catch {
       Logger.artworksModel.log(
