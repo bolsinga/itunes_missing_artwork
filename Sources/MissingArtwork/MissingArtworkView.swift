@@ -46,10 +46,10 @@ public struct MissingArtworkView: View {
       if isMusicKitAuthorized {
         do {
           try await model.loadMissingArtwork()
-          missingArtworksLoading = false
         } catch {
           self.error = error
         }
+        missingArtworksLoading = false
       }
     }
     .musicKitAuthorizationSheet(isAuthorized: $isMusicKitAuthorized)
